@@ -16,7 +16,7 @@
 
 ## Đã biết
 
-Nguồn của mọi dòng: đọc từ cấu hình Klipper và Moonraker ngày 2026-11-24 ([fleet/precheck/2026-11-24/SUMMARY.md](../../fleet/precheck/2026-11-24/SUMMARY.md)).
+Nguồn: đọc từ cấu hình Klipper và Moonraker ngày 2026-11-24, ghi trong [SUMMARY.md](../../fleet/precheck/2026-11-24/SUMMARY.md) và bản sao cấu hình trong `fleet/precheck/2026-11-24/<máy>/`.
 
 > [!NOTE]
 > Cấu hình cho biết máy được khai báo thế nào, chưa chắc là linh kiện đang lắp thật. Phần "Cần điền" bên dưới để xác nhận.
@@ -31,7 +31,7 @@ Nguồn của mọi dòng: đọc từ cấu hình Klipper và Moonraker ngày 2
 | Đùn | Động cơ LDO-36STH20-1004AHG, 0,65 A |
 | Đầu nóng | Cảm biến PT1000, tối đa 300 °C; đầu phun 0,4 mm |
 | Cảm biến | Cartographer V3 (scan + touch), gia tốc kế ADXL345 |
-| Phần mềm | Klipper v0.13.0-822 |
+| Phần mềm | Klipper v0.13.0-822 (dirty: có file đã sửa cục bộ so với bản gốc) |
 | Firmware MCU | Bo chính và bo đầu in đang là **Kalico v2026.04.00**; sẽ nạp lại về Klipper chính |
 | Input shaper | X ei 139,8 Hz, Y mzv 64,2 Hz; `max_accel` 10000 |
 | Pressure advance đang chạy | 0,02 (chưa phải số đã đo cho PETG) |
@@ -61,7 +61,7 @@ Mọi thay đổi cấu hình lên máy theo hiến chương: máy không in, so
 - [voron_BAMBU-PETG.md](../../calibration/guides/voron_BAMBU-PETG.md)
 - [voron_TIN-PETGECO.md](../../calibration/guides/voron_TIN-PETGECO.md)
 - [voron_TIN-ABSPRO.md](../../calibration/guides/voron_TIN-ABSPRO.md)
-- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm (bản cũ, đang sửa)
+- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm
 
 Các thẻ đang được rà, nội dung có thể đổi.
 

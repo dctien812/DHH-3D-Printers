@@ -47,7 +47,7 @@ Hệ số K do máy tự quản lý; hồ sơ DHH của máy Bambu không đặt
 - [bambu_BAMBU-PETG.md](../../calibration/guides/bambu_BAMBU-PETG.md)
 - [bambu_TIN-PETGECO.md](../../calibration/guides/bambu_TIN-PETGECO.md)
 - [MAINTENANCE.md](../../calibration/bambu/MAINTENANCE.md): bảng bảo trì Bambu
-- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm (bản cũ, đang sửa)
+- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm
 
 Các thẻ đang được rà, nội dung có thể đổi.
 

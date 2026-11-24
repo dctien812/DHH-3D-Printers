@@ -51,12 +51,12 @@ X/Y ở giữa chiều cao; (b) tấm lỗ và chốt Ø8; (c) tháp bề mặt 
 
 **Thứ tự giữa 4 đặc tả**: 001 trước. Phần nền của 003 chạy song song với 001 và với phần đo không
 đùn nhựa của 002. 002:US1 và 004:US1 song song. Pilot PLA trên 6 máy (Buổi C) chạy trước khi dựng
-đủ 22 hồ sơ; hiệu chuẩn nhựa của 002, 004 và in mẫu của 003 dùng chung các buổi.
+đủ 20 hồ sơ; hiệu chuẩn nhựa của 002, 004 và in mẫu của 003 dùng chung các buổi.
 
 **Lượt có mặt của người dùng**: xem [../003-orca-profiles/plan.md](../003-orca-profiles/plan.md).
 
 **Phương án đã loại**: sửa tay JSON hồ sơ Orca (khó kiểm, dễ lệch giữa các máy); một file CSV
-hiệu chuẩn chung cho cả hai hãng (hai đặc tả ghi đè nhau); hiệu chuẩn nhiệt cho cả 22 cặp (dùng
+hiệu chuẩn chung cho cả hai hãng (hai đặc tả ghi đè nhau); hiệu chuẩn nhiệt cho cả 20 cặp (dùng
 mặc định của nhà sản xuất, ghi "mặc_định").
 
 ## Technical Context

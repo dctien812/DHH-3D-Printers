@@ -104,7 +104,7 @@ khỏi tốn nhựa.
 - 001:T001 (cây thư mục, `docs\data-formats.md`) → 002:T001, T002.
 - 001:T011 (baseline Voron) → 002:T005, T012.
 - 001:T016 (`gaps.md`) → 002:T012, T021 để xác nhận phạm vi.
-- 003 (STL mẫu chuẩn và bộ hồ sơ PLA tối thiểu cho pilot) → 002:T014 (Buổi C). 003 chỉ dựng đủ 22
+- 003 (STL mẫu chuẩn và bộ hồ sơ) → 002:T015 (ngày 2, lần in thử đầu của Voron). 003 chỉ dựng đủ 20
   hồ sơ sau khi Buổi C đạt.
 - 002:T014 (Buổi C) dùng chung buổi với pilot của 003 và 004.
 - 002:T002 (`ingest.ps1`) → 004 chạy cùng script này, không sửa nó.

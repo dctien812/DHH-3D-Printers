@@ -2,11 +2,12 @@
 
 Tối ưu và giữ đồng bộ dàn 6 máy in 3D (2 Voron chạy Klipper, 4 Bambu Lab) để cùng một file in ra chi tiết cùng kích thước trên máy nào cũng được. Repo này là thư mục làm việc và bản sao lưu của dự án.
 
-![Số máy](https://img.shields.io/badge/may_in-6-blue)
-![Trạng thái](https://img.shields.io/badge/trang_thai-chua_cham_may_in-orange)
-![Kế hoạch](https://img.shields.io/badge/ke_hoach-da_duyet-brightgreen)
+Cập nhật lần cuối: 2026-11-24
+
+![Số máy](https://img.shields.io/badge/S%E1%BB%91_m%C3%A1y-6-blue)
+![Trạng thái](https://img.shields.io/badge/Tr%E1%BA%A1ng_th%C3%A1i-ch%C6%B0a_ch%E1%BA%A1m_m%C3%A1y_in-orange)
+![Kế hoạch](https://img.shields.io/badge/K%E1%BA%BF_ho%E1%BA%A1ch-%C4%91%C3%A3_duy%E1%BB%87t-brightgreen)
 ![Slicer](https://img.shields.io/badge/slicer-OrcaSlicer_2.5.2-informational)
-![Task](https://img.shields.io/badge/task-7%2F107_xong-lightgrey)
 
 > [!NOTE]
 > Tính đến 2026-11-24: kế hoạch đã duyệt, đang viết và rà script, hồ sơ, thẻ hướng dẫn. **Chưa có thay đổi nào lên máy in. Chưa script nào chạy với máy thật.** Việc trên máy chờ lúc cả 6 máy rảnh.
@@ -32,8 +33,8 @@ Tối ưu và giữ đồng bộ dàn 6 máy in 3D (2 Voron chạy Klipper, 4 Ba
 
 | Máy | Mã | Loại | Phần mềm | Nhựa trong phạm vi | Thư mục |
 |---|---|---|---|---|---|
-| Voron Trident 250 | `TRI` | Voron, Klipper, buồng kín | Klipper v0.13.0-822, Klippain, Moonraker | PETG Basic, PETG-ECO, ABS Pro | [machines/Voron-Trident-250/](machines/Voron-Trident-250/) |
-| Voron 2.4 300 | `V24` | Voron, Klipper, buồng kín | Klipper v0.13.0-822, Klippain; MCU đang là Kalico v2026.04.00, sẽ nạp lại về Klipper chính | PETG Basic, PETG-ECO, ABS Pro | [machines/Voron-2.4-300/](machines/Voron-2.4-300/) |
+| Voron Trident 250 | `TRI` | Voron, Klipper, buồng kín | Klipper v0.13.0-822 (dirty: có file đã sửa cục bộ so với bản gốc), Klippain, Moonraker | PETG Basic, PETG-ECO, ABS Pro | [machines/Voron-Trident-250/](machines/Voron-Trident-250/) |
+| Voron 2.4 300 | `V24` | Voron, Klipper, buồng kín | Klipper v0.13.0-822 (dirty: có file đã sửa cục bộ so với bản gốc), Klippain; MCU đang là Kalico v2026.04.00, sẽ nạp lại về Klipper chính | PETG Basic, PETG-ECO, ABS Pro | [machines/Voron-2.4-300/](machines/Voron-2.4-300/) |
 | Bambu H2S | `H2S` | Bambu, buồng kín, có AMS | Firmware 01.03.00.00, chế độ cloud | PLA, PETG Basic, PETG-ECO, ABS Pro | [machines/Bambu-H2S/](machines/Bambu-H2S/) |
 | Bambu P1S | `P1S` | Bambu, buồng kín | Firmware 01.10.00.00, chế độ cloud | PLA, PETG Basic, PETG-ECO, ABS Pro | [machines/Bambu-P1S/](machines/Bambu-P1S/) |
 | Bambu A1 | `A1` | Bambu, không buồng kín | Firmware 01.09.00.00, chế độ cloud | PLA, PETG Basic, PETG-ECO | [machines/Bambu-A1/](machines/Bambu-A1/) |
@@ -49,18 +50,18 @@ Số task đếm bằng lệnh trên `specs/*/tasks.md` (dòng `- [x]` và `- [ 
 |---|---|---|
 | [001 fleet-baseline](specs/001-fleet-baseline/spec.md) | Kiểm kê và đường cơ sở 6 máy | 3 / 18 |
 | [002 voron-tuning](specs/002-voron-tuning/spec.md) | Cân đai, shaper, hiệu chuẩn nhựa, gỡ lệch chuẩn hai Voron | 3 / 37 |
-| [003 orca-profiles](specs/003-orca-profiles/spec.md) | Bộ hồ sơ OrcaSlicer chung, mẫu chuẩn, bảng kết quả đo | 1 / 28 |
+| [003 orca-profiles](specs/003-orca-profiles/spec.md) | Bộ hồ sơ OrcaSlicer chung, mẫu chuẩn, bảng kết quả đo | 7 / 28 |
 | [004 bambu-calibration](specs/004-bambu-calibration/spec.md) | Bảo trì và hiệu chuẩn 4 máy Bambu | 0 / 24 |
-| **Tổng** | | **7 / 107** |
+| **Tổng** | | **13 / 107** |
 
-Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. Phần lớn script đã viết nhưng chưa tính là task xong vì còn đang rà (xem [Các script chính](#các-script-chính)). Task đánh `[x]` là task đã có kiểm độc lập.
+Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. Phần lớn script đã viết nhưng chưa tính là task xong vì còn đang rà (xem [Các script chính](#các-script-chính)). Task `[x]` gồm task đã kiểm độc lập và hai task chỉ ghi quyết định (002:T014, T024).
 
 <details>
 <summary>Đã xong, đang dở, chưa làm (ngày 2026-11-24)</summary>
 
 **Đã xong, có bằng chứng**
 
-- Hiến chương v1.0.1, 4 bộ spec/plan/tasks, phản biện 2 lượt, chủ dự án duyệt.
+- Hiến chương v1.0.2, 4 bộ spec/plan/tasks, phản biện 2 lượt, chủ dự án duyệt.
 - 001: cây thư mục, thư viện `Fleet.psm1`, sao lưu hồ sơ Orca (66 file, 0 lệch băm); kiểm độc lập đạt 5/5 ([fleet/verify_001_foundation.md](fleet/verify_001_foundation.md)).
 - 002: `apply-config.ps1` thử với Moonraker giả, 17/17 ca đạt ([fleet/verify_002_apply.md](fleet/verify_002_apply.md)).
 - 003: bộ sinh hồ sơ, 3 mẫu STL, `aggregate.ps1` đạt kiểm độc lập ([fleet/verify_003_build.md](fleet/verify_003_build.md), [fleet/verify_003_backup.md](fleet/verify_003_backup.md)).
@@ -68,8 +69,8 @@ Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. P
 
 **Đang dở**
 
-- Vòng sửa sau phản biện: `apply-config.ps1`, `measure.ps1`, `ingest.ps1`, `bambu-read.ps1`, `build-profiles.ps1`, các thẻ hướng dẫn.
-- Cập nhật spec, tasks, bảng nguồn hồ sơ và thẻ theo phạm vi nhựa mới (20 hồ sơ thay vì 22).
+- Rà lại và sửa: `apply-config.ps1` (thêm ca thử), `measure.ps1` và `ingest.ps1` (chờ rà lại lượt 2), các thẻ hướng dẫn (vòng sửa lượt 2).
+- Cập nhật spec, tasks, bảng nguồn hồ sơ và thẻ theo phạm vi nhựa mới (đã cập nhật theo 20 hồ sơ).
 
 **Chưa làm**
 
@@ -81,7 +82,7 @@ Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. P
 ## Việc đang chờ chủ dự án
 
 1. Điền phiếu [docs/phieu.html](docs/phieu.html): 83 câu, chia theo máy, tự lưu trên trình duyệt. Điền xong bấm "Gửi lên GitHub" hoặc "Chép câu trả lời". Mục chỉ dẫn và các câu đã trả lời nằm ở [PHIEU-DIEN.md](PHIEU-DIEN.md).
-2. Điền mã truy cập Bambu vào file cục bộ `secrets/bambu.local.json` (file này không có trong repo).
+2. Điền mã truy cập Bambu vào file cục bộ `secrets/bambu.local.json` (file này không có trong repo). Script đọc máy Bambu đã qua rà bảo mật lượt 2 và được kết luận dùng được với mã thật; lần đầu chạy từng máy một.
 3. Báo khi cả 6 máy rảnh (hai Voron đang có việc in lúc kiểm tra ngày 2026-11-24).
 4. Chuẩn bị cho ngày làm: sấy nhựa, dán nhãn cuộn, thước cặp, vật tư bảo trì (chi tiết trong [calibration/guides/RUN-DAY.md](calibration/guides/RUN-DAY.md)).
 
@@ -109,7 +110,7 @@ Số đo bằng thước cặp 0,01 mm do chủ dự án đo. Chưa có số đo
 
 ## Sáu nguyên tắc
 
-Nguồn đầy đủ: [.specify/memory/constitution.md](.specify/memory/constitution.md) (v1.0.1, 2026-11-24).
+Nguồn đầy đủ: [.specify/memory/constitution.md](.specify/memory/constitution.md) (v1.0.2, 2026-11-24).
 
 1. **Thứ tự ưu tiên: Tin cậy, rồi Đồng bộ, rồi Chất lượng, rồi Tốc độ.** Thay đổi làm máy kém ổn định thì không áp dụng.
 2. **Thay đổi lên máy: tự áp dụng, luôn có sao lưu.** Chỉ làm khi máy không in, so bản trên máy trước khi ghi, sao lưu, ghi sổ kèm cách hoàn tác. Nạp firmware MCU, tháo lắp cơ khí, xóa dữ liệu thì hỏi riêng.
@@ -135,9 +136,6 @@ Hãng chính: Bambu PLA, Bambu PETG Basic, Tinmorry PETG-ECO, Tinmorry ABS Pro; 
 - PLA chỉ in trên 4 máy Bambu; hai Voron không thử PLA.
 - ABS / ASA chỉ in trên máy có buồng kín: hai Voron, H2S, P1S.
 - Quy ước tên hồ sơ (tiền tố `DHH`): [profiles/NAMING.md](profiles/NAMING.md).
-
-> [!NOTE]
-> Phạm vi 20 hồ sơ là quyết định mới nhất. `profiles/NAMING.md`, `profiles/src/materials.csv` và spec 002, 003, 004 vẫn ghi 22 hồ sơ (có PLA trên Voron); đang chờ sửa theo phạm vi mới.
 
 ## Luồng làm việc
 
@@ -178,9 +176,6 @@ flowchart TD
 | Ngày 2 | Hai loại PETG (Bambu PETG Basic và Tinmorry PETG-ECO) trên cả 6 máy. |
 | Ngày 3 | ABS Pro trên 4 máy buồng kín, in bù các cặp lệch, thử lắp chéo. |
 
-> [!NOTE]
-> [calibration/guides/RUN-DAY.md](calibration/guides/RUN-DAY.md) vẫn là bản cũ (22 hồ sơ, PLA trên Voron, cách cắt ngày khác); đang sửa theo lịch trên. Khi hai nơi khác nhau, theo bảng này.
-
 Thẻ hướng dẫn từng nhựa, theo máy:
 
 | Nhựa | Voron | Bambu |
@@ -190,7 +185,7 @@ Thẻ hướng dẫn từng nhựa, theo máy:
 | Tinmorry PETG-ECO | [voron_TIN-PETGECO.md](calibration/guides/voron_TIN-PETGECO.md) | [bambu_TIN-PETGECO.md](calibration/guides/bambu_TIN-PETGECO.md) |
 | Tinmorry ABS Pro | [voron_TIN-ABSPRO.md](calibration/guides/voron_TIN-ABSPRO.md) | [bambu_TIN-ABSPRO.md](calibration/guides/bambu_TIN-ABSPRO.md) |
 
-Bảo trì máy Bambu theo bảng: [calibration/bambu/MAINTENANCE.md](calibration/bambu/MAINTENANCE.md). Các thẻ đang được rà và sửa, nội dung có thể đổi.
+Bảo trì máy Bambu theo bảng: [calibration/bambu/MAINTENANCE.md](calibration/bambu/MAINTENANCE.md). Thẻ chung cho nửa 2 của mỗi buổi (in và đo mẫu chuẩn): [NUA-2_mau-chuan.md](calibration/guides/NUA-2_mau-chuan.md). Lịch chi tiết: [RUN-DAY.md](calibration/guides/RUN-DAY.md). Các thẻ đang ở vòng sửa lượt 2, nội dung có thể đổi.
 
 ## Bản đồ thư mục
 
@@ -243,14 +238,14 @@ Chạy bằng Windows PowerShell 5.1 từ thư mục gốc repo. Cột "Chạm m
 |---|---|---|---|
 | `scripts/lib/Fleet.psm1` | Thư viện: gọi Moonraker bằng GET, nghe SSDP | Chỉ đọc; từ chối lệnh gửi G-code | Kiểm độc lập đạt, có gọi thật hai Voron |
 | `scripts/fleet/backup-orca.ps1` | Chép nguyên hồ sơ OrcaSlicer vào `profiles/orca_backup/` kèm băm | Không | Đạt: 66/66 file khớp băm |
-| `scripts/fleet/inventory.ps1` | Kiểm kê 6 máy ra CSV và Markdown | Chỉ đọc | Chạy offline ra CSV 6 dòng; **chưa chạy với máy thật** |
-| `scripts/fleet/snapshot-voron.ps1` | Chụp cấu hình hai Voron kèm băm | Chỉ đọc | **Chưa chạy với máy thật** |
-| `scripts/fleet/bambu-read.ps1` | Đọc trạng thái Bambu qua MQTT; chỉ gửi "pushall" khi có công tắc `-AllowPushAll` | Đọc; tối đa một gói pushall | Qua kiểm cú pháp và phép thử logic; còn vòng sửa; **chưa dùng mã thật** |
-| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 17/17 ca với Moonraker giả; phần sửa mới chưa có ca thử; **chưa chạy với máy thật** |
-| `scripts/voron/measure.ps1` | Đo cộng hưởng lặp lại được, chỉ lệnh trong danh sách cho phép | Chuyển động, không đùn nhựa, không gia nhiệt | Chưa rà lại sau sửa; **chưa chạy với máy thật** |
-| `scripts/calibration/ingest.ps1` | Gộp phiếu `cal` vào `calibration/voron.csv` và `bambu.csv` | Không | Thử trên dữ liệu mẫu; chưa rà lại sau sửa |
+| `scripts/fleet/inventory.ps1` | Kiểm kê 6 máy ra CSV và Markdown | Chỉ đọc | Chạy offline ra CSV 6 dòng; qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
+| `scripts/fleet/snapshot-voron.ps1` | Chụp cấu hình hai Voron kèm băm | Chỉ đọc | Qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
+| `scripts/fleet/bambu-read.ps1` | Đọc trạng thái Bambu qua MQTT; chỉ gửi "pushall" khi có công tắc `-AllowPushAll` | Đọc; tối đa một gói pushall | Qua phép thử logic và rà bảo mật lượt 2 (kết luận dùng được với mã thật, chạy từng máy ở lần đầu); **chưa dùng mã thật, chưa chạy với máy thật** |
+| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 17/17 ca với Moonraker giả; đang thêm ca thử cho phần sửa mới; **chưa chạy với máy thật** |
+| `scripts/voron/measure.ps1` | Đo cộng hưởng lặp lại được, chỉ lệnh trong danh sách cho phép | Chuyển động, không đùn nhựa, không gia nhiệt | Đã sửa lượt 2, chờ rà lại; **chưa chạy với máy thật** |
+| `scripts/calibration/ingest.ps1` | Gộp phiếu `cal` vào `calibration/voron.csv` và `bambu.csv` | Không | Thử trên dữ liệu mẫu; đã sửa lượt 2, chờ rà lại |
 | `scripts/calibration/aggregate.ps1` | Gộp số đo mẫu, báo cặp ngoài dung sai, gợi ý hệ số bù | Không | Đạt 5/5 ca; chưa có số đo thật |
-| `scripts/orca/build-profiles.ps1` | Sinh bộ hồ sơ `DHH` từ bảng nguồn | Không | Đạt: pilot 18 file, đủ 34 file, 0 lệch; **chưa thử `-Install`**, chưa có gói Preset Bundle |
+| `scripts/orca/build-profiles.ps1` | Sinh bộ hồ sơ `DHH` từ bảng nguồn | Không | Đạt: pilot 16 file, đủ 32 file, 0 lệch; `-Install` mới thử trên bản sao, **chưa cài vào Orca thật**; có 3 gói zip để nhập, Orca chưa thử nhận |
 | `scripts/orca/inventory-old.ps1` | Kiểm kê hồ sơ Orca cũ ra `profiles/old_inventory.csv` | Không | Đã chạy: 6 máy, 25 vật liệu, 1 quy trình |
 | `scripts/models/make-cal-models.ps1` | Sinh 3 mẫu STL vào `models/` | Không | STL kín, kích thước đúng; **chưa in thử** |
 

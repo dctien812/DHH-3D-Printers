@@ -6,7 +6,7 @@ Trạng thái thẻ: soạn theo tài liệu hãng (`specs\004-bambu-calibration
 
 Thứ tự: **1 lưu lượng thể tích tối đa (mvs) → 2 K → 3 flow ratio** (theo hướng dẫn hiệu chuẩn của Orca; người dùng chốt, ghi ở `.office\ledger.md`). Nhiệt in: **mặc định của hồ sơ, không chỉnh**, ghi `mặc_định`.
 Văn phòng **không gửi lệnh điều khiển nào tới máy Bambu** (ngoài `pushall` chỉ-đọc theo hiến chương III): mọi lần in do bạn bấm.
-Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini` (`profiles\NAMING.md`); nhựa `DHH Bambu PETG Basic @<Máy>` (mã nhựa vẫn `BAMBU-PETG`; `NAMING.md` còn ghi "Bambu PETG", trưởng phòng sẽ khớp lại).
+Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini` (`profiles\NAMING.md`); nhựa `DHH Bambu PETG Basic @<Máy>` (mã nhựa vẫn `BAMBU-PETG`).
 
 ## A. Quy tắc K
 
@@ -34,11 +34,11 @@ Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini`
 
 **Bước 0.** Chọn máy `DHH <Máy> 0.4`, nhựa như trên, quy trình `DHH 0.20 Sync @<Máy>`. H2S: chọn đúng khe AMS.
 
-**Bước 1. mvs.** **Calibration → Max flowrate**, khoảng mặc định (điểm xuất phát; còn đẹp tới đỉnh thì nâng "End"), ô Flow Dynamics **Auto**. In. Tìm **điểm xấu đầu tiên**; **điểm tốt cuối** là vạch ngay dưới. Đọc giá trị lưu lượng **in sẵn trên mẫu** tại hai điểm; mẫu không in giá trị thì chụp ảnh gửi trưởng phòng (hoặc đọc ở tab Preview, kiểu màu lưu lượng thể tích). **Đặt tạm** Max volumetric speed của nhựa = điểm tốt cuối, **không Save**, giữ tới hết bước 3. Biên an toàn do trưởng phòng quyết.
+**Bước 1. mvs.** **Calibration → Max flowrate**, khoảng mặc định (điểm xuất phát; còn đẹp tới đỉnh thì nâng "End"), ô Flow Dynamics **Auto**. In. Tìm **điểm xấu đầu tiên**; **điểm tốt cuối** là vạch ngay dưới. Đọc giá trị lưu lượng **in sẵn trên mẫu** tại hai điểm; mẫu không in giá trị thì suy ra: giá trị = Start + (chiều cao đo ÷ chiều cao mỗi bậc) × Step, với Start, Step và chiều cao mỗi bậc đọc ở hộp thoại lúc tạo mẫu (cách suy từ tham số hộp thoại, **chưa thử trên máy này**). Dù mẫu có in số hay không, ghi vào `điều_kiện` Start, End, Step và chiều cao đo bằng thước cặp (mm) để trưởng phòng tính lại (hoặc đọc ở tab Preview, kiểu màu lưu lượng thể tích). **Đặt tạm** Max volumetric speed của nhựa = điểm tốt cuối, **không Save**, giữ tới hết bước 3. Biên an toàn do trưởng phòng quyết.
 
 **Bước 2. K.**
 - **H2S, A1, A1M:** in **Calibration → Flow Rate → Pass 1** với ô Flow Dynamics = **On**; quan sát máy có chạy quy trình đo K trước khi in không. Có: đọc K của khe ở trang Device hoặc màn hình máy (chưa thử đường nào trên máy này). Không: `k` = `chưa_đo`, báo trưởng phòng.
-- **P1S:** **Calibration → Pressure Advance** (PA Line hoặc Pattern), khoảng mặc định (điểm xuất phát; mở rộng nếu vạch đẹp nhất sát mép). Đọc K **in sẵn trên mẫu** (không in thì chụp ảnh gửi trưởng phòng). Nhập thành bộ K có tên (ví dụ `DHH-BAMBU-PETG-<ngày>`, đề xuất), gán cho cuộn ngoài, theo `https://wiki.bambulab.com/en/software/bambu-studio/calibration_pa`. Đường nhập chưa thử trên máy này.
+- **P1S:** **Calibration → Pressure Advance** (PA Line hoặc Pattern), khoảng mặc định (điểm xuất phát; mở rộng nếu vạch đẹp nhất sát mép). Đọc K **in sẵn trên mẫu** (luôn ghi vào `điều_kiện` Start, End, Step của hộp thoại và số thứ tự vạch đã chọn, kèm ảnh, để trưởng phòng tính lại). Nhập thành bộ K có tên (ví dụ `DHH-BAMBU-PETG-<ngày>`, đề xuất), gán cho cuộn ngoài, theo `https://wiki.bambulab.com/en/software/bambu-studio/calibration_pa`. Đường nhập chưa thử trên máy này.
 
 **Bước 3. Flow.** **Calibration → Flow Rate → Pass 1** (ô **Auto**), chọn tấm mặt trên mịn nhất; đọc số in trên tấm; áp vào Flow ratio **tạm** theo hướng dẫn hộp thoại Orca (dự án không có công thức), **không Save** hồ sơ DHH. **Pass 2** tương tự. Không rõ cách áp thì ghi số in trên tấm vào `điều_kiện` và gửi ảnh cho trưởng phòng. Orca hỏi lưu thì chọn bỏ.
 

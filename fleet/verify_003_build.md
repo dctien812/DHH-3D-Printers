@@ -29,3 +29,17 @@ CHUA THU: script chi nhan -UserId, khong co tham so thu muc dich, nen khong chay
 
 ## (8) Orca CLI
 `OrcaSlicer.dll` chua chuoi "OrcaSlicer 2.5.2" va "release/v2.5.2", file `OrcaSlicer.conf` ghi 2.5.1 (cu, ghi lan chay truoc). `orca-slicer.exe --help` thoat 0 nhung khong lay duoc dong chu nao qua redirect. Bam `user` va kich thuoc/gio sua toan bo `%APPDATA%\OrcaSlicer` truoc/sau khong doi. CHUA THU cat lop. Ket luan "CLI dung duoc": chua co.
+
+# Kiem lai luot 2 (pham vi moi: 20 vat lieu, pilot 16, all 32)
+
+Cong cu: `tests\tmp\v003\check_profiles.ps1`, `check_values.ps1` (da cap nhat cho PETG Basic, mang theo bien the), thu muc `r2_pilot`, `r2_all`, `u1`.
+
+1. DAT. pilot 16 file (6/6/4), all 32 file (6/6/20), `-Verify` lech 0 ca hai. check_profiles 0 loi; check_values 24 phep (pilot) va 208 phep (all 20 dong), 0 lech. PLA cho TRI/V24 = 0, ABS cho A1/A1M = 0, 20 ten khac nhau. inherits co trong `*.opc`, ke ca 4 cha PETG Basic (@BBL H2S, @BBL A1, @BBL A1M 0.4 nozzle, @BBL X1C). Ho so Bambu khong co pressure_advance. Doi chung am: doi 1 phan tu mang P1S -> bi bat.
+2. DAT (tren ban sao `tests\tmp\v003\u1`, dung `-UserDir`). Install: +16 file DHH, 0 file cu doi. Cai lai lan 2: tu choi, exit 1, cay khong doi. `-Install -Force`: exit 0, bam khong doi. File "DHH ..." da sua tay, khong -Force: tu choi. `-UserDir` khong ton tai: loi, khong tao thu muc (Install va Uninstall). Thu muc trong: tao machine/filament/process, 16 file. Duong dan tuong doi, VIET HOA, dau `\` cuoi: chay duoc. `-Uninstall`: xoa DHH *.json, bam 65 file goc khop 100% voi sao luu. Doc ma: ghi chi vao `Join-Path $ud "<loai>\<ten>.json"` (dong 335, 346), xoa chi trong 3 thu muc con (dong 292-296); khong thay duong ghi ra ngoai `-UserDir`. Dieu kien Orca-dang-chay (dong 279-282): so sanh OrdinalIgnoreCase sau Resolve-Path, chiu duoc hoa/thuong va dau `\`. Chua kiem: ten 8.3 va junction tro vao `%APPDATA%\OrcaSlicer` co the lot qua kiem tra (khong thu vi se ghi vao thu muc that).
+   - Nho: `-like "DHH *"` khong phan biet hoa thuong nen `-Uninstall` xoa ca `dhh lower.json` va file DHH da sua tay (dong 295); `-Verify -UserDir` bao file `dhh lower.json` la thua.
+   - Nho: `-UserDir` tuong doi tinh tu thu muc goc du an, khong phai thu muc hien tai (dong 264).
+3. DAT. 3 zip x (pilot, all): so entry = so .json cung loai (6/4/6 va 6/20/6), moi entry trung SHA256 voi .json da sinh, ten entry phang. Orca co nhap duoc zip nay khong: CHUA KIEM.
+4. DAT. H2S: may 3 bien the, moi khoa theo bien the cua 4 vat lieu co 3 phan tu. P1S: may 2 (Standard, High Flow), vat lieu co 2. A1, A1 Mini: 1/1. 0 khoa sai so phan tu.
+5. DAT. Ban sao `fakeroot` them dong PLA cho TRI: script nem loi "PLA chi cho may Bambu: DHH Bambu PLA @Voron Trident 250" (build-profiles.ps1:141), exit 1, khong sinh file.
+
+An toan: bam `%APPDATA%\OrcaSlicer\user` truoc va sau: 66 file, 0 lech.

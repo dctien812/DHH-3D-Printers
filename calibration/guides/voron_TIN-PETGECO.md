@@ -21,11 +21,11 @@ Tên hồ sơ: `<Máy>` là TRI = `Voron Trident 250`, V24 = `Voron 2.4 300` (`p
 
 **Bước 0.** Chọn máy `DHH <Máy> 0.4`, nhựa như trên, quy trình `DHH 0.20 Sync @<Máy>`. Nạp nhựa, chờ nhiệt mặc định.
 
-**Bước 1. mvs.** **Calibration → Max flowrate**, khoảng mặc định (điểm xuất phát; còn đẹp tới đỉnh thì nâng "End"). In. Tìm **điểm xấu đầu tiên**; **điểm tốt cuối** là vạch ngay dưới. Đọc giá trị lưu lượng **in sẵn trên mẫu** tại hai điểm; mẫu không in giá trị thì chụp ảnh gửi trưởng phòng (hoặc đọc ở tab Preview, kiểu màu lưu lượng thể tích).
+**Bước 1. mvs.** **Calibration → Max flowrate**, khoảng mặc định (điểm xuất phát; còn đẹp tới đỉnh thì nâng "End"). In. Tìm **điểm xấu đầu tiên**; **điểm tốt cuối** là vạch ngay dưới. Đọc giá trị lưu lượng **in sẵn trên mẫu** tại hai điểm; mẫu không in giá trị thì suy ra: giá trị = Start + (chiều cao đo ÷ chiều cao mỗi bậc) × Step, với Start, Step và chiều cao mỗi bậc đọc ở hộp thoại lúc tạo mẫu (cách suy từ tham số hộp thoại, **chưa thử trên máy này**). Dù mẫu có in số hay không, ghi vào `điều_kiện` Start, End, Step và chiều cao đo bằng thước cặp (mm) để trưởng phòng tính lại (hoặc đọc ở tab Preview, kiểu màu lưu lượng thể tích).
 
 **Bước 1b. Đặt tạm.** Sửa **tạm** Max volumetric speed của nhựa = điểm tốt cuối, **không Save**, giữ tới hết bước 3. Biên an toàn do trưởng phòng quyết.
 
-**Bước 2. PA.** **Calibration → Pressure Advance → PA Tower**. Khoảng quét điểm xuất phát **0 → 0,1** (chưa đo; 0,02 và 0,0475 nằm trong khoảng, `SUMMARY.md:25`). Chọn chỗ góc sắc nhất. Đọc PA **in sẵn trên mẫu**; không in thì chụp ảnh gửi trưởng phòng. PA đến Klipper qua G-code Orca; không SAVE_CONFIG, không sửa `overrides.cfg` hay `variables.cfg`.
+**Bước 2. PA.** **Calibration → Pressure Advance → PA Tower**. Khoảng quét điểm xuất phát **0 → 0,1** (chưa đo; 0,02 và 0,0475 nằm trong khoảng, `SUMMARY.md:25`). Chọn chỗ góc sắc nhất. Đọc PA **in sẵn trên mẫu**; không in thì suy ra: PA = Start + (chiều cao đo ÷ chiều cao mỗi bậc) × Step, với Start, Step và chiều cao mỗi bậc đọc ở hộp thoại lúc tạo mẫu (chưa thử trên máy này). Dù có in số hay không, ghi vào `điều_kiện` Start, End, Step và chiều cao đo bằng thước cặp (mm). PA đến Klipper qua G-code Orca; không SAVE_CONFIG, không sửa `overrides.cfg` hay `variables.cfg`.
 
 **Bước 3. Flow.** **Calibration → Flow Rate → Pass 1**, chọn tấm mặt trên mịn nhất; đọc số in trên tấm; áp vào Flow ratio **tạm** theo hướng dẫn hộp thoại Orca (dự án không có công thức), **không Save**. **Pass 2** tương tự. Không rõ cách áp thì ghi số in trên tấm vào `điều_kiện` và gửi ảnh cho trưởng phòng. Orca hỏi lưu thì chọn bỏ.
 

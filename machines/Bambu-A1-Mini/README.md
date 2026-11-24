@@ -21,7 +21,7 @@ Nguồn: gói quảng bá của máy trên mạng nội bộ ngày 2026-11-24 ([
 | Mục | Giá trị |
 |---|---|
 | Firmware | 01.09.00.00 (bản mới nhất theo trang của hãng) |
-| Kết nối | Chế độ cloud, đã gắn tài khoản; tên máy "TTeccS A1 Mini" (chủ dự án xác nhận đúng máy trong phạm vi) |
+| Kết nối | Chế độ cloud, đã gắn tài khoản; tên máy khác ba máy còn lại (chủ dự án xác nhận đúng máy trong phạm vi) |
 | AMS | Không có |
 | Bàn in | 180 x 180 mm (mẫu chuẩn 100 mm vừa bàn) |
 | Buồng | Không kín: không in ABS / ASA |
@@ -48,7 +48,7 @@ Hệ số K do máy tự quản lý; hồ sơ DHH của máy Bambu không đặt
 - [bambu_BAMBU-PETG.md](../../calibration/guides/bambu_BAMBU-PETG.md)
 - [bambu_TIN-PETGECO.md](../../calibration/guides/bambu_TIN-PETGECO.md)
 - [MAINTENANCE.md](../../calibration/bambu/MAINTENANCE.md): bảng bảo trì Bambu
-- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm (bản cũ, đang sửa)
+- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm
 
 Các thẻ đang được rà, nội dung có thể đổi.
 
