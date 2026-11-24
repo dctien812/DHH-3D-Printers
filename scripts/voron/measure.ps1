@@ -84,13 +84,21 @@ function Get-StoreLastTime {
     if ($a.Count -gt 0) { [double]$a[-1].time } else { 0.0 }
 }
 
-# Thong diep sau lan xuat hien CUOI cua dong lenh khop dung $g (moi hon $t); $null neu lenh khong thay trong store.
-function Get-StoreSince([string]$g, [double]$t) {
-    $r = Invoke-RestMethod "http://${Ip}:7125/server/gcode_store?count=500" -TimeoutSec 20
-    $m = @($r.result.gcode_store | Where-Object { [double]$_.time -gt $t } | ForEach-Object { ([string]$_.message).Trim() })
+# Tach hai tin hieu: Found = lenh $g co trong store (moi hon $t); Messages = phan hoi sau lan xuat hien CUOI (luon la mang, co the rong).
+# Ham thuan (khong goi mang) de tests\measure\ doc rieng qua AST.
+function Select-StoreSince($entries, [string]$g, [double]$t) {
+    $e = @($entries | Where-Object { $null -ne $_ -and [double]$_.time -gt $t })
+    $m = @($e | ForEach-Object { ([string]$_.message).Trim() })
     $idx = [array]::LastIndexOf($m, $g)
-    if ($idx -lt 0) { return $null }
-    @($m[($idx + 1)..($m.Count - 1)] | Where-Object { $_ })
+    if ($idx -lt 0) { return [pscustomobject]@{ Found = $false; Messages = @() } }
+    # chi giu phan hoi: bo muc type=command va cac dong lenh $g, M400
+    $msgs = @($e[$idx..($e.Count - 1)] | Where-Object { $_.type -ne 'command' -and ([string]$_.message).Trim() -notin @($g, 'M400', '') } | ForEach-Object { ([string]$_.message).Trim() })
+    [pscustomobject]@{ Found = $true; Messages = $msgs }
+}
+
+function Get-StoreSince([string]$g, [double]$t) {
+    $r = Invoke-RestMethod "http://${Ip}:7125/server/gcode_store?count=2000" -TimeoutSec 20
+    Select-StoreSince $r.result.gcode_store $g $t
 }
 
 function Get-ResultFiles {
@@ -107,12 +115,12 @@ function Invoke-Measure([string]$g) {
     Send-Gcode 'M400'
     Wait-Done
     Start-Sleep 5   # Shake&Tune ve bieu do sau khi lenh tra ve
-    $msgs = Get-StoreSince $g $t0
-    if ($null -eq $msgs) { throw "[$Printer] gcode_store khong co lenh '$g': lenh co the chua toi may" }
-    $msgs = @($msgs)
+    $st = Get-StoreSince $g $t0
+    if (-not $st.Found) { throw "[$Printer] gcode_store khong co lenh '$g': lenh co the chua toi may" }
+    $msgs = @($st.Messages)
     $new = @(Get-ResultFiles | Where-Object { -not $before.ContainsKey($_.path) -or $before[$_.path] -ne "$($_.modified)/$($_.size)" } | ForEach-Object { $_.path })
     if ($msgs.Count -eq 0 -and $new.Count -eq 0) { throw "[$Printer] khong doc duoc phan hoi hay file ket qua nao cho: $g" }
-    [pscustomobject]@{ messages = $msgs; files = $new }
+    [pscustomobject]@{ messages = $msgs; files = $new; raw = @($msgs | Select-Object -Last 20) }
 }
 
 function Get-SimilarityPct($m) {
@@ -169,7 +177,7 @@ try {
     if ($needHome) {
         $t0 = Get-StoreLastTime
         Send-Gcode 'G28'; Send-Gcode 'M400'; Wait-Done
-        if ($null -eq (Get-StoreSince 'G28' $t0)) { throw "[$Printer] gcode_store khong co G28: lenh co the chua toi may" }
+        if (-not (Get-StoreSince 'G28' $t0).Found) { throw "[$Printer] gcode_store khong co G28: lenh co the chua toi may" }
         Assert-Cold (Assert-Idle)
     }
 
@@ -177,7 +185,7 @@ try {
     for ($i = 1; $i -le $Repeats; $i++) {
         $m = Invoke-Measure 'COMPARE_BELTS_RESPONSES FREQ_END=200'
         $p = Get-SimilarityPct $m
-        $runs += [ordered]@{ lan = $i; do_giong_pct = $p; tep_ket_qua = $m.files }
+        $runs += [ordered]@{ lan = $i; do_giong_pct = $p; tep_ket_qua = $m.files; phan_hoi_tho = $m.raw }
         Write-Output "[$Printer] lan $i : do giong = $p ; $($m.files.Count) file moi"
     }
     $result.lan_so_dai = $runs
@@ -187,7 +195,7 @@ try {
 
     foreach ($ax in 'X', 'Y') {
         $m = Invoke-Measure "AXES_SHAPER_CALIBRATION AXIS=$ax FREQ_END=200"
-        $o = [ordered]@{ tep_ket_qua = $m.files; khuyen_nghi = (Get-Recommendation $m) }
+        $o = [ordered]@{ tep_ket_qua = $m.files; phan_hoi_tho = $m.raw; khuyen_nghi = (Get-Recommendation $m) }
         if ($ax -eq 'X') { $result.shaper_x = $o } else { $result.shaper_y = $o }
         if ($null -eq $o.khuyen_nghi) { $result.ghi_chu += "Khong thay khuyen nghi shaper $ax trong phan hoi: doc bieu do bang tay." }
     }

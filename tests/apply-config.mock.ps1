@@ -54,7 +54,7 @@ $S = [hashtable]::Synchronized(@{
     files = @{}; klippy = 'ready'; print = 'standby'; printAfter = -1; psq = 0; fail500 = ''
     restartNever = $false; restarted = $false; readyAt = [datetime]::MinValue; restartDelay = 4
     started = $false; listener = $null; err = ''
-    savePending = $false; extT = 0; bedT = 0; idle = 'Idle'; omit = $false; statusEmpty = $false; queryFail = $true; restartTo = 'ready'; mutateBytes = $null; mutateKey = ''; queryHttp500 = $false
+    savePending = $false; extT = 0; bedT = 0; idle = 'Idle'; omit = $false; omitHeat = $false; statusEmpty = $false; queryFail = $true; restartTo = 'ready'; mutateBytes = $null; mutateKey = ''; queryHttp500 = $false
 })
 $handler = {
     param($S, $port)
@@ -100,6 +100,8 @@ $handler = {
                     if (-not $S.statusEmpty) { $o += '"print_stats":{"state":"' + $ps + '"}' }
                     if (-not $S.omit -and -not $S.statusEmpty) {
                         $o += '"configfile":{"save_config_pending":' + ([string]$S.savePending).ToLower() + '}'
+                    }
+                    if (-not $S.omit -and -not $S.omitHeat -and -not $S.statusEmpty) {
                         $o += '"extruder":{"target":' + $S.extT + '}'
                         $o += '"heater_bed":{"target":' + $S.bedT + '}'
                         $o += '"idle_timeout":{"state":"' + $S.idle + '"}'
@@ -152,7 +154,7 @@ $handler = {
 function Reset-Mock([hashtable]$Over = @{}, [switch]$KeepFiles) {
     $S.log.Clear(); $S.uploads.Clear(); $S.klippy = 'ready'; $S.print = 'standby'; $S.printAfter = -1; $S.psq = 0
     $S.fail500 = ''; $S.restartNever = $false; $S.restarted = $false; $S.readyAt = [datetime]::MinValue; $S.restartDelay = 4
-    $S.savePending = $false; $S.extT = 0; $S.bedT = 0; $S.idle = 'Idle'; $S.omit = $false; $S.statusEmpty = $false; $S.queryFail = $true; $S.restartTo = 'ready'; $S.mutateBytes = $null; $S.mutateKey = ''; $S.queryHttp500 = $false
+    $S.savePending = $false; $S.extT = 0; $S.bedT = 0; $S.idle = 'Idle'; $S.omit = $false; $S.omitHeat = $false; $S.statusEmpty = $false; $S.queryFail = $true; $S.restartTo = 'ready'; $S.mutateBytes = $null; $S.mutateKey = ''; $S.queryHttp500 = $false
     if (-not $KeepFiles) { $S.files.Clear(); $S.files['overrides.cfg'] = $origBytes; $S.files['macros/m.cfg'] = $mOrig; $S.files['a..b.cfg'] = $mOrig; $S.files['moonraker.conf'] = $mOrig; $S.files['sub/moonraker.conf'] = $mOrig }
     foreach ($k in $Over.Keys) { $S[$k] = $Over[$k] }
 }
@@ -470,13 +472,14 @@ $r = Invoke-Apply (Get-RestoreArgs 'c14c'); Test-Refused $r "state is 'printing'
 Complete-Case
 
 # ---- 15 file changed between step 2 and step 4
-Start-Case '15' 'file on machine edited after the hash gate (during backup) -> target never written, backup kept'
+Start-Case '15' 'file on machine edited after the hash gate (during backup) -> target never written, no ROLLBACK line'
 $changed = $enc.GetBytes('edited by someone else')
 Reset-Mock @{ mutateBytes = $changed; mutateKey = 'overrides.cfg' }
 $r = Invoke-Apply (Get-Args 'c15')
 Assert-That ($r.Code -ne 0) "exit code should be non-zero, was $($r.Code)"
 Assert-That ($r.Out -match 'changed since the hash gate') 'message about the changed file missing'
-Assert-That ($r.Out -match 'backup kept at config/backups/') 'message does not say the backup is kept'
+Assert-That ($r.Out -match 'target file not written' -and $r.Out -match 'can be deleted') 'message should say target not written and backup can be deleted'
+Assert-That ($r.Out -notmatch 'ROLLBACK') 'a ROLLBACK line was printed although the target file was never written'
 Assert-That ($S.uploads.Count -eq 1 -and $S.uploads[0] -like 'backups/*') "expected only the backup upload, saw: $($S.uploads -join ',')"
 Assert-That ((Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq (Get-Sha256 $changed)) 'target file was overwritten'
 Assert-That (-not ($r.Log -contains 'POST /printer/firmware_restart')) 'restart was sent'
@@ -519,6 +522,12 @@ $r = Invoke-Apply (Get-RestoreArgs 'c17d'); Test-RestoreOk $r
 Add-Info 'documents behavior: -Restore proceeds (and restarts) while a heater target is set'
 Complete-Case
 
+Start-Case '17e' '-Restore while extruder.target = 245 prints the WARN line'
+Reset-Mock @{ extT = 245 }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c17e'); Test-RestoreOk $r
+Assert-That ($r.Out -match 'WARN: -Restore while extruder target is 245 - the restart will switch the heater off') 'WARN line missing'
+Complete-Case
+
 # ---- 18 RemotePath allow-list
 Start-Case '18' '-RemotePath allow-list'
 foreach ($p in 'backups/x.cfg', 'backups/2026-01-01_x/overrides.cfg', 'a//b.cfg', './a.cfg', 'x.txt', 'x.cfg.bak', 'dir.d/x.cfg', 'moonraker.conf', 'sub/moonraker.conf', 'MOONRAKER.CONF') {
@@ -556,11 +565,15 @@ if ($rbl.Count -eq 1) {
 Complete-Case
 
 # ---- 20 fields absent from the fake machine's answer
-Start-Case '20a' 'machine omits configfile/extruder/heater_bed/idle_timeout (print_stats present) -> behavior recorded'
+Start-Case '20a' 'reply lacks configfile.save_config_pending (and the other optional objects) -> refuse, message names the field'
 Reset-Mock @{ omit = $true }
-$r = Invoke-Apply (Get-Args 'c20a')
-Assert-That ($r.Code -eq 0 -and $r.Writes -eq 3) "current behavior is to proceed (code $($r.Code), writes $($r.Writes))"
-Add-Info 'script treats missing save_config_pending and heater targets as absent and writes; see report for recommendation'
+$r = Invoke-Apply (Get-Args 'c20a'); Test-Refused $r 'no configfile\.save_config_pending'
+Complete-Case
+Start-Case '20a2' 'reply has print_stats and configfile but lacks extruder/heater_bed/idle_timeout -> proceeds with WARN lines'
+Reset-Mock @{ omitHeat = $true }
+$r = Invoke-Apply (Get-Args 'c20a2')
+Assert-That ($r.Code -eq 0 -and $r.Writes -eq 3) "should proceed (code $($r.Code), writes $($r.Writes))"
+foreach ($o in 'extruder', 'heater_bed', 'idle_timeout') { Assert-That ($r.Out -match "WARN: reply has no $o - that check was skipped") "WARN line for $o missing" }
 Complete-Case
 Start-Case '20b' 'machine omits print_stats too (empty status) -> refuse'
 Reset-Mock @{ statusEmpty = $true }
