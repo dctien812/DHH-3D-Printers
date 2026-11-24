@@ -4,7 +4,7 @@ Nguồn: wiki chính thức của Bambu Lab, trưởng phòng đọc ngày 2026-
 
 **Trước mọi việc dưới đây: tắt máy, rút điện nếu trang hãng dặn, đợi đầu in và bàn nguội.**
 
-Cách dùng: tích ô `Làm` khi xong, ghi ngày vào `Lần gần nhất`. **Cột `Lần gần nhất` để trống nghĩa là chưa biết việc nào đến hạn**: ghi ngày lần cuối bạn nhớ trước khi làm (không nhớ thì ghi `không_rõ` và coi là đến hạn). Việc đến hạn thì làm ở lượt B2 hôm trước ngày hiệu chuẩn (`specs\004-bambu-calibration\tasks.md:29`) và ghi vào `calibration\bambu\health_<máy>.md`. Máy tự ước lượng độ bẩn và nhắc bảo trì (chỉ nêu cho H2S). Văn phòng không điều khiển máy Bambu; mọi việc dưới đây do bạn làm bằng tay.
+Cách dùng: tích ô `Làm` khi xong, ghi ngày vào `Lần gần nhất`. **Cột `Lần gần nhất` để trống nghĩa là chưa biết việc nào đến hạn**: ghi ngày lần cuối bạn nhớ trước khi làm (không nhớ thì ghi `không_rõ` và coi là đến hạn). Việc đến hạn thì làm ở lượt B2 hôm trước ngày hiệu chuẩn (`specs\004-bambu-calibration\tasks.md:31`) và ghi vào `calibration\bambu\health_<máy>.md`. Máy tự ước lượng độ bẩn và nhắc bảo trì (chỉ nêu cho H2S). Văn phòng không điều khiển máy Bambu; mọi việc dưới đây do bạn làm bằng tay.
 
 ## H2S (chỉ dùng chức năng in)
 
@@ -47,12 +47,17 @@ URL: https://wiki.bambulab.com/en/a1/maintenance/basic-maintenance ; căng đai:
 
 | Làm | Việc | Chu kỳ | Vật tư | Lần gần nhất |
 |---|---|---|---|---|
-| [ ] | Ray X: tra **dầu**; **cấm tra mỡ lên ray X** | (chưa đọc, tra URL) | dầu (loại: tra URL) | |
-| [ ] | Ray Y: tra **dầu** (hãng đã đổi từ mỡ sang dầu cho ray Y) | (chưa đọc, tra URL) | dầu (loại: tra URL) | |
-| [ ] | Vít me: tra mỡ | (chưa đọc, tra URL) | mỡ (loại: tra URL) | |
-| [ ] | Bánh răng đùn: tra mỡ | (chưa đọc, tra URL) | mỡ (loại: tra URL) | |
+| [ ] | Ray X: lau, tra **dầu**; **cấm tra mỡ lên ray X** | mỗi tháng | dầu (loại: tra URL) | |
+| [ ] | Ray Y: lau, tra **dầu** (hãng đã đổi từ mỡ sang dầu cho ray Y) | mỗi tháng | dầu (loại: tra URL) | |
+| [ ] | Vít me Z: tra mỡ | mỗi 3 tháng | mỡ (loại: tra URL) | |
+| [ ] | Puly dẫn hướng X, Y | mỗi 3 tháng | (thao tác: tra URL) | |
+| [ ] | Quạt làm mát chi tiết, quạt đầu nóng: kiểm, gỡ vật lạ | mỗi tuần | | |
+| [ ] | Cụm gia nhiệt đầu nóng | mỗi tháng | (thao tác: tra URL) | |
+| [ ] | Dao cắt nhựa: kiểm lưỡi | sau mỗi 3 cuộn PLA / ABS / PETG | | |
+| [ ] | Ống PTFE: thay khi mòn | nhựa thường khoảng mỗi 6 cuộn; nhựa có sợi hoặc ma sát cao mỗi 2 cuộn | ống PTFE (loại: tra URL) | |
+| [ ] | Bánh răng đùn: tra mỡ | (chu kỳ chưa đọc, tra URL) | mỡ (loại: tra URL) | |
 
-Chu kỳ chưa đọc được (`research.md:54-56`). Research chỉ ghi có trang hướng dẫn căng đai A1 (URL `belt_tension` ở trên), chưa nói chu kỳ hay việc cần làm: không đưa vào bảng.
+Nguồn chu kỳ: `research.md:64-74` (đọc 2026-11-25), URL basic-maintenance ở trên. **Độ căng đai**: không có chu kỳ; máy tự kiểm khi chạy hiệu chuẩn tần số rung, đai lỏng thì HMS báo dùng bộ căng đai tự động (`research.md:76`); hướng dẫn ở URL `belt_tension`. Ô còn trống: bánh răng đùn (chu kỳ) và các cột "thao tác" ghi "tra URL".
 
 ## A1M (A1 Mini)
 
@@ -60,15 +65,31 @@ URL: https://wiki.bambulab.com/en/a1-mini/maintenance/period-maintenance
 
 | Làm | Việc | Chu kỳ | Vật tư | Lần gần nhất |
 |---|---|---|---|---|
-| [ ] | Ray X: lau và tra dầu | (chưa đọc, tra URL) | dầu (loại: tra URL) | |
-| [ ] | Ray Z: lau và tra dầu | (chưa đọc, tra URL) | dầu (loại: tra URL) | |
+| [ ] | Ray X, ray Y: lau, tra dầu (theo "như A1") | mỗi tháng | dầu (loại: tra URL) | |
+| [ ] | Ray Z: lau, tra dầu | mỗi tháng | dầu (loại: tra URL) | |
+| [ ] | Vít me Z: tra mỡ (theo "như A1") | mỗi 3 tháng | mỡ (loại: tra URL) | |
+| [ ] | Puly dẫn hướng trục X (chỉ một puly) | mỗi 3 tháng | (thao tác: tra URL) | |
+| [ ] | Quạt làm mát chi tiết, quạt đầu nóng: kiểm, gỡ vật lạ | mỗi tuần | | |
+| [ ] | Quạt bo mạch (quạt thứ ba) | (trang chỉ nêu chu kỳ tuần cho hai quạt kia; để trống, tra URL) | | |
+| [ ] | Cụm gia nhiệt đầu nóng | mỗi tháng | (thao tác: tra URL) | |
+| [ ] | Dao cắt nhựa: kiểm lưỡi | sau mỗi 3 cuộn PLA / ABS / PETG | | |
+| [ ] | Ống PTFE: thay khi mòn | nhựa thường khoảng mỗi 6 cuộn; nhựa có sợi hoặc ma sát cao mỗi 2 cuộn | ống PTFE (loại: tra URL) | |
+| [ ] | Bánh răng đùn: tra mỡ (theo "như A1") | (chu kỳ chưa đọc, tra URL) | mỡ (loại: tra URL) | |
 
-Chu kỳ chưa đọc được (`research.md:57-58`). Các hạng mục khác của trang chưa đọc.
+Nguồn: `research.md:78-80` ("như A1, khác ở chỗ ..."), đọc 2026-11-25. Độ căng đai: như A1, không có chu kỳ; máy tự kiểm khi hiệu chuẩn rung, đai lỏng thì HMS báo dùng bộ căng đai tự động. Ô còn trống: chu kỳ quạt bo mạch.
 
 ## Chung cho cả bốn máy
 
-- Hiệu chuẩn có sẵn trên máy: https://wiki.bambulab.com/en/general/printer-calibration (chưa đọc). Danh sách bước hiệu chuẩn theo từng máy: chưa có, điền khi đọc (`research.md:62-65`).
+- Hiệu chuẩn có sẵn trên máy: xem mục "Sau khi bảo trì" bên dưới.
 - Firmware: cả bốn máy đang ở bản mới nhất theo trang lịch sử phát hành (`research.md:7-22`); khuyến nghị xem `fleet\firmware\TEMPLATE.md`.
+
+## Sau khi bảo trì: chạy hiệu chuẩn của máy
+
+Nguồn: https://wiki.bambulab.com/en/general/printer-calibration (`research.md:82-90`, đọc 2026-11-25). **Làm bảo trì (tra dầu, mỡ, căng đai) trước, rồi mới chạy hiệu chuẩn.**
+- Auto Calibration gồm cân bàn, độ cao đầu phun, bù rung (vibration compensation) và khử ồn động cơ (motor noise cancellation).
+- Lối vào: màn hình máy (Settings → Calibration, tên mục khác nhau theo dòng máy), Bambu Studio (Devices → Calibrate), hoặc Bambu Handy. Bạn bấm; văn phòng không điều khiển máy.
+- Hãng khuyên chạy lại: sau khi chuyển chỗ máy; sau cập nhật firmware hoặc bảo trì (căng đai); khi thay linh kiện; khi chất lượng in giảm.
+- Trang nguồn **không liệt kê riêng cho H2S và P1S**: danh sách hiệu chuẩn của hai máy này chưa có nguồn, xem màn hình máy.
 
 ## Vật tư cần có trước ngày làm (tích khi đã có)
 

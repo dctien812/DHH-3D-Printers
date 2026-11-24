@@ -12,7 +12,8 @@
 [CmdletBinding()]
 param(
     [string]$EntryDir = '',   # default: <repo>\calibration\entry\part
-    [string]$OutFile = ''     # default: <repo>\calibration\results.csv
+    [string]$OutFile = '',    # default: <repo>\calibration\results.csv
+    [string]$MaterialsFile = ''   # default: <repo>\profiles\src\materials.csv (valid filament codes and pairs)
 )
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
@@ -24,8 +25,12 @@ if (-not (Test-Path -LiteralPath $EntryDir)) { throw "EntryDir not found: $Entry
 
 $inv = [System.Globalization.CultureInfo]::InvariantCulture
 $machines = 'TRI', 'V24', 'H2S', 'P1S', 'A1', 'A1M'
-$filaments = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'
-$dims = @(
+if (-not $MaterialsFile) { $MaterialsFile = Join-Path $repo 'profiles\src\materials.csv' }
+if (-not (Test-Path -LiteralPath $MaterialsFile)) { throw "Cannot read materials table: $MaterialsFile" }
+$mat = @(Import-Csv -LiteralPath $MaterialsFile -Encoding UTF8)
+if ($mat.Count -eq 0 -or $null -eq $mat[0].PSObject.Properties['máy'] -or $null -eq $mat[0].PSObject.Properties['nhựa']) { throw "Materials table is empty or lacks columns 'máy', 'nhựa': $MaterialsFile" }
+$filaments = @($mat | ForEach-Object { ([string]$_.'nhựa').Trim().ToUpperInvariant() } | Where-Object { $_ } | Select-Object -Unique)
+$pairs = @{}; foreach ($m in $mat) { $pairs[(([string]$m.'máy').Trim().ToUpperInvariant()) + '|' + (([string]$m.'nhựa').Trim().ToUpperInvariant())] = $true }$dims = @(
     @{ Name = 'X'; Nominal = 100.0; Tol = 0.1; Keys = 'X1', 'X2', 'X3'; Min = 3 },
     @{ Name = 'Y'; Nominal = 100.0; Tol = 0.1; Keys = 'Y1', 'Y2', 'Y3'; Min = 3 },
     @{ Name = 'Z'; Nominal = 20.0; Tol = 0.1; Keys = 'Z1', 'Z2', 'Z3'; Min = 1 },
@@ -61,6 +66,7 @@ foreach ($f in $files) {
         $machine = Get-Cell $r 'máy'; $fil = Get-Cell $r 'nhựa'; $spool = Get-Cell $r 'cuộn'; $date = Get-Cell $r 'ngày'
         if ($machines -notcontains $machine) { throw "bad machine code '$machine'" }
         if ($filaments -notcontains $fil) { throw "bad filament code '$fil'" }
+        if (-not $pairs.ContainsKey($machine + '|' + $fil)) { throw "pair $fil on $machine is not in $MaterialsFile" }
         if (-not $spool) { throw 'missing cuộn' }
         if ($date -notmatch '^\d{4}-\d{2}-\d{2}$') { throw "date '$date' is not YYYY-MM-DD" }
         $round = 0

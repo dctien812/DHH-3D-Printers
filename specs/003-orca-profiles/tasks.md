@@ -79,8 +79,8 @@ tính ra đạt.
 
 ## Phase 5: User Story 3 — Hồ sơ có nguồn gốc và khôi phục được (P3)
 
-- [ ] T021 [P] [US3] Viết `profiles\ADD-FILAMENT.md`: quy trình thêm một hãng nhựa mới (tên theo DHH, thứ tự hiệu chuẩn nhiệt, lưu lượng thể tích tối đa, PA/K, flow, co ngót, nhập vào bảng, dựng lại bằng script, kiểm mẫu); nhắc ghi điều kiện sấy và cuộn — KC: người ngoài dự án đọc làm theo được (kiểm ở T022) (vai: software-engineer)
-- [ ] T022 [US3] Làm thử theo `profiles\ADD-FILAMENT.md` với hãng giả "TEST-BRAND" trong thư mục tạm (không cài vào Orca): thêm 1 dòng materials, dựng, `-Verify`; ghi mọi chỗ phải đoán — KC: `fleet\verify_003_addfilament.md`, 0 chỗ phải đoán hoặc liệt kê chỗ thiếu để sửa (SC-006) (vai: test-engineer)
+- [x] T021 [P] [US3] Viết `profiles\ADD-FILAMENT.md`: quy trình thêm một hãng nhựa mới (tên theo DHH, thứ tự hiệu chuẩn nhiệt, lưu lượng thể tích tối đa, PA/K, flow, co ngót, nhập vào bảng, dựng lại bằng script, kiểm mẫu); nhắc ghi điều kiện sấy và cuộn — KC: người ngoài dự án đọc làm theo được (kiểm ở T022) (vai: software-engineer)
+- [x] T022 [US3] Làm thử theo `profiles\ADD-FILAMENT.md` với hãng giả "TEST-BRAND" trong thư mục tạm (không cài vào Orca): thêm 1 dòng materials, dựng, `-Verify`; ghi mọi chỗ phải đoán — KC: `fleet\verify_003_addfilament.md`, 0 chỗ phải đoán hoặc liệt kê chỗ thiếu để sửa (SC-006) (vai: test-engineer)
 - [ ] T023 [US3] Thử khôi phục: sao lưu thư mục user của Orca, bỏ các hồ sơ DHH khỏi Orca (chỉ file DHH, đã sao lưu), nạp lại từ `profiles\bundle\` bằng `-Install` khi Orca đóng; `test-engineer` chạy `-Verify` độc lập ghi `fleet\verify_003_restore.md` — KC: danh sách và giá trị khớp bảng 100 % (SC-005) (vai: trưởng phòng)
 
 ## Phase 6: Polish

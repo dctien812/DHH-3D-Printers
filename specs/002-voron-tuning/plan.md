@@ -76,4 +76,4 @@ Trident; mọi thứ của máy Bambu.
 ## Project Structure
 
 Tạo `scripts\voron\`, `scripts\calibration\ingest.ps1`, `calibration\voron\`,
-`calibration\guides\voron_*.md`, `fleet\backups\`, `tests\`, và `docs\mcu-reflash-v24.md` nếu có.
+`calibration\guides\voron_*.md`, `fleet\backups\`, `tests\`, và `docs-internal\mcu-reflash-v24.md` nếu có.

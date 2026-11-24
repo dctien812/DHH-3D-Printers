@@ -50,7 +50,7 @@ nóng hoặc in do người dùng khởi động trên máy hoặc từ Orca.
 
 ## Phase 5: User Story 3 — Quyết định firmware có căn cứ (P3)
 
-- [ ] T018 [P] [US3] Viết `fleet\firmware\{H2S,P1S,A1,A1M}.md` từ `TEMPLATE.md` và kết quả T001: bản đang chạy (H2S 01.03.00.00, P1S 01.10.00.00, A1 01.09.00.00, A1 Mini 01.09.00.00), bản mới, thay đổi liên quan Orca và plugin mạng, khuyến nghị nâng hay giữ, nguồn, ngày — KC: mỗi khuyến nghị dẫn được tới ghi chú phát hành chính thức; nguồn bên thứ ba ghi rõ là bên thứ ba (vai: software-engineer)
+- [x] T018 [P] [US3] Viết `fleet\firmware\{H2S,P1S,A1,A1M}.md` từ `TEMPLATE.md` và kết quả T001: bản đang chạy (H2S 01.03.00.00, P1S 01.10.00.00, A1 01.09.00.00, A1 Mini 01.09.00.00), bản mới, thay đổi liên quan Orca và plugin mạng, khuyến nghị nâng hay giữ, nguồn, ngày — KC: mỗi khuyến nghị dẫn được tới ghi chú phát hành chính thức; nguồn bên thứ ba ghi rõ là bên thứ ba (vai: software-engineer)
 - [ ] T019 [US3] Kiểm lại từng URL và trích dẫn trong 4 file firmware (trưởng phòng chép URL và câu trích vào bản giao việc) — KC: URL truy cập được và nội dung khớp trích dẫn, hoặc nêu rõ cái nào không (vai: explorer; gọi `model: sonnet`, không đọc file trên máy trong cùng lượt)
 - [ ] T020 [US3] [Buổi F] Quyết định nâng hay giữ từng máy; không máy nào bị nâng trước câu trả lời này — KC: câu trả lời ghi sổ; firmware máy vẫn như `fleet\inventory.csv` trừ khi người dùng chọn nâng (vai: người dùng)
 

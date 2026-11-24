@@ -2,7 +2,7 @@
 
 Tối ưu và giữ đồng bộ dàn 6 máy in 3D (2 Voron chạy Klipper, 4 Bambu Lab) để cùng một file in ra chi tiết cùng kích thước trên máy nào cũng được. Repo này là thư mục làm việc và bản sao lưu của dự án.
 
-Cập nhật lần cuối: 2026-11-24
+Cập nhật lần cuối: 2026-11-25
 
 ![Số máy](https://img.shields.io/badge/S%E1%BB%91_m%C3%A1y-6-blue)
 ![Trạng thái](https://img.shields.io/badge/Tr%E1%BA%A1ng_th%C3%A1i-ch%C6%B0a_ch%E1%BA%A1m_m%C3%A1y_in-orange)
@@ -48,11 +48,11 @@ Số task đếm bằng lệnh trên `specs/*/tasks.md` (dòng `- [x]` và `- [ 
 
 | Đặc tả | Nội dung | Task xong / tổng |
 |---|---|---|
-| [001 fleet-baseline](specs/001-fleet-baseline/spec.md) | Kiểm kê và đường cơ sở 6 máy | 3 / 18 |
-| [002 voron-tuning](specs/002-voron-tuning/spec.md) | Cân đai, shaper, hiệu chuẩn nhựa, gỡ lệch chuẩn hai Voron | 8 / 37 |
-| [003 orca-profiles](specs/003-orca-profiles/spec.md) | Bộ hồ sơ OrcaSlicer chung, mẫu chuẩn, bảng kết quả đo | 7 / 28 |
-| [004 bambu-calibration](specs/004-bambu-calibration/spec.md) | Bảo trì và hiệu chuẩn 4 máy Bambu | 3 / 24 |
-| **Tổng** | | **21 / 107** |
+| [001 fleet-baseline](specs/001-fleet-baseline/spec.md) | Kiểm kê và đường cơ sở 6 máy | 4 / 18 |
+| [002 voron-tuning](specs/002-voron-tuning/spec.md) | Cân đai, shaper, hiệu chuẩn nhựa, gỡ lệch chuẩn hai Voron | 10 / 37 |
+| [003 orca-profiles](specs/003-orca-profiles/spec.md) | Bộ hồ sơ OrcaSlicer chung, mẫu chuẩn, bảng kết quả đo | 9 / 28 |
+| [004 bambu-calibration](specs/004-bambu-calibration/spec.md) | Bảo trì và hiệu chuẩn 4 máy Bambu | 4 / 24 |
+| **Tổng** | | **27 / 107** |
 
 Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. Các script và thẻ hướng dẫn đã viết và qua rà; phần còn lại gần như đều cần máy in hoặc cần chủ dự án (xem [Các script chính](#các-script-chính)). Task `[x]` gồm task đã kiểm độc lập và hai task chỉ ghi quyết định (002:T014, T024).
 

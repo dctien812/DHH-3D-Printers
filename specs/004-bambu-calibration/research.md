@@ -59,7 +59,40 @@ gửi lựa chọn này đúng như Bambu Studio (trang của hãng không nói 
 - Trang chung về hiệu chuẩn trên máy: https://wiki.bambulab.com/en/general/printer-calibration
   (chưa đọc). Hướng dẫn căng đai A1: https://wiki.bambulab.com/en/a1/maintenance/belt_tension.
 
+## Bổ sung ngày 2026-11-25 (đọc wiki chính thức qua Chrome của người dùng)
+
+**A1** (https://wiki.bambulab.com/en/a1/maintenance/basic-maintenance):
+
+| Hạng mục | Chu kỳ |
+|---|---|
+| Ray X, ray Y (lau, tra dầu) | mỗi tháng |
+| Vít me Z (tra mỡ) | mỗi 3 tháng |
+| Puly dẫn hướng X, Y | mỗi 3 tháng |
+| Quạt làm mát chi tiết, quạt đầu nóng (kiểm, gỡ vật lạ) | mỗi tuần |
+| Cụm gia nhiệt đầu nóng | mỗi tháng |
+| Dao cắt nhựa | kiểm lưỡi sau mỗi 3 cuộn PLA / ABS / PETG |
+| Ống PTFE | thay khi mòn; nhựa thường khoảng mỗi 6 cuộn, nhựa có sợi hoặc ma sát cao mỗi 2 cuộn |
+
+Độ căng đai: máy tự kiểm qua hiệu chuẩn tần số rung; đai lỏng thì HMS báo dùng bộ căng đai tự động.
+
+**A1 Mini** (https://wiki.bambulab.com/en/a1-mini/maintenance/period-maintenance): như A1, khác ở chỗ
+có thêm ray Z (mỗi tháng), chỉ một puly dẫn hướng trục X (mỗi 3 tháng), và có ba quạt (thêm quạt bo
+mạch; trang chỉ nêu chu kỳ hằng tuần cho quạt chi tiết và quạt đầu nóng).
+
+**Hiệu chuẩn có sẵn trên máy** (https://wiki.bambulab.com/en/general/printer-calibration): Auto
+Calibration gồm cân bàn, độ cao đầu phun, bù rung và khử ồn động cơ. Hãng khuyên chạy lại: sau khi
+chuyển chỗ máy; sau cập nhật firmware hoặc bảo trì (căng đai); khi thay linh kiện; khi chất lượng in
+giảm. Chạy từ màn hình máy (Settings → Calibration, tên mục khác nhau theo dòng máy), từ Bambu Studio
+(Devices → Calibrate) hoặc Bambu Handy. Trang nêu các mục gồm vibration compensation, motor noise
+cancellation, auto bed leveling; không liệt kê riêng cho H2S, P1S.
+
+Hệ quả cho kế hoạch: bước "chạy hiệu chuẩn của hãng" ở buổi bảo trì (004:T007) làm SAU khi bảo trì
+(tra dầu, căng đai), đúng theo khuyến nghị của hãng.
+
 ## Còn thiếu (đọc tiếp qua Chrome khi viết phiếu sức khỏe, 004:T006)
+
+(Đã có ngày 2026-11-25: chu kỳ bảo trì A1 và A1 Mini; cách chạy hiệu chuẩn trên máy. Vẫn thiếu: giới
+hạn số hồ sơ K lưu trên máy; ghi chú đầy đủ của các bản firmware; danh sách hiệu chuẩn riêng của H2S.)
 
 Chu kỳ bảo trì của A1 và A1 Mini; danh sách bước hiệu chuẩn có sẵn trên từng máy; giới hạn số hồ
 sơ K lưu trên máy; ghi chú đầy đủ của các bản firmware.

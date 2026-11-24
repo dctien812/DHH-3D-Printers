@@ -9,24 +9,29 @@ param(
     [string]$EntryDir,
     [string]$OutDir,
     [switch]$Inherit,
-    [string]$InheritFile
+    [string]$InheritFile,
+    [string]$MaterialsFile   # bang nguon: ma nhua va cap (may, nhua) hop le
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 if (-not $EntryDir) { $EntryDir = Join-Path $root 'calibration\entry\cal' }
 if (-not $OutDir) { $OutDir = Join-Path $root 'calibration' }
+if (-not $MaterialsFile) { $MaterialsFile = Join-Path $root 'profiles\src\materials.csv' }
 if (-not $InheritFile) { $InheritFile = Join-Path $root 'profiles\old_inventory.csv' }
 
 $Machines = @('TRI', 'V24', 'H2S', 'P1S', 'A1', 'A1M')
 $VoronM = @('TRI', 'V24')
-$Resins = @('BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO')
-$Params = @('pa', 'k', 'flow_ratio', 'mvs', 'shrink_xy', 'temp_nozzle')
+# Ma nhua va cap hop le lay tu bang nguon; khong doc duoc thi dung han (khong quay ve danh sach cu).
+if (-not (Test-Path -LiteralPath $MaterialsFile)) { throw "Khong doc duoc bang vat lieu: $MaterialsFile" }
+$mat = @(Import-Csv -LiteralPath $MaterialsFile -Encoding UTF8)
+if ($mat.Count -eq 0 -or -not ($mat[0].PSObject.Properties.Name -contains 'máy' -and $mat[0].PSObject.Properties.Name -contains 'nhựa')) { throw "Bang vat lieu rong hoac thieu cot 'máy', 'nhựa': $MaterialsFile" }
+$Resins = @($mat | ForEach-Object { ([string]$_.'nhựa').Trim().ToUpperInvariant() } | Where-Object { $_ } | Select-Object -Unique)
+$Pairs = @{}; foreach ($m in $mat) { $Pairs[(([string]$m.'máy').Trim().ToUpperInvariant()) + '|' + (([string]$m.'nhựa').Trim().ToUpperInvariant())] = $true }$Params = @('pa', 'k', 'flow_ratio', 'mvs', 'shrink_xy', 'temp_nozzle')
 $cMay = 'máy'; $cResin = 'nhựa'; $cParam = 'tham_số'; $cVal = 'giá_trị'; $cUnit = 'đơn_vị'
 $cStat = 'trạng_thái'; $cSrc = 'nguồn'; $cDate = 'ngày'; $cSpool = 'cuộn'; $cCond = 'điều_kiện'
 $Cols = @($cMay, $cResin, $cParam, $cVal, $cUnit, $cStat, $cSrc, $cDate, $cSpool, $cCond)
 $sMeasured = 'đo'; $sInherit = 'kế_thừa'; $sDefault = 'mặc_định'; $sNone = 'chưa_đo'
 $Rank = @{ $sMeasured = 3; $sInherit = 2; $sDefault = 1; $sNone = 0 }
-$InvalidPairs = @{ 'TIN-ABSPRO' = @('A1', 'A1M') }
 
 $errors = New-Object System.Collections.ArrayList
 $rows = New-Object System.Collections.ArrayList
@@ -58,7 +63,7 @@ function Read-Rows([string]$path, [bool]$inherited) {
         if ($Params -notcontains $f[$cParam]) { Add-Err $name $n "tham so la: '$($f[$cParam])'"; $bad = $true }
         if (-not $Rank.ContainsKey($f[$cStat])) { Add-Err $name $n "trang thai khong hop le: '$($f[$cStat])'"; $bad = $true }
         if ($bad) { continue }
-        if ($InvalidPairs.ContainsKey($f[$cResin]) -and $InvalidPairs[$f[$cResin]] -contains $f[$cMay]) {
+        if (-not $Pairs.ContainsKey($f[$cMay] + '|' + $f[$cResin])) {
             Add-Err $name $n "cap khong hop le: $($f[$cResin]) tren $($f[$cMay])"; continue
         }
         if ($f[$cStat] -eq $sMeasured) {
