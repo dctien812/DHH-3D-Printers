@@ -23,11 +23,11 @@ Gặp một trong các điều dưới đây: dừng, đưa máy về trạng th
 |---|---|---|
 | D1 | Không xác định được offset bo nào bằng dump (4.2) | Không nạp bo đó (và không nạp bo kia nếu chưa xong EBB) |
 | D2 | `lsusb` có HƠN MỘT thiết bị `0483:df11`, hoặc `dfu-util -l` liệt kê hơn một bo | Rút bo thừa khỏi DFU (ngắt nguồn bo đó) rồi kiểm lại |
-| D3 | Không dump được firmware cũ của bo (đọc lỗi, hai lần đọc băm khác nhau), trừ ngoại lệ EBB ở 4.1 | Không nạp bo đó |
+| D3 | Không dump được firmware cũ của bo (đọc lỗi, hai lần đọc băm khác nhau). NGOẠI LỆ DUY NHẤT: EBB ở nhánh E-A khi Katapult đã chứng minh (`-q` thấy) và "Application Start" đã đọc, VÀ người dùng nói rõ bằng lời chấp nhận đường lui bằng build lại (ghi sổ); mọi trường hợp khác không có ngoại lệ (xem 4.1 bước 4, điểm dừng 2(c)) | Không nạp bo đó |
 | D4 | EBB không vào được Katapult lẫn DFU | Dừng cả buổi, giữ nguyên cả hai bo (không nạp Octopus riêng) |
 | D5 | Nhiệt độ bàn hoặc đầu in ≥ 40 °C, hoặc không cắt được nguồn bàn/heater (4.0) | Không vào DFU |
-| D6 | Quá giới hạn thời gian: 90 phút kể từ lúc dừng Klipper (4.1) | Đưa về trạng thái chạy được, hẹn lại |
-| D7 | Phần A chưa xong (thiếu sao lưu, thiếu file build, dict không khớp) | Không bắt đầu Phần B |
+| D6 | Quá giới hạn thời gian: 90 phút kể từ lúc dừng Klipper. Giờ dừng và giờ hết hạn ghi bằng lệnh `date` ở 4.1 bước 1; trưởng phòng đọc lại `date '+%F %T'` tại mỗi điểm dừng | Đưa về trạng thái chạy được, hẹn lại |
+| D7 | Phần A chưa xong (thiếu sao lưu, thiếu file build, dict không khớp, `dump-inspect.py --selftest` trên Pi chưa ra `TU KIEM: DAT` hoặc `--app` trên `.bin` thật chưa đạt (3.4)) | Không bắt đầu Phần B |
 | D8 | Cáp USB tới EBB không đủ dài, hoặc phải tháo đầu in mà người dùng chưa đồng ý | Hỏi người dùng (6.1); không tự ý tháo |
 
 ## Nói thẳng với người dùng
@@ -169,7 +169,7 @@ Firmware trên chip không đọc ngược được bằng Katapult hay Klipper.
    Hoàn tác: `rm -r ~/mcu-build/kalico-rescue`.
 3. **Dump flash bằng DFU**: xem 4.1 (Phần B).
 
-**Điểm dừng 2 (cuối Phần A)**: chỉ cho phép Phần B khi (a) 2.1 đã nằm trong `fleet\backups\`, (b) mức 2 đã có 4 file Kalico với dict khớp V24 (hoặc mức 1 có file cũ khớp băm), (c) người dùng biết điều "Nói thẳng" số 1 và 2.
+**Điểm dừng 2 (cuối Phần A)**: chỉ cho phép Phần B khi (a) 2.1 đã nằm trong `fleet\backups\`, (b) mức 2 đã có 4 file Kalico với dict khớp V24 (hoặc mức 1 có file cũ khớp băm), (c) người dùng biết điều "Nói thẳng" số 1 và 2, và nếu muốn dùng ngoại lệ dump EBB (D3, 4.1 bước 4) thì đã nói rõ bằng lời là chấp nhận đường lui bằng build lại cho EBB (ghi sổ; không có lời nói đó thì dump EBB là bắt buộc), (d) 3.4 đã đạt trên Pi: `--selftest` ra `TU KIEM: DAT` và `--app` trên đúng các `.bin` vừa build ra `APP_OFFSET_OK` (bước 2 của 3.4; ghi đầu ra vào sổ).
 
 ## 3. BUILD FIRMWARE KLIPPER CHÍNH (Phần A, không đụng máy)
 
@@ -194,7 +194,26 @@ Thời gian: ước 2 đến 5 phút mỗi bản trên Pi 4 2 GB với `nice` (�
 python3 -c "import json,sys; d=json.load(open(sys.argv[1])); c=d['config']; print(d['version']); [print(k,c.get(k)) for k in ('MCU','CLOCK_FREQ','CANBUS_BRIDGE','CANBUS_FREQUENCY','RESERVE_PINS_CAN','RESERVE_PINS_USB','RESERVE_PINS_crystal','PWM_MAX')]" ~/mcu-build/<cfg>.dict
 sha256sum ~/mcu-build/*.bin > ~/mcu-build/SHA256SUMS
 ```
-(cấu trúc `klipper.dict` suy ra.) Khác bảng 3.1b (trừ `PWM_MAX`=32768) là DỪNG. Tải `.bin`, `.dict`, `SHA256SUMS` về `fleet\backups\`.
+(cấu trúc `klipper.dict` suy ra.) Khác bảng 3.1b (trừ `PWM_MAX`=32768) là DỪNG.
+
+**Kiểm offset của từng `.bin`** (dict KHÔNG chứa offset nên menuconfig gõ sai offset không bị dict bắt):
+```
+grep -E 'CONFIG_FLASH_APPLICATION_ADDRESS|CONFIG_STM32_FLASH_START' ~/mcu-build/<cfg>.config
+python3 ~/mcu-build/dump-inspect.py --app <offset> ~/mcu-build/<cfg>_klipper-0.13.0-822.bin      ; echo "rc=$?"      # dòng cuối phải là KET LUAN APP: APP_OFFSET_OK, rc=0 (mã 4 = lệch offset)
+```
+`<offset>`: `0x20000` (octopus_off128k), `0x0` (octopus_off0, ebb_off0), `0x2000` (ebb_off8k). Kết quả `grep` phải khớp: `0x8020000` (128 KiB), `0x8002000` (8 KiB), `0x8000000` (không bootloader) (tên biến suy ra, chưa kiểm chứng; dùng `--app` làm bằng chứng chính). `--app` đòi RESET nằm trong 0x1000 byte đầu của vùng nạp (con số CHỌN, chưa kiểm trên bản build thật: nếu từ chối nhầm một bản build đúng, in `RESET` ra và báo checker, không tự nới). Sai một file: DỪNG, build lại file đó. Tải `.bin`, `.dict`, `SHA256SUMS` về `fleet\backups\`.
+
+**Điểm dừng 3 (cuối build)**: cả 4 file (và 4 file Kalico, 2.2) đều có: dict khớp 3.1b, `grep` offset khớp, `--app` ra `APP_OFFSET_OK`, băm ghi vào `SHA256SUMS`. Thiếu một mục: không sang Phần B.
+
+### 3.4 Thử công cụ phân tích dump TRƯỚC khi tin bảng quyết ở 4.2
+Công cụ: `docs-internal\tools\dump-inspect.py` (Python 3 thuần, không thư viện ngoài). **[TRƯỞNG PHÒNG qua SSH]** hoặc người dùng chép nó vào `~/mcu-build/` trên Pi (tạo file mới; HOÀN TÁC: `rm ~/mcu-build/dump-inspect.py`) rồi chạy:
+1. Tự kiểm: `python3 ~/mcu-build/dump-inspect.py --selftest`. Gồm 46 ca ảnh giả (lượt 5 thêm: ứng dụng liền mạch có chuỗi canboot ở đầu và vector giả ở ứng viên, bảng vector `0x0` trỏ vào vùng ứng dụng, thiếu khoảng FF sát trước ứng viên, ca biên đúng 16 byte FF) (app không bootloader nhỏ và lớn hơn 128 KiB, app lớn có vector giả ở `0x20000`/`0x2000` kể cả khi có khoảng FF 4 KiB sát trước và chuỗi klipper nằm sau ứng viên (a1, a2, b1, b2), bảng con trỏ giả, bootloader 128 KiB và 8 KiB cộng app, bootloader của hãng không chuỗi katapult có/không FF (c, d: ra `UNKNOWN`), bootloader hãng cộng app có vector hỏng (j), chỉ bootloader, toàn FF/00, rỗng, dump quá ngắn, app không chuỗi, chuỗi katapult nằm trong vùng app, chuỗi UTF-16, khối zlib nhận dạng thật/rác/không phải từ điển (e1 đến e3), gọi sai `--board` (f1 đến f4)) và 18 tổ hợp kiểm `--app`. Kỳ vọng: mọi dòng `OK`, cuối `TU KIEM: DAT`. Có `SAI`: không dùng bảng 4.2, báo checker.
+2. `--app` trên đúng các `.bin` vừa build cho hai bo (lệnh ở 3.1, "Kiểm offset của từng `.bin`"): đây là bằng chứng thật đầu tiên cho ngưỡng 0x1000 (RESET nằm trong 4 KiB đầu vùng nạp). Mọi file phải ra `APP_OFFSET_OK`. Nếu một bản build thật ra `APP_OFFSET_MISMATCH` mà `RESET` in ra vẫn ≥ địa chỉ nạp, tức chỉ lệch vì ngưỡng: DỪNG và báo checker, KHÔNG tự nới ngưỡng.
+3. (i) Chính các `.bin` vừa build: ảnh dump giả dựng từ chúng (chép `off0` vào đầu một ảnh 1 MiB toàn FF): kỳ vọng `NO_BOOTLOADER` nếu bản build có chuỗi klipper/kalico hoặc khối zlib nhận dạng; nếu không có thì `UNKNOWN` (xem 4.2, 8).
+4. (ii) Ghép giả "bootloader + app 128 KiB": đệm 128 KiB có bảng vector hợp lệ (reset ~`0x08000201`) cộng chuỗi `Katapult`, nối `octopus_off128k` ở byte `0x20000`. Kỳ vọng `BOOTLOADER_128K` nếu bản build có chuỗi/khối zlib, nếu không thì `UNKNOWN`.
+5. (iii) Ảnh toàn FF: kỳ vọng `EMPTY` (mã 3).
+Kết quả đã chạy thật ở máy soạn (WSL `Ubuntu-24.04`, Python 3.12, vòng sửa lượt 5): `--selftest` 46 ca + 18 tổ hợp `--app` đạt, `TU KIEM: DAT`; bộ thử độc lập của test-engineer `tests\dump\t_harness.py` (21 ca dump, 16 ca `--app`, 6 ca lỗi đầu vào), `t_harness2.py` (20 ca dump; kỳ vọng ca `c`, `g_c` đã đổi sang `UNKNOWN` ở lượt 4) và `t_harness3.py` (14 ca) đều khớp kỳ vọng. Bằng chứng: `fleet\verify_002_dumpinspect.md` (do test-engineer) và đầu ra các lệnh chạy ở lượt 5. Chưa chạy trên Pi và chưa chạy trên dump hay `.bin` thật nào: làm bước 1 và 2 ở Phần A trên Pi, ghi kết quả vào sổ.
+Điểm dừng 3.4 (thuộc Điểm dừng 2(d)): bảng 4.2 chỉ được dùng khi bước 1 đạt `TU KIEM: DAT` và bước 2 đạt `APP_OFFSET_OK` cho mọi file.
 
 ### 3.1b Hằng số MCU đang chạy, trích nguyên văn
 Nguồn: `fleet\precheck\2026-11-24\V24\objects.json` và `...\TRI\objects.json` (khóa `mcu`, `mcu toolhead`; `mcu_constants`, `mcu_version`).
@@ -260,7 +279,7 @@ Ngân sách thời gian mục tiêu (nhánh E-A, O-B): chuẩn bị/an toàn 8 p
 
 ### 4.0 An toàn nhiệt và nguồn (BẮT BUỘC trước MỌI lần vào DFU)
 Trạng thái chân heater khi bo ở DFU chưa kiểm chứng (hãng cảnh báo chân hotend có thể bị kích ở EBB36 v1.1), và bàn Keenovo chạy qua SSR. Vì vậy:
-1. **[TỰ ĐỘNG]** `GET /printer/objects/query?heater_bed&extruder`: nhiệt độ bàn và đầu phun đều dưới 40 °C, ghi lại. Từ 40 °C trở lên: D5.
+1. **[TỰ ĐỘNG]** `GET /printer/objects/query?heater_bed&extruder&temperature_sensor`: nhiệt độ bàn và đầu phun đều dưới 40 °C (từ 40 °C trở lên: D5). **Ghi lại mọi cảm biến ngay lúc này làm MỐC TRƯỚC NẠP cho 5.2** (mốc ở 1.1 đã cũ nhiều ngày, chỉ để tham khảo).
 2. **[NGƯỜI DÙNG]** Cắt nguồn bàn: cắt phía AC của Keenovo/SSR (rút phích hoặc công tắc riêng). Không có cách cắt riêng thì D5. Ngắt đầu nối heater đầu phun khỏi bo đang vào DFU (cartridge nối vào EBB; với Octopus chỉ cần ngắt đầu ra heater nếu có thể). Ghi sổ đã cắt.
 3. **[NGƯỜI DÙNG]** Cách cấp nguồn cho bo khi vào DFU:
    - **EBB36**: chỉ USB 5V từ Pi. Rút đầu nối CAN VÀ nguồn 24V khỏi EBB (hãng cấm CAN và USB cùng lúc).
@@ -270,7 +289,7 @@ Trạng thái chân heater khi bo ở DFU chưa kiểm chứng (hãng cảnh bá
 
 ### 4.1 Dừng Klipper và dump firmware cũ (bắt buộc, gồm cả khi đã có `.config` cũ)
 Bắt đầu đếm 90 phút.
-1. **[TRƯỞNG PHÒNG qua SSH]** `sudo systemctl stop klipper` (hoặc `POST /machine/services/stop?service=klipper` [TỰ ĐỘNG]); `systemctl is-active klipper` phải `inactive`. HOÀN TÁC: `sudo systemctl start klipper`.
+1. **[TRƯỞNG PHÒNG qua SSH]** Ghi giờ rồi dừng: `date '+BAT DAU %F %T' ; date -d '+90 min' '+HET HAN %F %T'` (chép cả hai dòng vào sổ). Sau đó `sudo systemctl stop klipper` (hoặc `POST /machine/services/stop?service=klipper` [TỰ ĐỘNG]); `systemctl is-active klipper` phải `inactive`. HOÀN TÁC: `sudo systemctl start klipper`.
 2. **[TRƯỞNG PHÒNG qua SSH]** CAN khi Klipper dừng (chỉ đọc): `<py> ~/katapult/scripts/flashtool.py -i can0 -q` và `<py> ~/klipper/scripts/canbus_query.py can0`. Ghi UUID thấy (đuôi 4 ký tự).
 3. **Octopus vào DFU** (4.0 đã xong): **[NGƯỜI DÙNG]** giữ BOOT, nhấn rồi thả RESET (hoặc cấp nguồn khi giữ BOOT), thả BOOT. **[TRƯỞNG PHÒNG qua SSH]**:
    ```
@@ -282,32 +301,39 @@ Bắt đầu đếm 90 phút.
    ```
    Điều kiện đi tiếp: kích thước đúng 1048576 byte, hai băng giống nhau, không phải toàn `ff`/`00`. Không thỏa: D3. (Đọc ngược có thể bị khóa RDP: chưa kiểm chứng; không thử phá khóa.) Tải dump về `fleet\backups\` kèm băm.
    Đây là thao tác chỉ đọc; thoát DFU: **[NGƯỜI DÙNG]** ngắt nguồn bo rồi cấp lại không giữ BOOT. Bo trở lại chạy Kalico.
+   **Trở về trạng thái CAN đầy đủ trước khi làm EBB (nhánh E-A cần EBB có nguồn và CAN):** nếu 24V đã tắt ở 4.0 (Octopus chạy bằng USB), **[NGƯỜI DÙNG]** BẬT LẠI 24V (bàn vẫn cắt AC, heater đầu phun vẫn ngắt, đầu nối CAN của EBB cắm). **[TRƯỞNG PHÒNG qua SSH]** chờ `can0` lên: `ip -details link show can0` (state UP, 1000000) và `<py> ~/klipper/scripts/canbus_query.py can0` phải thấy `…233b`; chưa thấy sau 30 giây: kiểm nguồn/CAN, không đi tiếp.
 4. **EBB**: dump bắt buộc nếu nhánh E-B hoặc khi cần xác định offset; nếu nhánh E-A đã chứng minh Katapult và đọc được "Application Start" (4.3) thì dump EBB là khuyến nghị: bỏ được CHỈ khi người dùng nói rõ chấp nhận đường lui bằng build lại, trưởng phòng ghi sổ. Cách dump: như bước 3 nhưng EBB theo 4.0 (CAN và 24V ngắt, USB), dung lượng kỳ vọng 512 KiB (suy ra): `-s 0x08000000:0x80000`, tên `EBB_dump_a/b.bin`. Hai bo KHÔNG vào DFU cùng lúc.
 
 ### 4.2 Quyết offset từ dump (không đoán)
-Chạy trên từng dump (offline hoặc trên Pi, chỉ đọc). Octopus kiểm 0x0 và 0x20000, khoảng trống 0x1F000 đến 0x20000. EBB thay bằng 0x0 và 0x2000, khoảng trống 0x1000 đến 0x2000.
+Dùng công cụ `~/mcu-build/dump-inspect.py` (đã thử ở 3.4; Python 3 thuần, chỉ đọc) trên từng dump, KHÔNG phán đoán bằng mắt. Nguyên tắc của công cụ: thà `UNKNOWN` còn hơn đoán; mọi kết luận khác `UNKNOWN`/`EMPTY` đều in kèm danh sách bằng chứng, chép nguyên vào sổ.
 ```
-python3 -c "
-import struct,sys
-d=open(sys.argv[1],'rb').read(); a=int(sys.argv[2],16); g0=int(sys.argv[3],16)
-for o in (0,a):
-    sp,rv=struct.unpack_from('<II',d,o); print(hex(o),'SP',hex(sp),'RESET',hex(rv),'le' if rv&1 else 'chan')
-gap=d[g0:a]; print('khoang trong FF:',set(gap)=={255})
-print('chuoi katapult:',b'atapult' in d[:a])
-" ~/mcu-build/OCTOPUS_dump_a.bin 0x20000 0x1F000
-strings -n 6 ~/mcu-build/OCTOPUS_dump_a.bin | grep -i -m5 -E 'katapult|klipper|kalico'
+python3 ~/mcu-build/dump-inspect.py --board octopus ~/mcu-build/OCTOPUS_dump_a.bin ; echo "rc=$?"
+python3 ~/mcu-build/dump-inspect.py --board ebb36   ~/mcu-build/EBB_dump_a.bin ; echo "rc=$?"
 ```
-(script suy ra, chưa kiểm chứng; cho EBB đổi tham số `0x2000 0x1000`.) Quy tắc: word 1 là con trỏ stack (RAM `0x2xxxxxxx` hoặc `0x24xxxxxx`), word 2 là vector reset: số lẻ trong vùng flash `0x0800xxxx` hoặc `0x0802xxxx` đúng với vị trí kiểm.
+`--board` chọn ứng viên offset (octopus: 128 KiB, cần dump từ 0x20010 byte; ebb36: 8 KiB, cần từ 0x2010 byte); dump ngắn hơn ra `UNKNOWN`. Mã thoát: 0 kết luận chắc, 2 `UNKNOWN`, 3 `EMPTY`, 1 dùng sai/không đọc được file. Bảng quyết (chỉ tin khi 3.4 đã đạt):
 
-| Kết quả | Kết luận | Build dùng, địa chỉ nạp DFU |
+| `KET LUAN` (mã) | Nghĩa và điều kiện công cụ đã đòi | Build dùng, địa chỉ nạp DFU |
 |---|---|---|
-| Hợp lệ ở 0x0 VÀ ở offset ứng viên (reset lẻ nằm đúng trong `0x0802xxxx`/`0x0800 2xxx`), khoảng trống toàn FF, hoặc có chuỗi Katapult | Có bootloader, app ở offset | build `off128k` (Octopus) hoặc `off8k` (EBB); nạp ở `0x08020000` / `0x08002000` |
-| Hợp lệ ở 0x0, khoảng trống KHÔNG toàn FF (mã chạy liền qua ranh giới), không chuỗi Katapult | Không bootloader | build `off0`; nạp ở `0x08000000` |
-| Hợp lệ ở offset ứng viên nhưng 0x0 không hợp lệ | Bất thường | D1 |
-| Khoảng trống không FF nhưng vector ở offset ứng viên "hợp lệ" | Có thể app Kalico > 128 KiB đang chạy ở 0x0 và offset ứng viên chỉ là giữa mã | KHÔNG coi là bootloader; xem đối chiếu `.config` cũ và D1 nếu vẫn mơ hồ |
-| Bất kỳ trường hợp nào khác | | D1 |
+| `BOOTLOADER_128K` (0) | Vector hợp lệ ở `0x0` và chỉ ở một ứng viên `0x20000`; bootloader NHẬN DIỆN ĐƯỢC bằng chữ ký: chuỗi katapult/canboot trong khối bắt đầu từ 0 và nằm dưới `0x20000` (khoảng FF một mình KHÔNG đủ; bootloader của hãng không chuỗi ra `UNKNOWN`); RESET của `0x0` nằm dưới `0x20000`; `[0, 0x20000)` có dạng một ảnh bootloader độc lập: 16 mục đầu bảng vector `0x0` mục nào khác 0 (và khác `0xFFFFFFFF`) đều trỏ vào `[0x08000000, 0x08020000)`, và dữ liệu kết thúc trước ứng viên bằng một khoảng toàn FF sát ngay trước `0x20000` dài ≥ 4 KiB (ứng dụng liền mạch đi qua ứng viên ra `UNKNOWN`); có chuỗi klipper/kalico hoặc khối zlib nhận dạng ở vùng ≥ `0x20000` | `octopus_off128k`; `0x08020000` |
+| `BOOTLOADER_8K` (0) | Như trên với `0x2000`; khoảng FF sát trước `0x2000` chỉ cần ≥ 16 byte (giả định "Katapult không lấp kín 8 KiB", chưa kiểm chứng, mục 8; Katapult thật lấp kín thì ra `UNKNOWN`, dùng "Application Start" ở 4.3) | `ebb_off8k`; `0x08002000` |
+| `NO_BOOTLOADER` (0) | Vector hợp lệ ở `0x0`; KHÔNG có vector ứng dụng hợp lệ ở ứng viên, và 8 byte đầu tại MỌI ứng viên cũng không có dạng "SP trong RAM + RESET lẻ trong flash"; có chuỗi klipper/kalico hoặc khối zlib nhận dạng; KHÔNG có chuỗi katapult/canboot ở đâu cả; dữ liệu liên tục từ 0 tới byte không-FF cuối, không có khoảng FF ≥ 4 KiB ở giữa | `off0`; `0x08000000` |
+| `BOOTLOADER_ONLY_NO_APP` (0) | Có bootloader, không có ứng dụng | D1 (không thể xảy ra khi bo đang chạy Kalico) |
+| `EMPTY` (3) | Ảnh toàn FF/00 | D1 (dump hỏng, kiểm lại; D3) |
+| `UNKNOWN` (2) | Không đủ căn cứ | **D1: KHÔNG nạp bo đó**, không đoán bằng `.config` |
 
-`.config` cũ (nếu còn) chỉ dùng để đối chiếu với dump, không thay dump. Địa chỉ nạp = `0x08000000` + offset (128 KiB = `0x20000`); đó là suy ra, chưa có nguồn nói rõ cho Octopus MAX EZ.
+Kết luận không khớp bo (ví dụ `BOOTLOADER_128K` cho EBB) cũng là D1.
+
+**Mã thoát 0 KHÔNG đủ để nạp.** Script là một trong hai nguồn bằng chứng; mọi quy tắc nhận dạng đều có thể bị một ảnh bất thường đánh lừa, nên không bao giờ nạp chỉ dựa vào script. Trưởng phòng và người dùng cùng đọc dòng `KET LUAN` và danh sách bằng chứng (kèm offset), và kết luận của công cụ phải khớp với ít nhất một nguồn độc lập: offset trong `.config` cũ nếu còn (1.2), hoặc "Application Start" do Katapult tự báo (4.3). Không khớp, hoặc không có nguồn thứ hai: DỪNG (D1), không nạp bo đó. Ghi cả hai nguồn vào sổ.
+
+Sau buổi: chép dump thật của hai bo (`OCTOPUS_dump_a.bin`, `EBB_dump_a.bin` từ `fleet\backups\`) vào `tests\dump\real\` làm dữ liệu thử về sau (file không chứa bí mật nhưng chứa firmware; để trong repo riêng tư được).
+
+**Xử lý `UNKNOWN` (nói thẳng):**
+- Octopus: chuỗi klipper/kalico có thể lấy từ chuỗi mô tả USB (UTF-16LE; công cụ tìm cả ASCII lẫn UTF-16LE); đây là suy ra, chưa kiểm trên dump thật.
+- EBB36 chạy CAN, không có USB, nhiều khả năng bản build không chứa chuỗi nào, nên có thể LUÔN `UNKNOWN`. Công cụ quét thêm khối dữ liệu nhận dạng nén zlib của Klipper (suy ra Klipper nhúng từ điển zlib vào firmware; chưa kiểm trên bin thật). Còn `UNKNOWN`:
+  - Nhánh E-A (có Katapult): offset lấy từ dòng "Application Start" mà Katapult tự khai (4.3 bước 2), đủ căn cứ; không cần dump làm căn cứ offset.
+  - Nhánh E-B (không Katapult, chỉ DFU): **không có căn cứ để nạp EBB**. Phương án thay thế duy nhất đã dự trù: so dump với bản Kalico build lại ở Phần A: `cmp -n $(stat -c%s ~/mcu-build/kalico_ebb_off0.bin) ~/mcu-build/EBB_dump_a.bin ~/mcu-build/kalico_ebb_off0.bin` (offset 0) hoặc `cmp -i 8192:0 -n $(stat -c%s ~/mcu-build/kalico_ebb_off8k.bin) ~/mcu-build/EBB_dump_a.bin ~/mcu-build/kalico_ebb_off8k.bin` (offset 8 KiB); khớp hoàn toàn là bằng chứng mạnh, không khớp thì KHÔNG kết luận gì (build của tôi có thể khác byte so với bản đang chạy). Cũng không có thì đây là **điều kiện DỪNG D1: hỏi người dùng**, không nạp EBB (và theo D4 không nạp Octopus riêng).
+
+`.config` cũ (nếu còn) chỉ để đối chiếu với kết luận, không thay dump. Địa chỉ nạp = `0x08000000` + offset (128 KiB = `0x20000`); suy ra, chưa có nguồn nói rõ cho Octopus MAX EZ.
 
 ### 4.3 EBB36 (`mcu toolhead`, `…233b`)
 
@@ -325,12 +351,16 @@ strings -n 6 ~/mcu-build/OCTOPUS_dump_a.bin | grep -i -m5 -E 'katapult|klipper|k
 **Nhánh E-B: DFU qua USB** (bo trên đầu in; xem D8, 6.1). Thời gian 20 đến 30 phút.
 1. **[NGƯỜI DÙNG]** Theo 4.0 (nguồn bàn cắt, CAN và 24V ngắt khỏi EBB), cắm cáp USB thứ hai tới Pi. Vào DFU (BOOT + cấp USB/RESET; không rõ vị trí nút Gen2, xem ảnh 1.1; không tìm được nút: DỪNG, không mò chân).
 2. **[TRƯỞNG PHÒNG qua SSH]** Kiểm đúng một thiết bị: `lsusb | grep -c 0483:df11` = 1 (khác: D2), `dfu-util -l` một bo, dung lượng khớp 512 KiB (suy ra) để chắc đây là EBB chứ không phải Octopus.
-3. Dump EBB (4.1 bước 4) rồi quyết offset (4.2, tham số EBB). Nạp, GHI TÊN BO TRÊN LỆNH và dùng `-S`:
+3. Dump EBB (4.1 bước 4) rồi quyết offset (4.2, `--board ebb36`; có thể `UNKNOWN`, xem 4.2). Chỉ khi có kết luận rõ mới nạp. GHI TÊN BO TRÊN LỆNH và dùng `-S`. Điền `OFF` (để TRỐNG cho tới khi có kết luận; trống hoặc giá trị khác thì không nạp):
    ```
-   # Nếu EBB đang có Katapult 8 KiB (giữ nguyên Katapult, chỉ ghi ứng dụng):
-   dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s 0x08002000:leave -D ~/mcu-build/ebb_off8k_klipper-0.13.0-822.bin
-   # Nếu EBB không bootloader:
-   dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s 0x08000000:leave -D ~/mcu-build/ebb_off0_klipper-0.13.0-822.bin
+   OFF=                         # BOOTLOADER_8K -> 0x08002000 (giữ Katapult, chỉ ghi ứng dụng) ; NO_BOOTLOADER -> 0x08000000
+   case "$OFF" in
+     0x08002000) FILE=~/mcu-build/ebb_off8k_klipper-0.13.0-822.bin ; APPOFF=0x2000 ;;
+     0x08000000) FILE=~/mcu-build/ebb_off0_klipper-0.13.0-822.bin ;  APPOFF=0x0 ;;
+     *) FILE="" ;;
+   esac
+   echo "OFF=$OFF FILE=$FILE"       # đọc lại, khớp 4.2 rồi mới chạy dòng dưới
+   test -n "$FILE" && test -f "$FILE" && python3 ~/mcu-build/dump-inspect.py --app "$APPOFF" "$FILE" && dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s "$OFF:leave" -D "$FILE"
    ```
    Giữ offset đang chạy: KHÔNG ghi đè Katapult. Đường lui: nạp dump (`-s 0x08000000`) hoặc `kalico_ebb_*.bin` cùng offset.
 4. **[NGƯỜI DÙNG]** Rút USB, nối lại CAN và 24V (bàn vẫn cắt). `canbus_query.py can0` phải thấy `…233b`.
@@ -352,11 +382,18 @@ Thời gian 8 đến 15 phút. Khi nạp `can0` biến mất rồi trở lại: 
 
 **Nhánh O-B: DFU** (không Katapult, hoặc O-A thất bại):
 1. **[NGƯỜI DÙNG]** Theo 4.0; vào DFU như 4.1 bước 3 (nhớ: EBB đã nối lại CAN, không ở DFU; chỉ một bo ở DFU).
-2. **[TRƯỞNG PHÒNG qua SSH]** `lsusb | grep -c 0483:df11` = 1 (khác: D2); `dfu-util -l` một bo, flash 1 MiB; ghi serial. Chọn ĐÚNG MỘT lệnh theo 4.2, tên bo `octopus` trong tên file:
+2. **[TRƯỞNG PHÒNG qua SSH]** `lsusb | grep -c 0483:df11` = 1 (khác: D2); `dfu-util -l` một bo, flash 1 MiB; ghi serial. Điền `OFF` theo `KET LUAN` ở 4.2 (để TRỐNG cho tới khi có kết luận; trống hoặc giá trị khác thì không nạp):
    ```
-   dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s 0x08020000:leave -D ~/mcu-build/octopus_off128k_klipper-0.13.0-822.bin
-   dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s 0x08000000:leave -D ~/mcu-build/octopus_off0_klipper-0.13.0-822.bin
+   OFF=                         # BOOTLOADER_128K -> 0x08020000 ; NO_BOOTLOADER -> 0x08000000
+   case "$OFF" in
+     0x08020000) FILE=~/mcu-build/octopus_off128k_klipper-0.13.0-822.bin ; APPOFF=0x20000 ;;
+     0x08000000) FILE=~/mcu-build/octopus_off0_klipper-0.13.0-822.bin ;    APPOFF=0x0 ;;
+     *) FILE="" ;;
+   esac
+   echo "OFF=$OFF FILE=$FILE"       # trưởng phòng và người dùng cùng đọc lại dòng này, khớp 4.2 rồi mới chạy dòng dưới
+   test -n "$FILE" && test -f "$FILE" && python3 ~/mcu-build/dump-inspect.py --app "$APPOFF" "$FILE" && dfu-util -d 0483:df11 -S <dfu-serial> -a 0 -s "$OFF:leave" -D "$FILE"
    ```
+   (`--app` thoát mã 0 mới đi tiếp sang `dfu-util`; mã 4 là offset lệch.)
    Sai địa chỉ không làm hỏng ROM DFU (vào lại được) nhưng bo không chạy cho tới khi nạp lại. Đường lui: nạp `OCTOPUS_dump_a.bin` ở `0x08000000` (đúng byte) hoặc `kalico_octopus_*.bin` cùng offset. `make flash` không dùng (địa chỉ mặc định chưa kiểm với offset 128 KiB).
 3. **[NGƯỜI DÙNG]** Ngắt nguồn bo rồi cấp lại không giữ BOOT; chờ 10 giây.
 4. Thẻ SD của hãng (FAT32, `firmware.bin` ở gốc, thành `FIRMWARE.CUR`): chỉ nếu bo còn bootloader SD của hãng (chưa kiểm); không dùng trừ khi DFU hỏng.
@@ -370,9 +407,31 @@ Kiểm sau: `ip -details -statistics link show can0` có lại `can0` (1000000, 
 
 **5.1 [TỰ ĐỘNG]** `GET /printer/info` `ready` (đợi tới 60 giây). `GET /printer/objects/query?mcu&mcu%20toolhead&mcu%20cartographer`: `mcu_version` của `mcu` và `mcu toolhead` bắt đầu `v0.13.0-822-g282db764` (Trident chạy MCU cũ hơn host mà vẫn ổn nên cùng dòng v0.13.0 là tối thiểu, 822 là đích); `mcu_constants` khớp cột Trident của 3.1b (`PWM_MAX`=32768); `mcu cartographer` `CARTOGRAPHER V3 6.1.0`.
 
-**5.2 Cảm biến nhiệt (nguội, bàn vẫn cắt nguồn):** **[TỰ ĐỘNG]** `GET /printer/objects/query?heater_bed&extruder&temperature_sensor` so với mốc trước nạp (1.1): mọi cảm biến (bàn, đầu in, MCU, EBB, buồng) trong khoảng ±3 °C so với mốc (ngưỡng chọn tạm, máy nguội nên phải gần nhiệt phòng; lệch lớn: dừng, kiểm dây). Không cảm biến nào báo `0`, `-273`, hoặc "ADC out of range".
+**5.2 Cảm biến nhiệt (nguội, bàn vẫn cắt nguồn):** **[TỰ ĐỘNG]** `GET /printer/objects/query?heater_bed&extruder&temperature_sensor` so với MỐC ĐO LẠI Ở 4.0 bước 1 (cùng buổi, không dùng mốc 1.1 của nhiều ngày trước): mọi cảm biến (bàn, đầu in, MCU, EBB, buồng) trong khoảng ±3 °C so với mốc (ngưỡng chọn tạm, máy nguội nên phải gần nhiệt phòng; lệch lớn: dừng, kiểm dây). Không cảm biến nào báo `0`, `-273`, hoặc "ADC out of range".
 
-**5.3 Heater có giám sát (PWM_MAX đổi 256 → 32768):** **[NGƯỜI DÙNG]** nối lại nguồn bàn, đứng sát nút tắt. **[TỰ ĐỘNG]** `SET_HEATER_TEMPERATURE HEATER=extruder TARGET=50`; quan sát nhiệt tăng đều trong tối đa 3 phút, không vượt quá khoảng 55 °C, rồi TARGET=0. Lặp với `HEATER=heater_bed TARGET=40` (tối đa 5 phút, rồi 0). Nhiệt không tăng, tăng quá nhanh, hoặc Klipper báo lỗi nhiệt: tắt (`TARGET=0`, hoặc người dùng cắt nguồn bàn) và dừng. Không in, không đùn.
+**5.3 Heater có giám sát (PWM_MAX đổi 256 → 32768):** Chỉ làm khi 5.1, 5.2 đạt và Klipper `ready`.
+1. **[NGƯỜI DÙNG]** Nối lại nguồn AC của bàn và đầu nối heater đầu phun, đứng sát nút tắt. Với `TARGET=0` cả hai, **[TỰ ĐỘNG]** thăm dò nhiệt bàn và đầu phun mỗi 5 giây trong 2 phút: không được tăng quá +2 °C so với lúc nối lại (heater/SSR không tự nóng). Tăng quá: người dùng cắt nguồn bàn NGAY, dừng.
+2. Thử heater có cơ chế cắt tự động (PowerShell chạy trên máy dự án; `<pi>` là địa chỉ Pi). Hàm thăm dò mỗi 5 giây, thoát vòng khi nhiệt từ ngưỡng cắt trở lên hoặc hết giờ, và `try/finally` luôn gửi `TARGET=0` (kể cả khi vòng lặp hoặc `Invoke-RestMethod` lỗi, hoặc bấm Ctrl-C). Nếu mất kết nối tới Pi thì `TARGET=0` cũng không gửi được: người dùng cắt nguồn bàn ngay.
+   ```
+   function Test-Heater($name,$target,$limit,$seconds){
+     $base="http://<pi>/printer"
+     try {
+       Invoke-RestMethod -Method Post "$base/gcode/script?script=SET_HEATER_TEMPERATURE%20HEATER=$name%20TARGET=$target" | Out-Null
+       $end=(Get-Date).AddSeconds($seconds)
+       while((Get-Date) -lt $end){
+         $t=(Invoke-RestMethod "$base/objects/query?$name").result.status.$name.temperature
+         "{0:HH:mm:ss} {1} {2}" -f (Get-Date),$name,$t
+         if($t -ge $limit){ break }
+         Start-Sleep 5
+       }
+     } finally {
+       Invoke-RestMethod -Method Post "$base/gcode/script?script=SET_HEATER_TEMPERATURE%20HEATER=$name%20TARGET=0" | Out-Null   # HOÀN TÁC của lệnh gia nhiệt
+     }
+   }
+   Test-Heater extruder   50 55 180      # đầu phun: mục tiêu 50, cắt từ 55 °C, tối đa 180 giây
+   Test-Heater heater_bed 40 50 480      # bàn: mục tiêu 40, cắt từ 50 °C, tối đa 480 giây
+   ```
+   Đạt: nhiệt tăng đều đúng chiều, không dao động lạ, không lỗi nhiệt của Klipper, dưới ngưỡng cắt khi kết thúc. Bàn Keenovo có thể chưa tới 40 °C trong 5 phút: không phải lỗi, tiêu chí là nhiệt tăng đều, không cần đạt mục tiêu. Nhiệt không tăng sau 2 phút, tăng quá nhanh, hoặc Klipper báo lỗi nhiệt: dừng, người dùng cắt nguồn bàn. Không in, không đùn.
 
 **5.4 CAN và log:** **[TRƯỞNG PHÒNG qua SSH]** `ip -details -statistics link show can0`: `qlen 128`, bitrate 1000000, lỗi/bus-off/restarts = 0. `last_stats` mỗi MCU `bytes_retransmit`, `bytes_invalid` (trước nạp đều 0 theo `SUMMARY.md`), theo dõi 10 phút. `grep -E 'shutdown|Timer too close|bytes_invalid|Lost communication' ~/printer_data/logs/klippy.log | tail` không dòng mới.
 
@@ -432,8 +491,8 @@ Dừng Klipper, ghi sổ, không thử thêm; để người dùng quyết quay 
 - KHÔNG vào DFU khi chưa hoàn tất 4.0; KHÔNG đo (PROBE_ACCURACY, cộng hưởng, PID) trước khi mục 5 đạt.
 
 ## 8. CHƯA KIỂM CHỨNG (điều suy ra)
-1. Offset bootloader của Octopus và EBB; địa chỉ `0x08020000`/`0x08002000`; script nhận offset ở 4.2 (chưa chạy trên dump thật).
-2. EBB36 Gen2 có Katapult sẵn không; `-r` có chạy khi node vừa được Klipper gán hoặc đang chạy Kalico; flashtool in "Application Start" thế nào.
+1. Offset bootloader của Octopus và EBB; địa chỉ `0x08020000`/`0x08002000`; `dump-inspect.py` (đã chạy trên ảnh giả ở máy soạn, WSL Python 3.12, xem 3.4; chưa chạy trên Pi, chưa thử trên dump hay `.bin` thật; phân loại là suy luận từ cấu trúc bảng vector; bản build CAN-only của EBB có thể không chứa chuỗi nào nên ra `UNKNOWN`).
+2. EBB36 Gen2 có Katapult sẵn không; tùy chọn "8 KiB bootloader" có trong menuconfig G0B1 của bản 822 không (wiki BTT nêu, bản này chưa kiểm); `-r` có chạy khi node vừa được Klipper gán hoặc đang chạy Kalico; flashtool in "Application Start" thế nào.
 3. Nút/cách vào DFU của EBB36 Gen2; vị trí nút BOOT Octopus; Octopus có lên bằng USB khi 24V tắt.
 4. Octopus ở chế độ cầu: `-r` qua CAN tới chính cầu; không có `/dev/serial/by-id` ở chế độ cầu (suy từ `gs_usb`).
 5. Dump DFU (`-U`) đọc được (RDP), kích thước flash H723 1 MiB, G0B1 512 KiB.
@@ -444,3 +503,5 @@ Dừng Klipper, ghi sổ, không thử thêm; để người dùng quyết quay 
 10. `PWM_MAX` đổi không ảnh hưởng cấu hình quạt/heater (chưa soát hết cấu hình); ngưỡng ±3 °C và 55 °C ở 5.2/5.3 là chọn tạm; tên stepper cho `STEPPER_BUZZ`.
 11. Không có nguồn về lưu ý riêng khi đưa MCU từ Kalico về Klipper chính, cũng không có thứ tự nạp chính thức.
 12. `~/klipper`: `is_dirty` false, `pristine` false, 3 file untracked (`V24\update_status.json`, mục `klipper`, `anomalies`); chưa rõ có file đã theo dõi bị sửa không (S1 cho biết).
+13. dump-inspect.py: ngưỡng --app 0x1000 (reset handler của Klipper nằm trong 4 KiB đầu của ứng dụng: suy ra từ việc rmcm_boot được liên kết đầu tiên, chưa kiểm trên .bin thật, bằng chứng đầu tiên sẽ là 3.4 bước 2); quy tắc lượt 4 (bootloader chỉ được kết luận khi có chữ ký katapult/canboot, nên bootloader của hãng luôn ra `UNKNOWN`) chưa đối chiếu với bootloader thật của Octopus MAX EZ; quy tắc lượt 5 (bảng vector `0x0` chỉ trỏ vào `[0, ứng viên)`, khoảng FF sát trước ứng viên ≥ 4 KiB cho 128 KiB và ≥ 16 byte cho 8 KiB) dựa trên giả định Katapult 8 KiB không lấp kín 8 KiB và bootloader 128 KiB chừa ≥ 4 KiB FF ở cuối, chưa kiểm trên ảnh thật; ô vector chưa ghi (`0xFFFFFFFF`) được bỏ qua như ô 0; các mã thoát và quy tắc UNKNOWN/bằng chứng đã chạy trên ảnh giả (WSL Python 3.12), chưa chạy trên dump hay bản build thật nào; việc firmware Klipper nhúng từ điển nhận dạng zlib (commands, config) chỉ là suy ra; chưa chạy trên Pi (Python 3.13).
+14. EBB36 ở nhánh E-B không có Katapult có thể không có căn cứ nạp (4.2): phụ thuộc kết quả so cmp với bản Kalico build lại, chưa thử.

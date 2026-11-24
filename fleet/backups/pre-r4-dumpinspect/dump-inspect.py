@@ -1,0 +1,385 @@
+#!/usr/bin/env python3
+"""dump-inspect.py: doc anh flash (.bin) cua STM32 va ket luan bo co bootloader hay khong.
+
+Python 3 thuan, khong thu vien ngoai. Chi DOC file (tru --selftest --write).
+Nguyen tac thiet ke: THA RA UNKNOWN CON HON DOAN. Moi ket luan khac UNKNOWN/EMPTY
+in kem danh sach bang chung da dung.
+
+Dung:
+  python3 dump-inspect.py <dump.bin> [--board octopus|ebb36|auto] [--base 0x08000000]
+  python3 dump-inspect.py --app <offset> <build.bin> [--base 0x08000000]
+  python3 dump-inspect.py --selftest [--write <thu_muc>]
+  python3 dump-inspect.py --help
+
+--board: octopus = ung vien offset 128 KiB (0x20000), can dump >= 0x20010 byte;
+         ebb36   = ung vien 8 KiB (0x2000), can dump >= 0x2010 byte;
+         auto    = ca hai (mac dinh), can dump >= 0x20010 byte.
+
+Che do dump in bang vector, vi tri chuoi katapult/canboot/klipper/kalico (ASCII va
+UTF-16LE), khoi du lieu nhan dang zlib cua Klipper, cac khoang toan 0xFF >= 4 KiB, roi
+MOT dong cuoi:  KET LUAN: <GIA_TRI>  voi GIA_TRI thuoc
+NO_BOOTLOADER, BOOTLOADER_8K, BOOTLOADER_128K, BOOTLOADER_ONLY_NO_APP, EMPTY, UNKNOWN.
+Ma thoat: 0 ket luan chac (NO_BOOTLOADER, BOOTLOADER_*, BOOTLOADER_ONLY_NO_APP),
+          2 UNKNOWN, 3 EMPTY, 1 loi dung sai / khong doc duoc file.
+
+Che do --app: kiem file .bin vua build (chi chua ung dung) co bang vector khop offset khong;
+dong cuoi  KET LUAN APP: APP_OFFSET_OK (ma 0) | APP_OFFSET_MISMATCH (ma 4).
+RESET phai nam trong [base+offset, base+offset+0x1000): gioi han 0x1000 la CHON, chua kiem
+chung tren ban build that (xem tai lieu muc 8).
+
+Quy tac phan loai la suy luan tu cau truc bang vector Cortex-M, CHUA kiem chung tren dump
+that cua hai bo. UNKNOWN nghia la KHONG DU CAN CU: khong nap, dung theo D1.
+"""
+import re
+import struct
+import sys
+import zlib
+
+RAM_LO, RAM_HI = 0x20000000, 0x40000000
+BOOT_NAMES = ("katapult", "canboot")
+APP_NAMES = ("klipper", "kalico")
+BOARDS = {"octopus": (0x20000,), "ebb36": (0x2000,), "auto": (0x2000, 0x20000)}
+VIEW_OFFSETS = (0x0, 0x2000, 0x20000)
+APP_RESET_WINDOW = 0x1000
+EXIT = {"NO_BOOTLOADER": 0, "BOOTLOADER_8K": 0, "BOOTLOADER_128K": 0,
+        "BOOTLOADER_ONLY_NO_APP": 0, "UNKNOWN": 2, "EMPTY": 3}
+
+
+def positions(data_lower, name, limit=5):
+    res = []
+    for needle in (name.encode("ascii"), name.encode("utf-16-le")):
+        i = data_lower.find(needle)
+        while i != -1 and len(res) < limit:
+            res.append(i)
+            i = data_lower.find(needle, i + 1)
+    return sorted(set(res))
+
+
+def read_vec(d, off, base):
+    if off + 16 > len(d):
+        return None
+    sp, rv, nmi, hf = struct.unpack_from("<4I", d, off)
+    lo = base + off
+
+    def flash_ok(x):
+        return (x & 1) == 1 and lo <= x < base + 0x400000
+
+    ok = (RAM_LO <= sp < RAM_HI and flash_ok(rv)
+          and all(x == 0 or flash_ok(x) for x in (nmi, hf)))
+    return {"off": off, "sp": sp, "reset": rv, "nmi": nmi, "hf": hf, "ok": ok}
+
+
+def ff_runs(d, min_len=4096):
+    return [(m.start(), m.end()) for m in re.finditer(b"\xff{%d,}" % min_len, d)]
+
+
+def find_zlib_dict(d, max_tries=3000):
+    """Tim khoi du lieu nhan dang Klipper (zlib, JSON co "commands" va "config")."""
+    tries = 0
+    for m in re.finditer(b"\x78[\x01\x5e\x9c\xda]", d):
+        tries += 1
+        if tries > max_tries:
+            break
+        try:
+            out = zlib.decompressobj().decompress(d[m.start():m.start() + 0x20000], 1 << 20)
+        except Exception:
+            continue
+        if b'"commands"' in out and b'"config"' in out:
+            ver = re.search(rb'"version":\s*"([^"]*)"', out)
+            return m.start(), (ver.group(1).decode("ascii", "replace") if ver else "?")
+    return None
+
+
+def analyse(d, base, board="auto"):
+    """Tra ve (ket_luan, [dong bang chung/ly do])."""
+    n = len(d)
+    cands = BOARDS[board]
+    if n == 0 or d.count(b"\xff") == n or d.count(b"\x00") == n:
+        return "EMPTY", ["anh rong hoac toan 0xFF/0x00"]
+    v0 = read_vec(d, 0, base)
+    if v0 is None or not v0["ok"]:
+        return "UNKNOWN", ["bang vector tai 0x0 khong hop le hoac file < 16 byte"]
+    need = max(cands) + 16
+    if n < need:
+        return "UNKNOWN", ["dump qua ngan: can >= 0x%X byte cho --board %s, co 0x%X" % (need, board, n)]
+    low = d.lower()
+    runs = ff_runs(d)
+    boot = [(nm, p) for nm in BOOT_NAMES for p in positions(low, nm)]
+    app = [(nm, p) for nm in APP_NAMES for p in positions(low, nm)]
+    zd = find_zlib_dict(d)
+    block0_end = runs[0][0] if runs else n  # khoi lien tuc bat dau tu 0 (chua vector)
+    boot_in = [x for x in boot if x[1] < block0_end]
+    boot_out = [x for x in boot if x[1] >= block0_end]
+    valid = []
+    for c in cands:
+        v = read_vec(d, c, base)
+        if v and v["ok"]:
+            valid.append(c)
+    if len(valid) > 1:
+        return "UNKNOWN", ["bang vector hop le o nhieu ung vien: %s" % ", ".join("0x%X" % c for c in valid)]
+    if len(valid) == 1:
+        c = valid[0]
+        why = []
+        boot_ev = [x for x in boot_in if x[1] < c]
+        gap = any(e == c and e - s >= 4096 for s, e in runs)
+        if not (boot_ev or gap):
+            return "UNKNOWN", ["co vector o 0x%X nhung khong co chuoi bootloader trong vung bootloader "
+                               "va khong co khoang FF >= 4 KiB sat truoc: co the la bang con tro trong ma ung dung" % c]
+        if not v0["reset"] < base + c:
+            return "UNKNOWN", ["RESET cua vector 0x0 (0x%08X) khong nam duoi 0x%X" % (v0["reset"], c)]
+        app_ev = [x for x in app if x[1] >= c]
+        zdict_ev = zd is not None and zd[0] >= c
+        if not (app_ev or zdict_ev):
+            return "UNKNOWN", ["co bootloader/vector o 0x%X nhung khong co bang chung ung dung "
+                               "(chuoi klipper/kalico hoac khoi zlib) o vung >= 0x%X" % (c, c)]
+        why.append("vector 0x0 hop le, RESET=0x%08X < base+0x%X" % (v0["reset"], c))
+        why.append("vector tai 0x%X hop le (SP=0x%08X RESET=0x%08X)" % (c, read_vec(d, c, base)["sp"], read_vec(d, c, base)["reset"]))
+        for nm, p in boot_ev:
+            why.append("chuoi %s tai 0x%X (trong vung bootloader)" % (nm, p))
+        if gap:
+            why.append("khoang FF >= 4 KiB ket thuc dung tai 0x%X" % c)
+        for nm, p in app_ev:
+            why.append("chuoi %s tai 0x%X (vung ung dung)" % (nm, p))
+        if zdict_ev:
+            why.append("khoi zlib nhan dang Klipper tai 0x%X, version %s" % (zd[0], zd[1]))
+        return ("BOOTLOADER_128K" if c == 0x20000 else "BOOTLOADER_8K"), why
+    # khong co bang vector ung dung o ung vien nao
+    if boot_in and not app and not zd and not boot_out:
+        return "BOOTLOADER_ONLY_NO_APP", ["vector 0x0 hop le", "khong co vector ung dung o %s" % ", ".join("0x%X" % c for c in cands)]\
+            + ["chuoi %s tai 0x%X (trong khoi bat dau tu 0)" % x for x in boot_in] + ["khong co chuoi/khoi ung dung"]
+    interior = [(s, e) for s, e in runs if e <= len(d.rstrip(b"\xff"))]
+    if (app or zd) and not boot and not interior:
+        why = ["vector 0x0 hop le (SP=0x%08X RESET=0x%08X)" % (v0["sp"], v0["reset"]),
+               "khong co vector ung dung hop le o %s (dump du dai)" % ", ".join("0x%X" % c for c in cands),
+               "khong co chuoi katapult/canboot o bat ky dau",
+               "du lieu lien tuc tu 0 den byte khong-FF cuoi (0x%X), khong co khoang FF >= 4 KiB o giua" % len(d.rstrip(b"\xff"))]
+        for nm, p in app:
+            why.append("chuoi %s tai 0x%X" % (nm, p))
+        if zd:
+            why.append("khoi zlib nhan dang Klipper tai 0x%X, version %s" % (zd[0], zd[1]))
+        return "NO_BOOTLOADER", why
+    reasons = ["khong du can cu de ket luan"]
+    if boot_out:
+        reasons.append("co chuoi bootloader nam NGOAI khoi bat dau tu 0: %s" % boot_out)
+    if interior:
+        reasons.append("co khoang FF >= 4 KiB nam giua du lieu: %s" % interior)
+    if not (app or zd):
+        reasons.append("khong co chuoi klipper/kalico va khong co khoi zlib nhan dang (ban CAN-only co the khong co chuoi)")
+    if boot and (app or zd):
+        reasons.append("vua co bang chung bootloader vua co ung dung nhung khong thay vector ung dung o ung vien")
+    return "UNKNOWN", reasons
+
+
+def report(d, base, board):
+    print("kich thuoc: %d byte (0x%X), base 0x%08X, board %s" % (len(d), len(d), base, board))
+    for o in VIEW_OFFSETS:
+        v = read_vec(d, o, base)
+        if v is None:
+            print("vector @0x%X: (file qua ngan)" % o)
+        else:
+            print("vector @0x%X: SP=0x%08X RESET=0x%08X NMI=0x%08X HARDFAULT=0x%08X -> %s"
+                  % (o, v["sp"], v["reset"], v["nmi"], v["hf"], "HOP LE" if v["ok"] else "khong hop le"))
+    low = d.lower()
+    for nm in BOOT_NAMES + APP_NAMES:
+        p = positions(low, nm)
+        print("chuoi %-8s: %s" % (nm, ", ".join("0x%X" % x for x in p) if p else "khong co"))
+    zd = find_zlib_dict(d)
+    print("khoi zlib nhan dang Klipper: %s" % ("tai 0x%X, version %s" % zd if zd else "khong thay"))
+    runs = ff_runs(d)
+    print("khoang toan FF (>= 4 KiB): %s" % (", ".join("0x%X-0x%X" % r for r in runs) if runs else "khong co"))
+    print("byte khong-FF cuoi cung: 0x%X" % len(d.rstrip(b"\xff")))
+    verdict, why = analyse(d, base, board)
+    print("bang chung/ly do:" if verdict not in ("UNKNOWN", "EMPTY") else "ly do:")
+    for w in why:
+        print("  - %s" % w)
+    print("KET LUAN: %s" % verdict)
+    return verdict
+
+
+def check_app(d, off, base):
+    lo = base + off
+    v = read_vec(d, 0, lo)  # file ung dung: bang vector o byte 0, nap tai base+off
+    if v is None:
+        print("file qua ngan (< 16 byte)")
+        print("KET LUAN APP: APP_OFFSET_MISMATCH")
+        return False
+    in_win = lambda x: lo <= x < lo + min(APP_RESET_WINDOW, len(d))
+    ok = (RAM_LO <= v["sp"] < RAM_HI and (v["reset"] & 1) == 1 and in_win(v["reset"])
+          and all(x == 0 or ((x & 1) == 1 and lo <= x < lo + len(d)) for x in (v["nmi"], v["hf"])))
+    print("offset kiem: 0x%X; RESET phai nam trong 0x%08X-0x%08X" % (off, lo, lo + min(APP_RESET_WINDOW, len(d))))
+    print("SP=0x%08X RESET=0x%08X NMI=0x%08X HARDFAULT=0x%08X" % (v["sp"], v["reset"], v["nmi"], v["hf"]))
+    print("KET LUAN APP: %s" % ("APP_OFFSET_OK" if ok else "APP_OFFSET_MISMATCH"))
+    return ok
+
+
+# ---------------------------------------------------------------- tu kiem
+def _img(size=0x100000):
+    return bytearray(b"\xff" * size)
+
+
+def _vec(img, off, base, rel, sp=0x24080000):
+    rv = base + rel
+    struct.pack_into("<4I", img, off, sp, rv | 1, (rv + 2) | 1, (rv + 4) | 1)
+
+
+def _code(img, off, n):
+    img[off:off + n] = bytes(((i * 7 + 3) & 0xFF) for i in range(n))
+
+
+def _text(img, off, s, utf16=False):
+    b = s.encode("utf-16-le") if utf16 else s.encode("ascii")
+    img[off:off + len(b)] = b
+
+
+def _dict_blob():
+    import json
+    return zlib.compress(json.dumps({"commands": {}, "config": {"MCU": "x"}, "version": "v0.13.0-822-gtest"}).encode(), 9)
+
+
+def build_cases(base=0x08000000):
+    c = {}
+
+    def add(name, img, want, board="auto"):
+        c[name] = (img, want, board)
+
+    a = _img(); _code(a, 0x40, 0x600); _text(a, 0x400, "Klipper"); _vec(a, 0, base, 0x100)
+    add("c1_app0_nho_co_chuoi", a, "NO_BOOTLOADER")
+    a = _img(); _code(a, 0x40, 0x30000); _text(a, 0x400, "klipper"); _vec(a, 0, base, 0x100); _vec(a, 0x20000, base, 0x20100)
+    add("c2_app_lon_vector_gia_0x20000", a, "UNKNOWN")
+    a = _img(); _code(a, 0x40, 0x30000); _text(a, 0x400, "klipper"); _vec(a, 0, base, 0x100); _vec(a, 0x2000, base, 0x2100)
+    add("c2b_app_lon_vector_gia_0x2000", a, "UNKNOWN")
+    a = _img(); _code(a, 0x40, 0x30000); _text(a, 0x400, "kalico"); _vec(a, 0, base, 0x100)
+    a[0x1F000:0x20000] = b"\xff" * 0x1000  # co khoang FF sat truoc 0x20000 NHUNG van la app lon voi bang con tro gia
+    _vec(a, 0x20000, base, 0x20100)
+    add("c2c_app_lon_bang_con_tro_gia_co_khoang_FF_nhung_khong_chuoi_boot", a, "UNKNOWN")
+    a = _img(); _vec(a, 0, base, 0x200); _code(a, 0x40, 0x700); _text(a, 0x800, "Katapult")
+    _vec(a, 0x20000, base, 0x20100); _code(a, 0x20040, 0x600); _text(a, 0x20400, "kalico")
+    add("c3_katapult_128K_kalico", a, "BOOTLOADER_128K")
+    a = _img(0x80000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "Katapult")
+    _vec(a, 0x2000, base, 0x2100); _code(a, 0x2040, 0x600); _text(a, 0x2400, "Klipper")
+    add("c4_ebb36_katapult_8K", a, "BOOTLOADER_8K")
+    a = _img(); _vec(a, 0, base, 0x200); _code(a, 0x40, 0x700); _text(a, 0x800, "Katapult")
+    add("c5_chi_bootloader", a, "BOOTLOADER_ONLY_NO_APP")
+    add("c6a_toan_FF", _img(), "EMPTY")
+    add("c6b_toan_00", bytearray(0x100000), "EMPTY")
+    add("c6c_rong", bytearray(), "EMPTY")
+    add("c6d_3_byte", bytearray(b"\x01\x02\x03"), "UNKNOWN")
+    a = _img(0x1000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "Klipper")
+    add("c6f_chi_4KiB_ung_dung", a, "UNKNOWN")
+    a = _img(0x20000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "Katapult")
+    add("c6g_dump_dung_128KiB", a, "UNKNOWN")
+    a = _img(0x80000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "Katapult")
+    _vec(a, 0x2000, base, 0x2100, sp=0x20004000); _code(a, 0x2040, 0x600)
+    add("c8_ebb36_CAN_only_khong_chuoi", a, "UNKNOWN")
+    a = _img(); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "app"); _text(a, 0x5000, "katapult")
+    add("c9a_katapult_o_vung_app_khong_klipper", a, "UNKNOWN")
+    a = _img(); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "klipper"); _text(a, 0x5000, "katapult")
+    add("c9b_katapult_o_vung_app_co_klipper", a, "UNKNOWN")
+    a = _img(); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "klipper", utf16=True)
+    add("c9c_klipper_utf16", a, "NO_BOOTLOADER")
+    # bootloader cua hang: khong co chuoi katapult, nhung co khoang FF sat truoc 0x20000 va app hop le
+    a = _img(); _vec(a, 0, base, 0x200); _code(a, 0x40, 0x1000); _vec(a, 0x20000, base, 0x20100)
+    _code(a, 0x20040, 0x600); _text(a, 0x20400, "Klipper")
+    add("k1_bootloader_hang_khong_chuoi", a, "BOOTLOADER_128K")
+    # ung dung CAN-only khong chuoi nhung co khoi zlib nhan dang
+    a = _img(0x80000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300); _text(a, 0x400, "Katapult")
+    _vec(a, 0x2000, base, 0x2100); _code(a, 0x2040, 0x300)
+    blob = _dict_blob(); a[0x3000:0x3000 + len(blob)] = blob
+    add("k2_ebb36_zlib_dict", a, "BOOTLOADER_8K")
+    a = _img(0x80000); _vec(a, 0, base, 0x100); _code(a, 0x40, 0x300)
+    blob = _dict_blob(); a[0x400:0x400 + len(blob)] = blob
+    add("k3_ebb36_khong_bootloader_zlib_dict", a, "NO_BOOTLOADER")
+    return c
+
+
+def selftest(write_dir=None):
+    import os
+    base = 0x08000000
+    bad = 0
+    for name, (img, want, board) in build_cases(base).items():
+        got, _ = analyse(bytes(img), base, board)
+        good = got == want
+        if not good:
+            bad += 1
+        print("%s %-62s mong doi %-22s duoc %s" % ("OK " if good else "SAI", name, want, got))
+        if write_dir:
+            os.makedirs(write_dir, exist_ok=True)
+            with open(os.path.join(write_dir, "s_" + name + ".bin"), "wb") as f:
+                f.write(bytes(img))
+    for sz in (0x4000, 0x30000):
+        for rel, offs in ((0x20000, {0x20000: True, 0x0: False, 0x2000: False}),
+                          (0x0, {0x0: True, 0x20000: False, 0x2000: False}),
+                          (0x2000, {0x2000: True, 0x0: False, 0x20000: False})):
+            app = _img(sz)
+            struct.pack_into("<4I", app, 0, 0x24080000, base + rel + 0x101, base + rel + 0x103, base + rel + 0x105)
+            for off, want in offs.items():
+                import io
+                import contextlib
+                with contextlib.redirect_stdout(io.StringIO()):
+                    got = check_app(bytes(app), off, base)
+                if got != want:
+                    bad += 1
+                    print("SAI  --app 0x%X voi file build cho 0x%X (size 0x%X): mong doi %s" % (off, rel, sz, want))
+    print("kiem --app (18 to hop): %s" % ("OK" if bad == 0 else "co SAI o tren"))
+    print("TU KIEM: %s" % ("DAT" if bad == 0 else "%d LOI" % bad))
+    return bad == 0
+
+
+def parse_int(s, what):
+    try:
+        return int(s, 0)
+    except ValueError:
+        raise SystemExit_(1, "gia tri %s khong hop le: %r" % (what, s))
+
+
+class SystemExit_(Exception):
+    def __init__(self, code, msg):
+        super().__init__(msg)
+        self.code = code
+        self.msg = msg
+
+
+def main(argv):
+    import argparse
+
+    class P(argparse.ArgumentParser):
+        def error(self, message):
+            sys.stderr.write("loi dung sai: %s\n" % message)
+            sys.exit(1)
+
+    p = P(add_help=False)
+    p.add_argument("file", nargs="?")
+    p.add_argument("--app")
+    p.add_argument("--selftest", action="store_true")
+    p.add_argument("--write")
+    p.add_argument("--board", default="auto", choices=sorted(BOARDS))
+    p.add_argument("--base", default="0x08000000")
+    p.add_argument("-h", "--help", action="store_true")
+    a = p.parse_args(argv)
+    try:
+        if a.help:
+            print(__doc__)
+            return 0
+        base = parse_int(a.base, "--base")
+        if a.selftest:
+            return 0 if selftest(a.write) else 1
+        if a.file is None:
+            sys.stderr.write("loi dung sai: thieu ten file\n")
+            return 1
+        try:
+            with open(a.file, "rb") as f:
+                d = f.read()
+        except OSError as e:
+            sys.stderr.write("khong doc duoc file: %s\n" % e)
+            return 1
+        if a.app is not None:
+            off = parse_int(a.app, "--app")
+            return 0 if check_app(d, off, base) else 4
+        return EXIT[report(d, base, a.board)]
+    except SystemExit_ as e:
+        sys.stderr.write("loi dung sai: %s\n" % e.msg)
+        return e.code
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
