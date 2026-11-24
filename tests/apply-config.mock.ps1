@@ -44,6 +44,8 @@ $newFile  = Join-Path $TmpDir 'new_overrides.cfg'
 $newMFile = Join-Path $TmpDir 'new_m.cfg'
 [IO.File]::WriteAllBytes($newFile, $newBytes)
 [IO.File]::WriteAllBytes($newMFile, $mNew)
+$origFile = Join-Path $TmpDir 'orig_overrides.cfg'
+[IO.File]::WriteAllBytes($origFile, $origBytes)
 $date = Get-Date -Format 'yyyy-MM-dd'
 
 # ---------------------------------------------------------------- fake Moonraker
@@ -52,6 +54,7 @@ $S = [hashtable]::Synchronized(@{
     files = @{}; klippy = 'ready'; print = 'standby'; printAfter = -1; psq = 0; fail500 = ''
     restartNever = $false; restarted = $false; readyAt = [datetime]::MinValue; restartDelay = 4
     started = $false; listener = $null; err = ''
+    savePending = $false; extT = 0; bedT = 0; idle = 'Idle'; omit = $false; statusEmpty = $false; queryFail = $true; restartTo = 'ready'; mutateBytes = $null; mutateKey = ''; queryHttp500 = $false
 })
 $handler = {
     param($S, $port)
@@ -64,6 +67,14 @@ $handler = {
         $res.ContentLength64 = $raw.Length
         $res.OutputStream.Write($raw, 0, $raw.Length); $res.Close()
     }
+    function Get-State {
+        $st = $S.klippy
+        if ($S.restarted) {
+            if ($S.restartNever) { $st = 'startup' }
+            elseif ((Get-Date) -ge $S.readyAt) { $st = $S.restartTo } else { $st = 'startup' }
+        }
+        $st
+    }
     try {
         $l = New-Object System.Net.HttpListener
         $l.Prefixes.Add("http://127.0.0.1:$port/")
@@ -75,18 +86,26 @@ $handler = {
             $req = $ctx.Request; $m = $req.HttpMethod; $raw = $req.RawUrl; $path = $raw.Split('?')[0]
             [void]$S.log.Add("$m $raw")
             if ($m -eq 'GET' -and $path -eq '/printer/info') {
-                $st = $S.klippy
-                if ($S.restarted) {
-                    if ($S.restartNever) { $st = 'startup' }
-                    elseif ((Get-Date) -ge $S.readyAt) { $st = 'ready' } else { $st = 'startup' }
-                }
+                $st = Get-State
                 Send $ctx 200 ('{"result":{"state":"' + $st + '","state_message":"mock ' + $st + '"}}') $null
             }
             elseif ($m -eq 'GET' -and $path -eq '/printer/objects/query') {
                 $S.psq = $S.psq + 1
                 $ps = $S.print
                 if ($S.printAfter -ge 0 -and $S.psq -gt $S.printAfter) { $ps = 'printing' }
-                Send $ctx 200 ('{"result":{"status":{"print_stats":{"state":"' + $ps + '"}}}}') $null
+                if ($S.queryHttp500) { Send $ctx 500 '{"error":"mock query failure"}' $null }
+                elseif ($S.queryFail -and (Get-State) -ne 'ready') { Send $ctx 503 '{"error":"Klippy Disconnected"}' $null }
+                else {
+                    $o = @()
+                    if (-not $S.statusEmpty) { $o += '"print_stats":{"state":"' + $ps + '"}' }
+                    if (-not $S.omit -and -not $S.statusEmpty) {
+                        $o += '"configfile":{"save_config_pending":' + ([string]$S.savePending).ToLower() + '}'
+                        $o += '"extruder":{"target":' + $S.extT + '}'
+                        $o += '"heater_bed":{"target":' + $S.bedT + '}'
+                        $o += '"idle_timeout":{"state":"' + $S.idle + '"}'
+                    }
+                    Send $ctx 200 ('{"result":{"status":{' + ($o -join ',') + '}}}') $null
+                }
             }
             elseif ($m -eq 'POST' -and $path -eq '/printer/firmware_restart') {
                 $S.restarted = $true; $S.readyAt = (Get-Date).AddSeconds($S.restartDelay)
@@ -115,6 +134,7 @@ $handler = {
                 elseif ($S.fail500 -and $key -match $S.fail500) { Send $ctx 500 '{"error":"mock forced failure"}' $null }
                 else {
                     $S.files[$key] = $bytes; [void]$S.uploads.Add($key)
+                    if ($S.mutateBytes -and $key -like 'backups/*') { $S.files[$S.mutateKey] = $S.mutateBytes }
                     Send $ctx 201 ('{"item":{"path":"' + $key + '","root":"config"},"action":"create_file"}') $null
                 }
             }
@@ -132,7 +152,8 @@ $handler = {
 function Reset-Mock([hashtable]$Over = @{}, [switch]$KeepFiles) {
     $S.log.Clear(); $S.uploads.Clear(); $S.klippy = 'ready'; $S.print = 'standby'; $S.printAfter = -1; $S.psq = 0
     $S.fail500 = ''; $S.restartNever = $false; $S.restarted = $false; $S.readyAt = [datetime]::MinValue; $S.restartDelay = 4
-    if (-not $KeepFiles) { $S.files.Clear(); $S.files['overrides.cfg'] = $origBytes; $S.files['macros/m.cfg'] = $mOrig }
+    $S.savePending = $false; $S.extT = 0; $S.bedT = 0; $S.idle = 'Idle'; $S.omit = $false; $S.statusEmpty = $false; $S.queryFail = $true; $S.restartTo = 'ready'; $S.mutateBytes = $null; $S.mutateKey = ''; $S.queryHttp500 = $false
+    if (-not $KeepFiles) { $S.files.Clear(); $S.files['overrides.cfg'] = $origBytes; $S.files['macros/m.cfg'] = $mOrig; $S.files['a..b.cfg'] = $mOrig; $S.files['moonraker.conf'] = $mOrig; $S.files['sub/moonraker.conf'] = $mOrig }
     foreach ($k in $Over.Keys) { $S[$k] = $Over[$k] }
 }
 
@@ -194,14 +215,14 @@ function Complete-Case {
 function Get-Args([string]$Case, [string]$Sha = $origSha, [string]$Remote = 'overrides.cfg', [string]$Local = $newFile) {
     @('-BaseUrl', $Url, '-RemotePath', $Remote, '-LocalFile', $Local, '-ExpectedSha256', $Sha, '-Reason', "mocktest-$Case")
 }
-function Test-Untouched {
-    (Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq $origSha
+function Test-Untouched([string]$Sha = $origSha) {
+    (Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq $Sha
 }
-function Test-Refused($r, [string]$Pattern) {
+function Test-Refused($r, [string]$Pattern, [string]$Sha = $origSha) {
     Assert-That ($r.Code -ne 0) "exit code should be non-zero, was $($r.Code)"
     Assert-That ($r.Out -match $Pattern) "output should match /$Pattern/"
     Assert-That ($r.Writes -eq 0) "mock saw $($r.Writes) write request(s), expected 0"
-    Assert-That (Test-Untouched) 'file on the fake machine was changed'
+    Assert-That (Test-Untouched $Sha) 'file on the fake machine was changed'
     Assert-That ($S.uploads.Count -eq 0) 'mock stored an upload'
 }
 
@@ -397,6 +418,158 @@ foreach ($u in "http://127.0.0.2:$port", "http://localhost:$port", "https://127.
 }
 Complete-Case
 
+# ================================================================ round 2 (writer's fixes after checker review)
+function Invoke-Raw([string]$Line) {
+    if ($Line -match '192\.168\.1\.') { throw 'harness refuses to run a command with a printer address' }
+    $S.log.Clear(); $S.uploads.Clear()
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    $o = Invoke-Expression ($Line + ' 2>&1') | Out-String
+    $code = $LASTEXITCODE; $sw.Stop()
+    $log = @($S.log.ToArray())
+    $r = [pscustomobject]@{ Code = $code; Out = $o.Trim(); Log = $log; Writes = @($log | Where-Object { $_ -notmatch '^GET ' }).Count; Sec = [math]::Round($sw.Elapsed.TotalSeconds, 1) }
+    [void]$script:Cur.Runs.Add(@{ Args = "(rollback line as printed by the script) $Line"; R = $r })
+    $r
+}
+function Get-RestoreArgs([string]$Case) {
+    @('-BaseUrl', $Url, '-RemotePath', 'overrides.cfg', '-LocalFile', $origFile, '-ExpectedSha256', $newSha, '-Restore', '-Reason', "mocktest-$Case")
+}
+function Test-RestoreOk($r) {
+    Assert-That ($r.Code -eq 0) "exit code should be 0, was $($r.Code)"
+    Assert-That ((Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq $origSha) 'machine does not hold the original content after restore'
+    Assert-That ($r.Log -contains 'POST /printer/firmware_restart') 'no firmware_restart after the restore'
+    Assert-That ($r.Out -match 'LEDGER \|') 'no LEDGER line'
+}
+
+# ---- 13 restore while klippy is in error / shutdown
+foreach ($k in 'error', 'shutdown') {
+    Start-Case "13-$k" "-Restore while klippy = $k -> allowed, original hash back, restart, ready"
+    Reset-Mock @{ klippy = $k; queryFail = ($k -eq 'error') }
+    $S.files['overrides.cfg'] = $newBytes
+    $r = Invoke-Apply (Get-RestoreArgs "c13$k"); Test-RestoreOk $r
+    Assert-That ($S.uploads.Count -eq 2) "expected 2 uploads, saw $($S.uploads.Count)"
+    Add-Info "mock answered the print_stats query with 503 while klippy was down: $($k -eq 'error')"
+    Complete-Case
+}
+Start-Case '13c' '-Restore while klippy = startup -> still refused'
+Reset-Mock @{ klippy = 'startup' }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c13c'); Test-Refused $r "klippy state is 'startup'" $newSha
+Complete-Case
+
+# ---- 14 restore while printing
+Start-Case '14' '-Restore while print_stats = printing (klippy ready) -> refuse'
+Reset-Mock @{ print = 'printing' }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c14'); Test-Refused $r "state is 'printing'" $newSha
+Complete-Case
+Start-Case '14b' '-Restore while print_stats = paused -> refuse'
+Reset-Mock @{ print = 'paused' }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c14b'); Test-Refused $r "state is 'paused'" $newSha
+Complete-Case
+Start-Case '14c' '-Restore with klippy = error but print_stats still answers printing -> refuse'
+Reset-Mock @{ klippy = 'error'; queryFail = $false; print = 'printing' }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c14c'); Test-Refused $r "state is 'printing'" $newSha
+Complete-Case
+
+# ---- 15 file changed between step 2 and step 4
+Start-Case '15' 'file on machine edited after the hash gate (during backup) -> target never written, backup kept'
+$changed = $enc.GetBytes('edited by someone else')
+Reset-Mock @{ mutateBytes = $changed; mutateKey = 'overrides.cfg' }
+$r = Invoke-Apply (Get-Args 'c15')
+Assert-That ($r.Code -ne 0) "exit code should be non-zero, was $($r.Code)"
+Assert-That ($r.Out -match 'changed since the hash gate') 'message about the changed file missing'
+Assert-That ($r.Out -match 'backup kept at config/backups/') 'message does not say the backup is kept'
+Assert-That ($S.uploads.Count -eq 1 -and $S.uploads[0] -like 'backups/*') "expected only the backup upload, saw: $($S.uploads -join ',')"
+Assert-That ((Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq (Get-Sha256 $changed)) 'target file was overwritten'
+Assert-That (-not ($r.Log -contains 'POST /printer/firmware_restart')) 'restart was sent'
+Assert-That (Test-Path -LiteralPath (Join-Path $BkRoot "${date}_mocktest-c15\MOCK\overrides.cfg")) 'local backup missing'
+Complete-Case
+
+# ---- 16 save_config_pending
+Start-Case '16a' 'configfile.save_config_pending = true, no flag -> refuse before any write'
+Reset-Mock @{ savePending = $true }
+$r = Invoke-Apply (Get-Args 'c16a'); Test-Refused $r 'save-config change is pending'
+Complete-Case
+Start-Case '16b' 'save_config_pending = true with -DiscardPendingSaveConfig -> runs'
+Reset-Mock @{ savePending = $true }
+$r = Invoke-Apply ((Get-Args 'c16b') + '-DiscardPendingSaveConfig')
+Assert-That ($r.Code -eq 0) "exit code should be 0, was $($r.Code)"
+Assert-That ($r.Writes -eq 3) "expected 3 write requests, saw $($r.Writes)"
+Assert-That ((Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq $newSha) 'new content not on machine'
+Complete-Case
+Start-Case '16c' '-Restore with klippy ready and save_config_pending = true, no flag -> refuse'
+Reset-Mock @{ savePending = $true }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c16c'); Test-Refused $r 'save-config change is pending' $newSha
+Complete-Case
+
+# ---- 17 heaters / idle_timeout
+Start-Case '17a' 'extruder.target = 245 -> refuse'
+Reset-Mock @{ extT = 245 }
+$r = Invoke-Apply (Get-Args 'c17a'); Test-Refused $r 'extruder target is 245'
+Complete-Case
+Start-Case '17b' 'heater_bed.target = 85 -> refuse'
+Reset-Mock @{ bedT = 85 }
+$r = Invoke-Apply (Get-Args 'c17b'); Test-Refused $r 'heater_bed target is 85'
+Complete-Case
+Start-Case '17c' 'idle_timeout.state = Printing -> refuse'
+Reset-Mock @{ idle = 'Printing' }
+$r = Invoke-Apply (Get-Args 'c17c'); Test-Refused $r 'idle_timeout is Printing'
+Complete-Case
+Start-Case '17d' 'info: -Restore with extruder.target = 245 is exempt from the heater gate (design)'
+Reset-Mock @{ extT = 245 }; $S.files['overrides.cfg'] = $newBytes
+$r = Invoke-Apply (Get-RestoreArgs 'c17d'); Test-RestoreOk $r
+Add-Info 'documents behavior: -Restore proceeds (and restarts) while a heater target is set'
+Complete-Case
+
+# ---- 18 RemotePath allow-list
+Start-Case '18' '-RemotePath allow-list'
+foreach ($p in 'backups/x.cfg', 'backups/2026-01-01_x/overrides.cfg', 'a//b.cfg', './a.cfg', 'x.txt', 'x.cfg.bak', 'dir.d/x.cfg', 'moonraker.conf', 'sub/moonraker.conf', 'MOONRAKER.CONF') {
+    Reset-Mock
+    $r = Invoke-Apply (Get-Args 'c18' $mOrigSha $p $newMFile)
+    Assert-That ($r.Code -ne 0) "RemotePath '$p' exit code was $($r.Code)"
+    Assert-That ($r.Log.Count -eq 0) "RemotePath '$p' caused $($r.Log.Count) request(s)"
+}
+Reset-Mock
+$r = Invoke-Apply ((Get-Args 'c18p1' $mOrigSha 'a..b.cfg' $newMFile) + '-NoRestart')
+Assert-That ($r.Code -eq 0 -and $r.Writes -eq 2) "a..b.cfg should be accepted and written (code $($r.Code), writes $($r.Writes))"
+Assert-That ((Get-Sha256 ([byte[]]$S.files['a..b.cfg'])) -eq $mNewSha) 'a..b.cfg not written'
+Reset-Mock
+$r = Invoke-Apply ((Get-Args 'c18p2' $mOrigSha 'moonraker.conf' $newMFile) + @('-AllowMoonrakerConf', '-NoRestart'))
+Assert-That ($r.Code -eq 0 -and $r.Writes -eq 2) "moonraker.conf with the flag should be written (code $($r.Code), writes $($r.Writes))"
+Assert-That ((Get-Sha256 ([byte[]]$S.files['moonraker.conf'])) -eq $mNewSha) 'moonraker.conf not written'
+Complete-Case
+
+# ---- 19 restart ends in error; the printed rollback command must work
+Start-Case '19' 'after firmware_restart klippy goes to error -> error + rollback; running that exact rollback line succeeds'
+Reset-Mock @{ restartTo = 'error' }
+$r = Invoke-Apply (Get-Args 'c19')
+Assert-That ($r.Code -ne 0) "exit code should be non-zero, was $($r.Code)"
+Assert-That ($r.Out -match "klippy went to 'error'") 'error message missing'
+$rbl = @($r.Out -split "`r?`n" | Where-Object { $_ -like 'ROLLBACK: *' })
+Assert-That ($rbl.Count -eq 1) 'no single ROLLBACK line'
+Assert-That ($r.Out -notmatch 'LEDGER \|') 'LEDGER printed although klippy is in error'
+Assert-That ((Get-Sha256 ([byte[]]$S.files['overrides.cfg'])) -eq $newSha) 'precondition: new content should be on the machine'
+if ($rbl.Count -eq 1) {
+    $S.restartTo = 'ready'           # the old config boots fine
+    $r2 = Invoke-Raw ($rbl[0].Substring('ROLLBACK: '.Length))
+    Test-RestoreOk $r2
+    Assert-That ($r2.Log[$r2.Log.Count - 1] -eq 'GET /printer/info') 'rollback did not poll for ready'
+}
+Complete-Case
+
+# ---- 20 fields absent from the fake machine's answer
+Start-Case '20a' 'machine omits configfile/extruder/heater_bed/idle_timeout (print_stats present) -> behavior recorded'
+Reset-Mock @{ omit = $true }
+$r = Invoke-Apply (Get-Args 'c20a')
+Assert-That ($r.Code -eq 0 -and $r.Writes -eq 3) "current behavior is to proceed (code $($r.Code), writes $($r.Writes))"
+Add-Info 'script treats missing save_config_pending and heater targets as absent and writes; see report for recommendation'
+Complete-Case
+Start-Case '20b' 'machine omits print_stats too (empty status) -> refuse'
+Reset-Mock @{ statusEmpty = $true }
+$r = Invoke-Apply (Get-Args 'c20b'); Test-Refused $r 'ERROR'
+Complete-Case
+Start-Case '20c' 'objects/query answers HTTP 500 while klippy ready -> refuse'
+Reset-Mock @{ queryHttp500 = $true }
+$r = Invoke-Apply (Get-Args 'c20c'); Test-Refused $r 'ERROR'
+Complete-Case
 # ---------------------------------------------------------------- finish
 try { $S.listener.Stop() } catch { }
 try { [void]$psh.EndInvoke($async) } catch { }

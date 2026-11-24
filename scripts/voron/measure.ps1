@@ -11,7 +11,7 @@ param(
     [ValidateRange(1, 10)][int]$Repeats = 3,
     [double]$ColdMax = 45,
     [switch]$Force,
-    [switch]$BedClear,   # xac nhan ban trong, bat buoc khi may chua home (G28)
+    [switch]$BedClear,   # xac nhan ban trong, bat buoc moi lan chay that
     [switch]$WhatIf
 )
 $ErrorActionPreference = 'Stop'
@@ -33,7 +33,7 @@ $outFile = Join-Path $root "calibration\voron\${Phase}_${Printer}.json"
 if ($WhatIf) {
     Write-Output "[WhatIf] $Printer ($Ip) phase=$Phase condition=$Condition repeats=$Repeats. Khong gui gi."
     Write-Output "[WhatIf] Truoc khi gui: kiem ready, khong printing/paused, nhiet dau/ban < $ColdMax C. Lenh se gui theo thu tu:"
-    Write-Output '[WhatIf]   G28 (chi khi chua home xyz va co -BedClear), roi M400, kiem nguoi lai'
+    Write-Output '[WhatIf]   (chay that can -BedClear) G28 (chi khi chua home xyz), roi M400, kiem nguoi lai'
     1..$Repeats | ForEach-Object { Write-Output "[WhatIf]   COMPARE_BELTS_RESPONSES FREQ_END=200 (lan $_), roi M400" }
     Write-Output '[WhatIf]   AXES_SHAPER_CALIBRATION AXIS=X FREQ_END=200, roi M400'
     Write-Output '[WhatIf]   AXES_SHAPER_CALIBRATION AXIS=Y FREQ_END=200, roi M400'
@@ -60,8 +60,8 @@ function Send-Gcode([string]$g) {
     try {
         Invoke-RestMethod -Method Post "http://${Ip}:7125/printer/gcode/script" -Body (@{ script = $g } | ConvertTo-Json) -ContentType 'application/json' -TimeoutSec 1500 | Out-Null
     } catch {
-        # loi HTTP (Klipper/Moonraker tu choi lenh) -> dung; chi bo qua khi het gio phia client (lenh dai)
-        if ($_.Exception.Response) { throw "[$Printer] lenh bi tu choi: $g : $($_.Exception.Message)" }
+        # chi bo qua khi het gio phia client (lenh dai); loi ket noi/reset/tu choi deu dung
+        if ($_.Exception.Status -ne [Net.WebExceptionStatus]::Timeout) { throw "[$Printer] lenh khong toi may hoac bi tu choi: $g : $($_.Exception.Message)" }
         Write-Output "[$Printer] yeu cau ket thuc: $($_.Exception.Message)"
     }
 }
@@ -84,9 +84,13 @@ function Get-StoreLastTime {
     if ($a.Count -gt 0) { [double]$a[-1].time } else { 0.0 }
 }
 
-function Get-StoreSince([double]$t) {
+# Thong diep sau lan xuat hien CUOI cua dong lenh khop dung $g (moi hon $t); $null neu lenh khong thay trong store.
+function Get-StoreSince([string]$g, [double]$t) {
     $r = Invoke-RestMethod "http://${Ip}:7125/server/gcode_store?count=500" -TimeoutSec 20
-    @($r.result.gcode_store | Where-Object { [double]$_.time -gt $t } | ForEach-Object { [string]$_.message })
+    $m = @($r.result.gcode_store | Where-Object { [double]$_.time -gt $t } | ForEach-Object { ([string]$_.message).Trim() })
+    $idx = [array]::LastIndexOf($m, $g)
+    if ($idx -lt 0) { return $null }
+    @($m[($idx + 1)..($m.Count - 1)] | Where-Object { $_ })
 }
 
 function Get-ResultFiles {
@@ -103,7 +107,9 @@ function Invoke-Measure([string]$g) {
     Send-Gcode 'M400'
     Wait-Done
     Start-Sleep 5   # Shake&Tune ve bieu do sau khi lenh tra ve
-    $msgs = Get-StoreSince $t0
+    $msgs = Get-StoreSince $g $t0
+    if ($null -eq $msgs) { throw "[$Printer] gcode_store khong co lenh '$g': lenh co the chua toi may" }
+    $msgs = @($msgs)
     $new = @(Get-ResultFiles | Where-Object { -not $before.ContainsKey($_.path) -or $before[$_.path] -ne "$($_.modified)/$($_.size)" } | ForEach-Object { $_.path })
     if ($msgs.Count -eq 0 -and $new.Count -eq 0) { throw "[$Printer] khong doc duoc phan hoi hay file ket qua nao cho: $g" }
     [pscustomobject]@{ messages = $msgs; files = $new }
@@ -149,7 +155,7 @@ function Assert-Cold($st) {
 }
 Assert-Cold $s
 $needHome = ($s.toolhead.homed_axes -ne 'xyz')
-if ($needHome -and -not $BedClear) { throw "[$Printer] may chua home: G28 can xac nhan ban trong, chay lai voi -BedClear" }
+if (-not $BedClear) { throw "[$Printer] can -BedClear: phep do dua dau in xuong Z=20 mm o giua ban (resonance_tester probe_points: TRI 125,125,20; V24 150,128,20). Ban phai trong, roi chay lai voi -BedClear" }
 $version = (Get-MoonrakerInfo -Ip $Ip).software_version
 $temps = [ordered]@{ dau_phun_c = $s.extruder.temperature; ban_c = $s.heater_bed.temperature }
 
@@ -160,7 +166,12 @@ $result = [ordered]@{
     shaper_x = $null; shaper_y = $null; ghi_chu = @(); hoan_tat = $false
 }
 try {
-    if ($needHome) { Send-Gcode 'G28'; Send-Gcode 'M400'; Wait-Done; Assert-Cold (Assert-Idle) }
+    if ($needHome) {
+        $t0 = Get-StoreLastTime
+        Send-Gcode 'G28'; Send-Gcode 'M400'; Wait-Done
+        if ($null -eq (Get-StoreSince 'G28' $t0)) { throw "[$Printer] gcode_store khong co G28: lenh co the chua toi may" }
+        Assert-Cold (Assert-Idle)
+    }
 
     $runs = @()
     for ($i = 1; $i -le $Repeats; $i++) {

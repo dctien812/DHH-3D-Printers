@@ -4,14 +4,17 @@
 .DESCRIPTION
   Chi sinh file .json (khong .info, khong setting_id/user_id/base_id). Dau ra chia thanh
   <OutDir>\machine\, <OutDir>\filament\, <OutDir>\process\.
-  Khong tao Preset Bundle (.orca_printer/.orca_filaments): chua kiem dinh dang.
+  Them goi import: <OutDir>\import\DHH_printer.zip, DHH_filament.zip, DHH_process.zip (moi zip chua cac .json cung loai,
+  de nhap bang File > Import). Dinh dang CHUA thu nhap tren Orca that.
   So 'do' trong calibration\voron.csv va calibration\bambu.csv (neu co) thang so trong materials.csv.
-.PARAMETER Set       pilot = 6 may + 6 quy trinh + 6 vat lieu BAMBU-PLA; all = 6 + 6 + 22.
+.PARAMETER Set       pilot = 6 may + 6 quy trinh + 4 vat lieu BAMBU-PLA (16 file); all = 6 + 6 + 20 (32 file).
 .PARAMETER OutDir    Thu muc dau ra (mac dinh profiles\bundle). Duong dan tuong doi tinh tu thu muc goc du an.
 .PARAMETER Verify    Doc lai JSON da sinh, so tung gia tri voi bang nguon, in bang lech; thoat 1 neu co lech.
 .PARAMETER Install   Chep file MOI vao %APPDATA%\OrcaSlicer\user\<id>. Tu choi neu Orca dang chay hoac file da ton tai
                      (tru file ten bat dau "DHH " khi co -Force). Chay -Verify truoc.
 .PARAMETER Uninstall Xoa chi cac file ten bat dau "DHH " (.json/.info) trong machine\, filament\, process\ cua user.
+.PARAMETER UserDir   Thu muc user can ghi/xoa/doc (mac dinh: %APPDATA%\OrcaSlicer\user\<id> that). Moi thao tac ghi/xoa chi trong day.
+                     Voi -Verify, doc ho so da cai trong UserDir thay vi OutDir. Kiem Orca-dang-chay chi ap dung khi UserDir nam trong %APPDATA%\OrcaSlicer.
 .PARAMETER UserId    Thu muc <id> cua Orca khi co nhieu hon mot.
 #>
 [CmdletBinding(SupportsShouldProcess)]
@@ -22,7 +25,8 @@ param(
     [switch]$Install,
     [switch]$Uninstall,
     [switch]$Force,
-    [string]$UserId
+    [string]$UserId,
+    [string]$UserDir
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path (Split-Path $PSScriptRoot)
@@ -134,6 +138,7 @@ function Get-Plan {
         $mr = $byCode[$row.'máy']
         if (-not $mr) { throw "May khong co trong machines.csv: $($row.'máy')" }
         if ($row.'nhựa' -eq 'TIN-ABSPRO' -and $row.'máy' -in 'A1', 'A1M') { throw "Khong duoc co ABS cho $($row.'máy')" }
+        if ($row.'nhựa' -eq 'BAMBU-PLA' -and $mr.'loại' -eq 'voron') { throw "PLA chi cho may Bambu: $($row.'tên_hồ_sơ')" }
         $n = @($mr.'biến_thể' -split '\|').Count
         $v = @{}
         foreach ($p in $Params) {
@@ -166,7 +171,12 @@ function Get-Plan {
                 $k = $kv.Substring(0, $i); $val = $kv.Substring($i + 1)
                 if ($d.Contains($k)) { throw "$($row.'tên_hồ_sơ'): khoa '$k' bi dat hai lan" }
                 if ($Forbidden -contains $k) { throw "Khoa cam: $k" }
-                if ($PerVariant -contains $k) { $d[$k] = New-Rep $val $n } else { $d[$k] = [string[]]@($val) }
+                if ($val.Contains('|')) {
+                    $arr = [string[]]@($val -split '\|')
+                    if ($arr.Count -ne $n) { throw "$($row.'tên_hồ_sơ'): khoa '$k' co $($arr.Count) gia tri, can $n" }
+                    $d[$k] = $arr
+                }
+                elseif ($PerVariant -contains $k) { $d[$k] = New-Rep $val $n } else { $d[$k] = [string[]]@($val) }
             }
         }
         $plan.Add([pscustomobject]@{ Type = 'filament'; Name = $row.'tên_hồ_sơ'; Code = "$($row.'máy')|$($row.'nhựa')"; Class = $mr.'loại'; Pilot = ($row.'nhựa' -eq 'BAMBU-PLA'); Data = $d })
@@ -194,7 +204,7 @@ function Format-Val($v) {
     return 'S:' + "$v"
 }
 
-function Test-Plan($plan) {
+function Test-Plan($plan, [string]$Root, [switch]$UserMode) {
     $sys = Get-SystemNames
     $diff = New-Object System.Collections.Generic.List[object]
     $add = { param($f, $k, $e, $a) $diff.Add([pscustomobject]@{ File = $f; Khoa = $k; MongDoi = $e; ThucTe = $a }) }
@@ -202,7 +212,7 @@ function Test-Plan($plan) {
     foreach ($it in $plan) {
         $rel = "$($it.Type)\$($it.Name).json"
         $want[$rel.ToLowerInvariant()] = $true
-        $p = Join-Path $OutDir $rel
+        $p = Join-Path $Root $rel
         if (-not (Test-Path -LiteralPath $p)) { & $add $rel '(file)' 'co' 'thieu'; continue }
         try { $j = Get-Content -LiteralPath $p -Raw -Encoding UTF8 | ConvertFrom-Json }
         catch { & $add $rel '(file)' 'JSON hop le' $_.Exception.Message; continue }
@@ -220,17 +230,41 @@ function Test-Plan($plan) {
         }
         if ($sys.Count -gt 0 -and -not $sys.Contains("$($it.Type)/$($actual['inherits'])")) { & $add $rel 'inherits' 'ten ho so he thong co that' "$($actual['inherits'])" }
     }
-    if (Test-Path $OutDir) {
-        foreach ($f in Get-ChildItem $OutDir -Recurse -File) {
+    if ($UserMode) {
+        foreach ($ty in 'machine', 'filament', 'process') {
+            $dd = Join-Path $Root $ty
+            if (-not (Test-Path $dd)) { continue }
+            foreach ($f in Get-ChildItem $dd -File | Where-Object { $_.Name -like "$Prefix*" }) {
+                if (-not $want.ContainsKey("$ty\$($f.Name)".ToLowerInvariant())) { & $add "$ty\$($f.Name)" '(file)' 'khong co trong bo' 'file DHH thua' }
+            }
+        }
+    }
+    elseif (Test-Path $OutDir) {
+        $imp = Join-Path $OutDir 'import'
+        foreach ($f in Get-ChildItem $OutDir -Recurse -File | Where-Object { -not $_.FullName.StartsWith($imp + '\') }) {
             $rel = $f.FullName.Substring($OutDir.Length).TrimStart('\')
             if ($f.Extension -ne '.json') { & $add $rel '(file)' 'khong co' 'file khong phai .json (vd .info)' }
             elseif (-not $want.ContainsKey($rel.ToLowerInvariant())) { & $add $rel '(file)' 'khong co trong bo' 'file thua' }
+        }
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        foreach ($ty in @{ machine = 'printer'; filament = 'filament'; process = 'process' }.GetEnumerator()) {
+            $zp = Join-Path $imp "DHH_$($ty.Value).zip"
+            $exp = @($plan | Where-Object { $_.Type -eq $ty.Key } | ForEach-Object { "$($_.Name).json" } | Sort-Object)
+            if (-not (Test-Path $zp)) { & $add "import\DHH_$($ty.Value).zip" '(file)' 'co' 'thieu'; continue }
+            $za = [IO.Compression.ZipFile]::OpenRead($zp)
+            try { $got = @($za.Entries | ForEach-Object { $_.Name } | Sort-Object) } finally { $za.Dispose() }
+            if (($exp -join '|') -ne ($got -join '|')) { & $add "import\DHH_$($ty.Value).zip" 'noi_dung' ($exp -join '; ') ($got -join '; ') }
         }
     }
     , $diff
 }
 
 function Get-UserDir {
+    if ($UserDir) {
+        $ud0 = if ([IO.Path]::IsPathRooted($UserDir)) { $UserDir } else { Join-Path $root $UserDir }
+        if (-not (Test-Path $ud0)) { throw "Khong thay -UserDir $ud0" }
+        return (Resolve-Path $ud0).Path
+    }
     $base = Join-Path $env:APPDATA 'OrcaSlicer\user'
     if ($UserId) { $d = Join-Path $base $UserId }
     else {
@@ -242,6 +276,10 @@ function Get-UserDir {
     $d
 }
 function Assert-OrcaClosed {
+    if ($UserDir) {
+        $real = (Join-Path $env:APPDATA 'OrcaSlicer').TrimEnd('\') + '\'
+        if (-not ((Get-UserDir) + '\').StartsWith($real, [StringComparison]::OrdinalIgnoreCase)) { return }
+    }
     $pr = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -in 'orca-slicer', 'OrcaSlicer' })
     if ($pr.Count) { throw 'Orca dang chay (orca-slicer). Dong Orca roi chay lai.' }
 }
@@ -264,9 +302,9 @@ if ($Uninstall) {
 
 $plan = Get-Plan
 if ($Verify -or $Install) {
-    $diff = Test-Plan $plan
+    if ($Verify -and $UserDir) { $diff = Test-Plan $plan (Get-UserDir) -UserMode; $where = Get-UserDir } else { $diff = Test-Plan $plan $OutDir; $where = $OutDir }
     $cnt = ($plan | Group-Object Type | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
-    Write-Output "Verify -Set $Set tai ${OutDir}: $($plan.Count) ho so ($cnt), lech = $($diff.Count)"
+    Write-Output "Verify -Set $Set tai ${where}: $($plan.Count) ho so ($cnt), lech = $($diff.Count)"
     if ($diff.Count) { $diff | Format-Table -AutoSize -Wrap | Out-String -Width 250 | Write-Output; if ($Verify) { exit 1 } else { throw 'Verify lech, khong cai.' } }
     if ($Verify) { return }
 }
@@ -275,6 +313,14 @@ else {
         $dir = Join-Path $OutDir $it.Type
         New-Item -ItemType Directory -Force $dir | Out-Null
         [IO.File]::WriteAllText((Join-Path $dir "$($it.Name).json"), (ConvertTo-OrcaJson $it.Data), (New-Object Text.UTF8Encoding $false))
+    }
+    $imp = Join-Path $OutDir 'import'
+    New-Item -ItemType Directory -Force $imp | Out-Null
+    foreach ($ty in @{ machine = 'printer'; filament = 'filament'; process = 'process' }.GetEnumerator()) {
+        $zp = Join-Path $imp "DHH_$($ty.Value).zip"
+        if (Test-Path $zp) { Remove-Item -LiteralPath $zp }
+        $files = @($plan | Where-Object { $_.Type -eq $ty.Key } | ForEach-Object { Join-Path $OutDir "$($_.Type)\$($_.Name).json" })
+        Compress-Archive -LiteralPath $files -DestinationPath $zp
     }
     $cnt = ($plan | Group-Object Type | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
     Write-Output "Da sinh $($plan.Count) file .json vao $OutDir ($cnt)"

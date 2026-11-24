@@ -13,6 +13,8 @@ param(
     [switch]$RepinCert
 )
 $ErrorActionPreference = 'Stop'
+if ($RepinCert -and @($Machine).Count -ne 1) { throw '-RepinCert chi dung voi dung mot -Machine (vi du -Machine H2S -RepinCert).' }
+if ($RepinCert -and -not $PSBoundParameters.ContainsKey('Machine')) { throw '-RepinCert can chi ro -Machine.' }
 Import-Module (Join-Path $PSScriptRoot '..\lib\BambuMqtt.psm1') -Force
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path

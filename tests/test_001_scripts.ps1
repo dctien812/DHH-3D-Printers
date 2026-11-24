@@ -78,7 +78,7 @@ Check "filter counted unknown keys ($($stats.Unknown)) and rule keys ($($stats.R
 # Fleet.psm1: path allow-list and SSDP source check (module-private functions)
 $fm = Get-Module Fleet
 $allowed = '/printer/info', '/printer/objects/query?toolhead', '/server/files/list?root=config', '/server/files/config/printer.cfg', '/server/gcode_store', '/machine/system_info', '/machine/proc_stats', '/machine/update/status', '/server/history/list?limit=5'
-$denied = '/printer/info/../../printer/gcode/script', '/printer/gcode/script', '/printer/info/x', '/server/files/config/../x', '/server/files/%2e%2e/x', '/printer/emergency_stop', '/machine/reboot', '/server/files/config/a\b'
+$denied = '/printer/info/../../printer/gcode/script', '/printer/gcode/script', '/printer/info/x', '/server/files/config/../x', '/server/files/%2e%2e/x', '/printer/emergency_stop', '/machine/reboot', '/server/files/config/a\b', '/machine/update/status?refresh=true'
 foreach ($p in $allowed) { Check "path allowed $p" (& $fm { param($x) Test-MoonrakerPathAllowed $x } $p) }
 foreach ($p in $denied) { Check "path denied $p" (-not (& $fm { param($x) Test-MoonrakerPathAllowed $x } $p)) }
 $threwRel = $false; try { Get-MoonrakerFiles -Ip '203.0.113.1' -RelPath '../secret' } catch { $threwRel = $true }

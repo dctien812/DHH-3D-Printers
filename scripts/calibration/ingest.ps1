@@ -46,12 +46,13 @@ function Read-Rows([string]$path, [bool]$inherited) {
     foreach ($r in $data) {
         $n++   # dong 1 la tieu de
         $f = @{}; foreach ($c in $Cols) { $f[$c] = Get-Field $r $c }
-        $f[$cMay] = $f[$cMay].ToUpperInvariant(); $f[$cResin] = $f[$cResin].ToUpperInvariant(); $f[$cParam] = $f[$cParam].ToLowerInvariant()
+        $f[$cMay] = $f[$cMay].ToUpperInvariant(); $f[$cResin] = $f[$cResin].ToUpperInvariant(); $f[$cParam] = $f[$cParam].ToLowerInvariant(); $f[$cStat] = $f[$cStat].ToLowerInvariant()
         if ($inherited) {
             $f[$cStat] = $sInherit
             if (-not $f[$cSrc]) { $f[$cSrc] = 'profiles\old_inventory.csv' }
         }
         $bad = $false
+        foreach ($c in $Cols) { if ($f[$c] -like 'ĐIỀN*') { Add-Err $name $n "cot $c con gia tri mau '$($f[$c])'"; $bad = $true } }
         if ($Machines -notcontains $f[$cMay]) { Add-Err $name $n "ma may la: '$($f[$cMay])'"; $bad = $true }
         if ($Resins -notcontains $f[$cResin]) { Add-Err $name $n "ma nhua la: '$($f[$cResin])'"; $bad = $true }
         if ($Params -notcontains $f[$cParam]) { Add-Err $name $n "tham so la: '$($f[$cParam])'"; $bad = $true }
@@ -107,6 +108,9 @@ foreach ($r in $rows) {
     $cmp = [int]($r.F[$cStat] -eq $sMeasured) - [int]($o.F[$cStat] -eq $sMeasured)
     if ($cmp -eq 0) { $cmp = [string]::CompareOrdinal($r.F[$cDate], $o.F[$cDate]) }
     if ($cmp -eq 0) { $cmp = $Rank[$r.F[$cStat]] - $Rank[$o.F[$cStat]] }
+    if ($r.F[$cStat] -eq $sMeasured -and $o.F[$cStat] -eq $sMeasured -and $r.F[$cDate] -eq $o.F[$cDate] -and $r.F[$cVal] -ne $o.F[$cVal]) {
+        Write-Warning "2 dong 'do' cung khoa $k, cung ngay $($r.F[$cDate]), khac gia tri ($($o.F[$cVal]) vs $($r.F[$cVal])): lay dong sau"
+    }
     if ($cmp -eq 0) { $cmp = $r.Order - $o.Order }
     if ($cmp -gt 0) { $best[$k] = $r }
 }
@@ -121,7 +125,7 @@ $pending = @()
 foreach ($t in @(@{ N = 'voron.csv'; M = $VoronM }, @{ N = 'bambu.csv'; M = @('H2S', 'P1S', 'A1', 'A1M') })) {
     $lines = @($Cols -join ',') + @($final | Where-Object { $t.M -contains $_.F[$cMay] } | ForEach-Object { ConvertTo-CsvLine $_.F })
     $tmp = (Join-Path $OutDir $t.N) + '.tmp'
-    [IO.File]::WriteAllText($tmp, (($lines -join "`n") + "`n"), $enc)   # ghi tam ca hai file roi moi doi ten
+    try { [IO.File]::WriteAllText($tmp, (($lines -join "`n") + "`n"), $enc) } catch { $pending | ForEach-Object { Remove-Item -LiteralPath $_.Tmp -ErrorAction SilentlyContinue }; Remove-Item -LiteralPath $tmp -ErrorAction SilentlyContinue; throw }   # ghi tam ca hai file roi moi doi ten
     $pending += @{ Tmp = $tmp; Dst = (Join-Path $OutDir $t.N); Count = $lines.Count - 1 }
 }
 foreach ($x in $pending) { Move-Item -LiteralPath $x.Tmp -Destination $x.Dst -Force; Write-Output "Ghi $($x.Dst): $($x.Count) dong" }

@@ -17,6 +17,10 @@ và Voron 2.4 300 (Klippain, gantry Monolith 2WD).
 - Q: Ai khởi động việc chạy máy? → A: Phép đo không đùn nhựa văn phòng tự chạy khi máy rảnh; in
   mẫu chờ người dùng.
 - Q: Chính sách cập nhật? → A: Host cập nhật qua Moonraker, Trident thử trước; firmware MCU hỏi riêng.
+- Q: Voron test nhựa nào? → A: Không test PLA (PLA in ở máy Bambu); test Bambu PETG Basic, Tinmorry PETG-ECO, Tinmorry ABS Pro.
+- Q: PA của Voron lấy từ đâu? → A: Từ hồ sơ Orca trên cả hai máy; bảng vật liệu của Klippain tắt.
+- Q: Firmware bo mạch V2.4 (đang là Kalico)? → A: Không chuyển sang Kalico; nạp lại về Klipper chính khi triển khai, trước mọi phép đo trên V2.4.
+- Q: SAVE_CONFIG đang treo trên hai máy? → A: Bỏ.
 
 ## Đã xong (không làm lại)
 
@@ -56,7 +60,7 @@ cùng một phép đo.
 ### User Story 2 - Hiệu chuẩn đùn nhựa theo vật liệu trên hai Voron (Priority: P2)
 
 Mỗi máy có pressure advance, hệ số lưu lượng và lưu lượng thể tích tối đa đã đo cho từng nhựa trong
-phạm vi (PLA, PETG, ABS/ASA), ghi vào nơi mà bộ hồ sơ chung của đặc tả 003 sẽ dùng.
+phạm vi của Voron (hai loại PETG và ABS; không có PLA), ghi vào nơi mà bộ hồ sơ chung của đặc tả 003 sẽ dùng.
 
 **Why this priority**: Hiện chỉ có một con số PA cho mỗi máy (0,0256 và 0,02) và chỉ ABS có hồ sơ
 riêng; đây là phần quyết định bề mặt và kích thước.
@@ -143,5 +147,5 @@ thấy skew chỉ được nạp một lần.
 - Người dùng tự cân đai và kiểm puly; văn phòng chỉ đo và hướng dẫn.
 - Kiểu shaper "performance" người dùng đã chọn vẫn giữ, trừ khi nó làm hỏng tiêu chí đồng bộ kích
   thước của đặc tả 003; khi đó trình người dùng quyết.
-- Nhựa dùng để đo là các hãng người dùng nêu (Bambu PLA, Bambu PETG, Tinmorry PETG-ECO, Tinmorry
-  ABS Pro), màu trắng.
+- Nhựa dùng để đo trên Voron: Bambu PETG Basic, Tinmorry PETG-ECO, Tinmorry ABS Pro (không có PLA),
+  màu trắng.

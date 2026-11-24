@@ -25,7 +25,7 @@ và `scripts\test_speed.ps1` của đợt trước (dùng lại, không sửa); 
 
 **Constraints**: Trident trước, V2.4 sau; chỉ chạm máy khi rảnh; giá trị nằm trong `overrides.cfg`.
 
-**Scale/Scope**: 2 máy, 4 nhựa (8 cặp), 37 task trong đó 8 task có điều kiện (T010, T023,
+**Scale/Scope**: 2 máy, 3 nhựa (6 cặp; Voron không test PLA), 37 task trong đó 8 task có điều kiện (T010, T023,
 T025–T028, T030, T036).
 
 **Firmware MCU V2.4**: người dùng quyết ngày 2026-11-24 sẽ đưa V2.4 về Klipper chính khi triển khai

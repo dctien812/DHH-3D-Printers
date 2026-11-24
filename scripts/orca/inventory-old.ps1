@@ -121,7 +121,7 @@ foreach ($g in ($fil | Group-Object { "$($_.'hãng')|$($_.'loại_nhựa')|$($_.
 }
 # thieu cap: voi moi may, ma nhua (trong 22 cap hop le) chua co ho so cu
 $valid = @{
-    TRI = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'; V24 = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'
+    TRI = 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'; V24 = 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'
     H2S = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'; P1S = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO', 'TIN-ABSPRO'
     A1 = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO'; A1M = 'BAMBU-PLA', 'BAMBU-PETG', 'TIN-PETGECO'
 }

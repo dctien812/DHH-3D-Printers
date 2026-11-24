@@ -23,6 +23,7 @@ vật liệu, quy trình trong OrcaSlicer để cùng một file in trên máy n
 - Q: Dung sai chiều Z và lỗ? → A: Z ±0,1 mm trên 20 mm; lỗ Ø8 ±0,15 mm; cộng thử lắp chéo.
 - Q: ABS / ASA chưa đạt 0,1 mm sau 2 vòng bù? → A: Giữ 0,1 mm, in bù tiếp; không nới dung sai.
 - Q: Tiền tố tên hồ sơ? → A: "DHH" (ví dụ "DHH Tinmorry PETG-ECO @P1S").
+- Q: Nhựa nào test trên máy nào? → A: PLA chỉ 4 máy Bambu (Voron không in PLA); PETG cả 6 máy; ABS / ASA trên hai Voron, H2S, P1S. Bambu PETG là dòng PETG Basic.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -103,8 +104,9 @@ sách và nội dung khớp.
   thay đổi, và không hồ sơ cũ nào bị sửa hay xóa.
 - **FR-002**: Bộ mới PHẢI theo một quy ước tên duy nhất cho hồ sơ máy, vật liệu và quy trình.
 - **FR-003**: Mỗi cặp (máy, nhựa) hợp lệ trong phạm vi PHẢI có đúng một hồ sơ vật liệu. "Nhựa" ở
-  đây là hãng cộng loại (Bambu PLA, Bambu PETG, Tinmorry PETG-ECO, Tinmorry ABS Pro).
-- **FR-004**: ABS / ASA chỉ có hồ sơ cho máy buồng kín (hai Voron, H2S, P1S).
+  đây là hãng cộng loại (Bambu PLA, Bambu PETG Basic, Tinmorry PETG-ECO, Tinmorry ABS Pro).
+- **FR-004**: ABS / ASA chỉ có hồ sơ cho máy buồng kín (hai Voron, H2S, P1S); PLA chỉ có hồ sơ cho 4
+  máy Bambu.
 - **FR-005**: Mỗi giá trị trong hồ sơ PHẢI có nguồn: đo trong đợt này, kế thừa từ hồ sơ cũ (ví dụ
   hệ số co ngót XY), mặc định của nhà sản xuất, hoặc chưa đo.
 - **FR-006**: Hồ sơ quy trình PHẢI cho kích thước chi tiết như nhau giữa các máy; chỗ tốc độ xung
@@ -140,8 +142,8 @@ sách và nội dung khớp.
 
 ## Assumptions
 
-- Cặp hợp lệ: PLA và PETG trên cả 6 máy; ABS / ASA trên 4 máy buồng kín. Với 4 dòng nhựa đã nêu,
-  khoảng 6 + 6 + 6 + 4 = 22 hồ sơ vật liệu; con số chốt ở bước kế hoạch.
+- Cặp hợp lệ: PLA trên 4 máy Bambu; Bambu PETG Basic và Tinmorry PETG-ECO trên cả 6 máy; ABS Pro
+  trên 4 máy buồng kín: 4 + 6 + 6 + 4 = 20 hồ sơ vật liệu.
 - Quy ước tên: máy "DHH <Máy> 0.4", vật liệu "DHH <Hãng> <Loại> @<Máy>", quy trình
   "DHH 0.20 Sync @<Máy>".
 - Số hiệu chuẩn của Voron đến từ đặc tả 002, của Bambu từ đặc tả 004; đặc tả này gom và kiểm chéo.

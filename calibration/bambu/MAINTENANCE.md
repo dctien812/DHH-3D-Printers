@@ -2,7 +2,9 @@
 
 Nguồn: wiki chính thức của Bambu Lab, trưởng phòng đọc ngày 2026-11-24 qua Chrome của người dùng; **chỉ đọc một phần mỗi trang** (`specs\004-bambu-calibration\research.md:3-5,44-60`). Ô để trống nghĩa là research chưa đọc được: tra URL ở cột cuối và điền, đừng đoán. Tên dầu và mỡ cụ thể không có trong research: tra trang hãng.
 
-Cách dùng: tích ô `Làm` khi xong, ghi ngày vào `Lần gần nhất`. Việc đến hạn thì làm ở Buổi B2 (`specs\004-bambu-calibration\tasks.md:29`) và ghi vào `calibration\bambu\health_<máy>.md`. Máy tự ước lượng độ bẩn và nhắc bảo trì (chỉ nêu cho H2S). Văn phòng không điều khiển máy Bambu; mọi việc dưới đây do bạn làm bằng tay.
+**Trước mọi việc dưới đây: tắt máy, rút điện nếu trang hãng dặn, đợi đầu in và bàn nguội.**
+
+Cách dùng: tích ô `Làm` khi xong, ghi ngày vào `Lần gần nhất`. **Cột `Lần gần nhất` để trống nghĩa là chưa biết việc nào đến hạn**: ghi ngày lần cuối bạn nhớ trước khi làm (không nhớ thì ghi `không_rõ` và coi là đến hạn). Việc đến hạn thì làm ở lượt B2 hôm trước ngày hiệu chuẩn (`specs\004-bambu-calibration\tasks.md:29`) và ghi vào `calibration\bambu\health_<máy>.md`. Máy tự ước lượng độ bẩn và nhắc bảo trì (chỉ nêu cho H2S). Văn phòng không điều khiển máy Bambu; mọi việc dưới đây do bạn làm bằng tay.
 
 ## H2S (chỉ dùng chức năng in)
 
@@ -49,9 +51,8 @@ URL: https://wiki.bambulab.com/en/a1/maintenance/basic-maintenance ; căng đai:
 | [ ] | Ray Y: tra **dầu** (hãng đã đổi từ mỡ sang dầu cho ray Y) | (chưa đọc, tra URL) | dầu (loại: tra URL) | |
 | [ ] | Vít me: tra mỡ | (chưa đọc, tra URL) | mỡ (loại: tra URL) | |
 | [ ] | Bánh răng đùn: tra mỡ | (chưa đọc, tra URL) | mỡ (loại: tra URL) | |
-| [ ] | Kiểm và căng đai | (chưa đọc, tra URL) | (tra URL belt_tension) | |
 
-Chu kỳ chưa đọc được (`research.md:54-56,60`).
+Chu kỳ chưa đọc được (`research.md:54-56`). Research chỉ ghi có trang hướng dẫn căng đai A1 (URL `belt_tension` ở trên), chưa nói chu kỳ hay việc cần làm: không đưa vào bảng.
 
 ## A1M (A1 Mini)
 
@@ -74,4 +75,4 @@ Chu kỳ chưa đọc được (`research.md:57-58`). Các hạng mục khác c�
 - [ ] Dầu cho trục trơn và ray (H2S, A1, A1M); loại: tra URL từng máy
 - [ ] Mỡ cho vít me và bánh răng đùn (H2S, P1S, A1); loại: tra URL từng máy
 - [ ] IPA và khăn không xơ (P1S: lau thanh carbon X)
-- [ ] Dụng cụ theo trang hãng (tua vít, cờ lê lục giác): tra URL; chưa liệt kê vì research chưa đọc
+- Dụng cụ (tua vít, cờ lê lục giác, ...): research không nêu; xem trang hãng của từng việc

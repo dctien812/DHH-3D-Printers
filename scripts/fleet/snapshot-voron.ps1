@@ -24,13 +24,28 @@ function Hide-ConfigSecrets([string]$Path) {
     $bytes = [System.IO.File]::ReadAllBytes($Path)
     $bom = ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF)
     $text = [System.Text.Encoding]::UTF8.GetString($bytes)
-    $re = '(?im)^([ \t]*[\w.\-]*(?:token|api_key|password|secret)[\w.\-]*[ \t]*[:=][ \t]*)(?!\*\*\*)([^\r\n]*\S)'
+    $re = '(?im)^([ \t]*[\w.\-]*(?:token|api_key|password|secret|webhook|url)[\w.\-]*[ \t]*[:=][ \t]*)(?!\*\*\*)([^\r\n]*\S)'
+    $reCred = '(?i)(\b[a-z][a-z0-9+.\-]*://)[^\s/@:]+:[^\s/@]+@'      # scheme://user:pass@host
     $count = [regex]::Matches($text, $re).Count
+    $new = [regex]::Replace($text, $re, '${1}***')
+    $count += [regex]::Matches($new, $reCred).Count
+    $new = [regex]::Replace($new, $reCred, '${1}***@')
     if ($count -gt 0) {
-        $new = [regex]::Replace($text, $re, '${1}***')
         [System.IO.File]::WriteAllText($Path, $new, (New-Object System.Text.UTF8Encoding($bom)))
     }
     $count
+}
+
+function Hide-JsonSecrets([string]$Text) {
+    <# Same rule for calib.json text: scalar values of keys containing token, api_key, password,
+       secret, webhook or url become "***"; scheme://user:pass@ credentials are cut. Returns @{Text; Count}. #>
+    $re = '(?i)("[\w.\- ]*(?:token|api_key|password|secret|webhook|url)[\w.\- ]*"\s*:\s*)("(?:[^"\\]|\\.)*"|-?\d[\w.+\-]*|true|false)'
+    $reCred = '(?i)(\b[a-z][a-z0-9+.\-]*://)[^\s/@:"\\]+:[^\s/@"\\]+@'
+    $count = [regex]::Matches($Text, $re).Count
+    $Text = [regex]::Replace($Text, $re, '${1}"***"')
+    $count += [regex]::Matches($Text, $reCred).Count
+    $Text = [regex]::Replace($Text, $reCred, '${1}***@')
+    @{ Text = $Text; Count = $count }
 }
 
 function Save-VoronSnapshot([string]$id, [string]$ip) {
@@ -91,7 +106,12 @@ function Save-VoronSnapshot([string]$id, [string]$ip) {
         configfile = $st.configfile
         objects = $main
     }
-    [System.IO.File]::WriteAllText((Join-Path $dest 'calib.json'), ($calib | ConvertTo-Json -Depth 30), $utf8)
+    $cj = Hide-JsonSecrets ($calib | ConvertTo-Json -Depth 30)
+    [System.IO.File]::WriteAllText((Join-Path $dest 'calib.json'), $cj.Text, $utf8)
+    if ($cj.Count -gt 0) {
+        [System.IO.File]::AppendAllText((Join-Path $dest 'masked.txt'), ("MASKED  calib.json  values_masked={0}  (khong co file tuong ung tren may)`r`n" -f $cj.Count), $utf8)
+        "{0}: calib.json co {1} gia tri bi che" -f $id, $cj.Count
+    }
     "{0}: da ghi {1} file config + manifest.sha256 + calib.json trong {2} (trang thai in: {3})" -f $id, $lines.Count, $dest, $main.print_stats.state
 }
 

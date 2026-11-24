@@ -18,13 +18,13 @@ function Test-MoonrakerPathAllowed {
     <# $true only for the read-only GET endpoints: anchored, no "..", no encoded dots. #>
     param([string]$Path)
     if ($Path -match '\.\.|%2e|%5c|\\') { return $false }
-    $Path -match '^/(printer/info|printer/objects/query(\?.*)?|server/files/.+|server/gcode_store(\?.*)?|machine/system_info|machine/proc_stats|machine/update/status(\?.*)?|server/history/.*)$'
+    $Path -match '^/(printer/info|printer/objects/query(\?.*)?|server/files/.+|server/gcode_store(\?.*)?|machine/system_info|machine/proc_stats|machine/update/status|server/history/.*)$'
 }
 
 function Test-SsdpSource {
     <# Accept a parsed SSDP packet only when its Location equals the real sender IP. #>
     param($Parsed, [string]$SenderIp)
-    [bool]$Parsed -and (-not $Parsed.Ip -or $Parsed.Ip -eq $SenderIp)
+    [bool]$Parsed -and [bool]$Parsed.Ip -and ($Parsed.Ip -eq $SenderIp)
 }
 
 function Invoke-MoonrakerGet {

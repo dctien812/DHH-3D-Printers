@@ -3,8 +3,8 @@ Bambu Lab A1 0.4,máy,machine\Bambu Lab A1 0.4.json,,,A1,,trong,,,BAMBU-PETG,,,,
 Bambu Lab A1 mini 0.4,máy,machine\Bambu Lab A1 mini 0.4.json,,,A1M,,trong,,,BAMBU-PETG,,,,,Bambu Lab A1 mini 0.4 nozzle
 Bambu Lab H2S 0.4,máy,machine\Bambu Lab H2S 0.4.json,,,H2S,,trong,,,BAMBU-PLA;BAMBU-PETG,,,,,Bambu Lab H2S 0.4 nozzle
 Bambu Lab P1S 0.4,máy,machine\Bambu Lab P1S 0.4.json,,,P1S,,trong,,,BAMBU-PETG,,,,,Bambu Lab P1S 0.4 nozzle
-Voron 2.4 300 0.4,máy,machine\Voron 2.4 300 0.4.json,,,V24,,trong,,,BAMBU-PLA;BAMBU-PETG;TIN-PETGECO,,,,,Voron 2.4 300 0.4 nozzle
-Voron Trident 250 0.4,máy,machine\Voron Trident 250 0.4.json,,,TRI,,trong,,,BAMBU-PLA;BAMBU-PETG;TIN-PETGECO,,,,,Voron Trident 250 0.4 nozzle
+Voron 2.4 300 0.4,máy,machine\Voron 2.4 300 0.4.json,,,V24,,trong,,,BAMBU-PETG;TIN-PETGECO,,,,,Voron 2.4 300 0.4 nozzle
+Voron Trident 250 0.4,máy,machine\Voron Trident 250 0.4.json,,,TRI,,trong,,,BAMBU-PETG;TIN-PETGECO,,,,,Voron Trident 250 0.4 nozzle
 2.4 - SUNLU ABS (XY 99.57),vật_liệu,filament\2.4 - SUNLU ABS (XY 99.57).json,SUNLU,ABS,V24,,ngoài,hãng SUNLU,,,99.57,0.965,22,0.0256,PolyLite ABS @System
 2.4 - Tinmorry ABS Pro,vật_liệu,filament\2.4 - Tinmorry ABS Pro.json,Tinmorry,ABS,V24,TIN-ABSPRO,trong,,2.4 - Tinmorry ABS Pro (XY 99.39),,,0.965,22,0.0256,PolyLite ABS @System
 2.4 - Tinmorry ABS Pro (XY 99.39),vật_liệu,filament\2.4 - Tinmorry ABS Pro (XY 99.39).json,Tinmorry,ABS,V24,TIN-ABSPRO,trong,,2.4 - Tinmorry ABS Pro,,99.39,0.965,22,0.0256,PolyLite ABS @System

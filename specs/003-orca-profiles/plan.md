@@ -8,7 +8,7 @@
 
 Hồ sơ mới được sinh bằng script từ ba bảng CSV (máy, quy trình, vật liệu) trên nền bản sao hồ sơ
 cũ, chỉ tạo file mới mang tiền tố "DHH". Chạy pilot PLA trên 6 máy trước để thử tiêu chí 0,1 mm,
-đạt rồi mới dựng đủ 22 hồ sơ vật liệu; cặp lệch thì bù riêng và in lại cho tới khi đạt.
+đạt rồi mới dựng đủ 20 hồ sơ vật liệu; cặp lệch thì bù riêng và in lại cho tới khi đạt.
 
 ## Technical Context
 
@@ -25,7 +25,7 @@ và `calibration\results.csv` là kết quả đo.
 **Constraints**: không sửa, không xóa hồ sơ cũ; cài chỉ khi Orca đóng; dung sai X/Y ±0,1 mm trên
 100 mm, Z ±0,1 mm trên 20 mm, lỗ Ø8 ±0,15 mm, áp cho cả ABS.
 
-**Scale/Scope**: 6 hồ sơ máy, 6 quy trình, 22 vật liệu; 28 task.
+**Scale/Scope**: 6 hồ sơ máy, 6 quy trình, 20 vật liệu; 28 task.
 
 **Chưa kiểm (giải trong task)**: cấu trúc JSON hồ sơ người dùng của Orca 2.5.2 (T005); đồng bộ
 cloud có ghi đè hồ sơ cục bộ không (T001, T014); Orca CLI (T011); nhập Preset Bundle khi Orca

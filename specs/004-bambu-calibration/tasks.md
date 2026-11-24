@@ -12,6 +12,8 @@ nóng hoặc in do người dùng khởi động trên máy hoặc từ Orca.
 
 **Pilot trước**: chạy Buổi C (PLA) rồi mới D1, D2, E. Pilot chưa đạt thì dừng để khỏi tốn nhựa.
 
+**Lịch (người dùng chốt 2026-11-24)**: hôm trước = Buổi A1, A2, B2, G1, G2 (nạp bo V2.4 trước mọi phép đo trên V2.4); ngày 1 = B1 và C (C chỉ gồm PLA trên 4 máy Bambu); ngày 2 = D1, D2 (hai loại PETG trên 6 máy); ngày 3 = E, F. Phạm vi nhựa: PLA chỉ 4 máy Bambu; PETG cả 6 máy; ABS trên hai Voron, H2S, P1S.
+
 ## Phase 1: Setup
 
 - [ ] T001 [P] Tra web: ghi chú phát hành firmware chính thức và lịch bảo trì chính thức cho H2S, P1S, A1, A1 Mini (wiki.bambulab.com từng trả 402; thử mục support và release notes của bambulab.com); tìm thay đổi liên quan kết nối OrcaSlicer và plugin mạng. Trang nào bị chặn thì trưởng phòng nhờ người dùng mở và dán nội dung ở Buổi A2 — KC: mỗi kết luận kèm URL chính thức và ngày; trang bị chặn ghi "bị chặn", nguồn bên thứ ba phải ghi rõ là bên thứ ba (vai: explorer; gọi `model: sonnet`, không đọc file trên máy trong cùng lượt)
@@ -37,7 +39,7 @@ nóng hoặc in do người dùng khởi động trên máy hoặc từ Orca.
 - [ ] T010 [P] [US2] Viết `calibration\guides\bambu_<nhựa>.md` cho 4 nhựa (H2S ghi theo đường AMS dùng hằng ngày; ABS chỉ H2S và P1S, buồng đóng, thông gió): lưu lượng thể tích tối đa, PA/K, flow theo thứ tự hiệu chuẩn của Orca (nhiệt dùng mặc định, ghi `mặc_định`), điền `calibration\entry\cal\<ngày>_<máy>_<nhựa>.csv` kèm cuộn và điều kiện sấy; lưu ý bù K chỉ ở một nơi — KC: người chưa biết dự án làm theo được; T024 rà trước Buổi C (vai: software-engineer)
 - [ ] T024 [US2] (trước T011) Rà `calibration\guides\bambu_*.md`: làm theo được, không bước nào đòi văn phòng gửi lệnh tới máy, phần an toàn ABS đủ — KC: báo cáo ba mức, không còn Nghiêm trọng hay Quan trọng (vai: checker)
 - [ ] T011 [US2] [Buổi C, nửa 1] Pilot Bambu PLA trắng trên H2S (qua AMS), P1S, A1, A1 Mini: chạy hiệu chuẩn theo thẻ, kèm thử A/B cho K (một mẫu với hiệu chuẩn động lực dòng chảy tự động của máy bật, một mẫu tắt, cùng nhựa, cùng hồ sơ) theo đề xuất T002; điền entry; sau đó trưởng phòng chạy 003:T028 rồi mới in mẫu chuẩn (003:T015) — KC: 4 entry BAMBU-PLA, mỗi tham số là số đo hoặc `chưa_đo` (vai: người dùng)
-- [ ] T012 [US2] [Buổi D1, nửa 1] Bambu PETG trắng trên 4 máy Bambu (chỉ sau khi pilot đạt) — KC: 4 entry BAMBU-PETG (vai: người dùng)
+- [ ] T012 [US2] [Buổi D1, nửa 1] Bambu PETG Basic trắng trên 4 máy Bambu (chỉ sau khi pilot đạt) — KC: 4 entry BAMBU-PETG (vai: người dùng)
 - [ ] T013 [US2] [Buổi D2, nửa 1] Tinmorry PETG-ECO trắng trên 4 máy Bambu — KC: 4 entry TIN-PETGECO (vai: người dùng)
 - [ ] T014 [US2] Giữa hai nửa của mỗi buổi C, D1, D2, E (trong cùng lượt với 002:T018 và 003:T028): chạy `scripts\calibration\ingest.ps1` (của 002:T002) để cập nhật `calibration\bambu.csv`; số kế thừa (co ngót XY) lấy từ `profiles\old_inventory.csv` và ghi `kế_thừa` — KC: dòng `đo` tăng đúng số entry nhận; dòng `kế_thừa` có nguồn (vai: trưởng phòng)
 - [ ] T015 [US2] Kiểm `calibration\bambu.csv`: đủ 14 cặp (PLA 4, Bambu PETG 4, Tinmorry PETG-ECO 4, ABS Pro 2: H2S và P1S), mỗi cặp có số đo hoặc `chưa_đo`; thử `ingest.ps1` với entry thiếu nguồn phải bị từ chối (SC-002) — KC: `fleet\verify_004_calib.md` kèm đầu ra lệnh (vai: test-engineer)

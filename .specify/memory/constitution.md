@@ -2,6 +2,7 @@
 Sync Impact Report (xóa trước khi commit)
 - Phiên bản: mẫu → 1.0.0 (bản đầu, người dùng trả lời từng nguyên tắc ngày 2026-11-24)
   → 1.0.1 (PATCH, cùng ngày: nguyên tắc III nêu rõ cho phép riêng gói pushall, người dùng đồng ý)
+  → 1.0.2 (PATCH, cùng ngày: phạm vi nhựa theo máy và dòng Bambu PETG Basic, người dùng quyết)
 - Nguyên tắc: 6 nguyên tắc mới (mẫu có 5 chỗ, thêm 1)
 - Mục thêm: Ràng buộc kỹ thuật, Quy trình làm việc
 - Mục bỏ: không
@@ -65,9 +66,10 @@ nối qua plugin mạng Bambu trong Orca, vẫn dùng cloud. Hồ sơ PHẢI lư
 
 ## Ràng buộc kỹ thuật
 
-- Vật liệu trong phạm vi: PLA / PLA+, PETG, ABS / ASA. Hãng chính: Bambu PLA, Bambu PETG,
+- Vật liệu trong phạm vi: PLA / PLA+, PETG, ABS / ASA. Hãng chính: Bambu PLA, Bambu PETG Basic,
   Tinmorry PETG-ECO, Tinmorry ABS Pro; màu trắng là chủ yếu. Hãng khác thêm sau theo cùng quy
-  trình. ABS / ASA chỉ in trên máy có buồng kín (hai Voron, H2S, P1S).
+  trình. ABS / ASA chỉ in trên máy có buồng kín (hai Voron, H2S, P1S). PLA chỉ hiệu chuẩn trên 4 máy
+  Bambu (hai Voron không in PLA trong đợt này); PETG hiệu chuẩn trên cả 6 máy.
 - Voron: giá trị người dùng chỉnh nằm trong `overrides.cfg`; không dùng SAVE_CONFIG cho thông
   số đã đặt ở đó (PID, shaper).
 - Bí mật (mã truy cập Bambu, tài khoản cloud) không ghi vào spec, sổ ghi hay bộ nhớ; chỉ nằm
@@ -89,4 +91,4 @@ hiến chương cần người dùng đồng ý, ghi một dòng vào sổ ghi, 
 hoặc định nghĩa lại nguyên tắc: MAJOR; thêm nguyên tắc hoặc mục: MINOR; sửa câu chữ: PATCH).
 `checker` đối chiếu kế hoạch với hiến chương khi phản biện.
 
-**Version**: 1.0.1 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24
+**Version**: 1.0.2 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24

@@ -189,6 +189,8 @@ function Remove-BambuSecrets {
             } else { $n.PSObject.Properties | ForEach-Object { [pscustomobject]@{ Name = $_.Name; Value = $_.Value } } }
             foreach ($p in $pairs) {
                 $hit = $p.Name -match $script:BambuDropKeyRegex
+                # bare "id" of AMS / tray / nozzle is a slot number: keep when the value is a small number
+                if ($hit -and $p.Name -ieq 'id' -and ([string]$p.Value) -match '^\d{1,3}$') { $hit = $false }
                 foreach ($s in $sec) { if ($p.Name.IndexOf($s, [StringComparison]::OrdinalIgnoreCase) -ge 0) { $hit = $true } }
                 if ($hit) { $Stats.Rule++; continue }
                 $out[$p.Name] = Scrub $p.Value

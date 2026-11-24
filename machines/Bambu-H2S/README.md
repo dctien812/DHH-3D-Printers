@@ -1,33 +1,72 @@
 # Bambu H2S
 
-Mã máy trong dự án: `H2S`. Địa chỉ trong LAN ngày 2026-11-24: 192.0.2.61.
+[Về trang chính](../../README.md) · [Phiếu cần điền](../../docs/phieu.html) · [Các máy khác](../)
+
+## Tóm tắt
+
+| Mục | Giá trị |
+|---|---|
+| Mã máy trong dự án | `H2S` |
+| Loại | Bambu Lab H2S, buồng kín, có AMS |
+| Nhựa trong phạm vi | Bambu PLA, Bambu PETG Basic, Tinmorry PETG-ECO, Tinmorry ABS Pro |
+| Số hồ sơ vật liệu | 4 |
+| Đặc tả liên quan | [004 bambu-calibration](../../specs/004-bambu-calibration/tasks.md), [003 orca-profiles](../../specs/003-orca-profiles/tasks.md) |
+| Hồ sơ OrcaSlicer | `DHH H2S 0.4` (chưa nạp vào Orca) |
+| Trạng thái | Chưa có thay đổi nào lên máy. Chưa đọc được bên trong máy (cần mã truy cập). |
 
 ## Đã biết
 
-- Firmware 01.03.00.00 (bản mới nhất theo trang của hãng)
-- Chế độ cloud, đã gắn tài khoản
-- Có AMS
-- Buồng kín: in được ABS / ASA
+Nguồn: gói quảng bá của máy trên mạng nội bộ ngày 2026-11-24 ([fleet/precheck/2026-11-24/SUMMARY.md](../../fleet/precheck/2026-11-24/SUMMARY.md)); firmware mới nhất theo wiki của hãng, đọc cùng ngày ([specs/004-bambu-calibration/research.md](../../specs/004-bambu-calibration/research.md)).
 
-Nguồn: gói quảng bá của máy trên LAN ngày 2026-11-24. Bên trong máy (lỗi treo, đầu phun, giờ in) chưa đọc được.
+| Mục | Giá trị |
+|---|---|
+| Firmware | 01.03.00.00 (bản mới nhất theo trang của hãng) |
+| Kết nối | Chế độ cloud, đã gắn tài khoản |
+| AMS | Có |
+| Buồng | Kín: in được ABS / ASA |
+
+Chưa đọc được: lỗi treo, đầu phun, giờ in, bảo trì đã làm. Cần mã truy cập hoặc ảnh chụp màn hình máy.
+
+## Việc sẽ làm trên máy này
+
+Văn phòng chỉ đọc máy Bambu, không gửi lệnh điều khiển; mọi lần in và hiệu chuẩn trên máy do chủ dự án bấm. Máy giữ cloud và firmware gốc, không tự nâng firmware.
+
+| Khi nào | Việc | Đặc tả |
+|---|---|---|
+| Hôm trước | Bảo trì tay theo bảng, chạy hiệu chuẩn có sẵn của hãng, ghi lại trạng thái | 004 |
+| Ngày 1 | In thử Bambu PLA, đo bằng thước cặp | 004, 003 |
+| Ngày 2 | Bambu PETG Basic và Tinmorry PETG-ECO | 004, 003 |
+| Ngày 3 | Tinmorry ABS Pro (buồng đóng, thông gió), in bù nếu lệch, thử lắp chéo | 003 |
+| Khi có bản mới | Tra ghi chú phát hành, trình chủ dự án quyết nâng hay giữ | 004 |
+
+Hệ số K do máy tự quản lý; hồ sơ DHH của máy Bambu không đặt `pressure_advance` để tránh bù hai lần.
+
+## Thẻ hướng dẫn liên quan
+
+- [bambu_BAMBU-PLA.md](../../calibration/guides/bambu_BAMBU-PLA.md)
+- [bambu_BAMBU-PETG.md](../../calibration/guides/bambu_BAMBU-PETG.md)
+- [bambu_TIN-PETGECO.md](../../calibration/guides/bambu_TIN-PETGECO.md)
+- [bambu_TIN-ABSPRO.md](../../calibration/guides/bambu_TIN-ABSPRO.md)
+- [MAINTENANCE.md](../../calibration/bambu/MAINTENANCE.md): bảng bảo trì Bambu
+- [RUN-DAY.md](../../calibration/guides/RUN-DAY.md): lịch ngày làm (bản cũ, đang sửa)
+
+Các thẻ đang được rà, nội dung có thể đổi.
 
 ## Cần điền
 
-Mục in đậm là cần trước ngày làm. **Không ghi mã truy cập, serial hay mật khẩu vào đây.**
+Điền ở nhóm của máy này trong phiếu [docs/phieu.html](../../docs/phieu.html) (xem [PHIEU-DIEN.md](../../PHIEU-DIEN.md)). Gồm: lỗi / HMS đang treo trên màn hình (ghi mã, hoặc "không có"), đầu phun đang lắp (cỡ, loại), tấm in, tổng giờ in nếu máy hiển thị, lần bảo trì gần nhất, loại AMS (AMS 2 Pro / AMS HT), mấy bộ, có nạp ABS qua AMS không.
 
-| # | Mục | Trả lời |
-|---|---|---|
-| 1 | **Lỗi / HMS đang treo trên màn hình (ghi mã, hoặc "không có")** | |
-| 2 | **Đầu phun đang lắp: cỡ, loại (thép không gỉ / thép tôi / high flow)** | |
-| 3 | Tấm in đang dùng (PEI nhám / trơn / khác) | |
-| 4 | Tổng giờ in (nếu máy hiển thị) | |
-| 5 | Lần bảo trì gần nhất (tra dầu, tra mỡ, vệ sinh) | |
-| 6 | Loại AMS (AMS 2 Pro / AMS HT), mấy bộ; có nạp ABS qua AMS không | |
+> [!NOTE]
+> Link web của phiếu cần bật GitHub Pages cho repo, hiện **chưa bật**. Cách mở: tải file `docs/phieu.html` về máy tính rồi nháy đúp.
+
+> [!WARNING]
+> Không ghi mã truy cập, serial hay mật khẩu vào phiếu hay vào repo.
 
 ## Dữ liệu của máy này
 
-- Thẻ hiệu chuẩn: [calibration/guides/](../../calibration/guides/) (các file `bambu_*.md`)
-- Bảo trì: [calibration/bambu/MAINTENANCE.md](../../calibration/bambu/MAINTENANCE.md)
-- Việc phải làm: [specs/004-bambu-calibration/tasks.md](../../specs/004-bambu-calibration/tasks.md)
-- Hồ sơ OrcaSlicer: tên bắt đầu bằng `DHH` và kết thúc bằng tên máy, nguồn ở [profiles/src/](../../profiles/src/)
-- Số hiệu chuẩn và số đo mẫu: [calibration/](../../calibration/) (các dòng có mã `H2S`)
+| Dữ liệu | Nơi để |
+|---|---|
+| Bảo trì | [calibration/bambu/MAINTENANCE.md](../../calibration/bambu/MAINTENANCE.md) |
+| Hồ sơ OrcaSlicer | tên bắt đầu bằng `DHH`; nguồn ở [profiles/src/](../../profiles/src/) |
+| Số hiệu chuẩn và số đo mẫu | [calibration/](../../calibration/) (các dòng có mã `H2S`) |
+| Bí mật của máy | Chỉ nằm trong `secrets/` trên máy tính, không có trong repo |
