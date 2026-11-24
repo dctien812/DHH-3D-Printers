@@ -49,12 +49,12 @@ Số task đếm bằng lệnh trên `specs/*/tasks.md` (dòng `- [x]` và `- [ 
 | Đặc tả | Nội dung | Task xong / tổng |
 |---|---|---|
 | [001 fleet-baseline](specs/001-fleet-baseline/spec.md) | Kiểm kê và đường cơ sở 6 máy | 3 / 18 |
-| [002 voron-tuning](specs/002-voron-tuning/spec.md) | Cân đai, shaper, hiệu chuẩn nhựa, gỡ lệch chuẩn hai Voron | 3 / 37 |
+| [002 voron-tuning](specs/002-voron-tuning/spec.md) | Cân đai, shaper, hiệu chuẩn nhựa, gỡ lệch chuẩn hai Voron | 8 / 37 |
 | [003 orca-profiles](specs/003-orca-profiles/spec.md) | Bộ hồ sơ OrcaSlicer chung, mẫu chuẩn, bảng kết quả đo | 7 / 28 |
-| [004 bambu-calibration](specs/004-bambu-calibration/spec.md) | Bảo trì và hiệu chuẩn 4 máy Bambu | 0 / 24 |
-| **Tổng** | | **13 / 107** |
+| [004 bambu-calibration](specs/004-bambu-calibration/spec.md) | Bảo trì và hiệu chuẩn 4 máy Bambu | 3 / 24 |
+| **Tổng** | | **21 / 107** |
 
-Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. Phần lớn script đã viết nhưng chưa tính là task xong vì còn đang rà (xem [Các script chính](#các-script-chính)). Task `[x]` gồm task đã kiểm độc lập và hai task chỉ ghi quyết định (002:T014, T024).
+Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. Các script và thẻ hướng dẫn đã viết và qua rà; phần còn lại gần như đều cần máy in hoặc cần chủ dự án (xem [Các script chính](#các-script-chính)). Task `[x]` gồm task đã kiểm độc lập và hai task chỉ ghi quyết định (002:T014, T024).
 
 <details>
 <summary>Đã xong, đang dở, chưa làm (ngày 2026-11-24)</summary>
@@ -63,14 +63,14 @@ Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. P
 
 - Hiến chương v1.0.2, 4 bộ spec/plan/tasks, phản biện 2 lượt, chủ dự án duyệt.
 - 001: cây thư mục, thư viện `Fleet.psm1`, sao lưu hồ sơ Orca (66 file, 0 lệch băm); kiểm độc lập đạt 5/5 ([fleet/verify_001_foundation.md](fleet/verify_001_foundation.md)).
-- 002: `apply-config.ps1` thử với Moonraker giả, 36/36 ca đạt ([fleet/verify_002_apply.md](fleet/verify_002_apply.md)).
+- 002: `apply-config.ps1` thử với Moonraker giả, 38/38 ca đạt ([fleet/verify_002_apply.md](fleet/verify_002_apply.md)).
 - 003: bộ sinh hồ sơ, 3 mẫu STL, `aggregate.ps1` đạt kiểm độc lập ([fleet/verify_003_build.md](fleet/verify_003_build.md), [fleet/verify_003_backup.md](fleet/verify_003_backup.md)).
 - Kiểm tra chỉ đọc cả 6 máy: [fleet/precheck/2026-11-24/SUMMARY.md](fleet/precheck/2026-11-24/SUMMARY.md).
 
 **Đang dở**
 
-- Rà lại và sửa: `apply-config.ps1` (thêm ca thử), `measure.ps1` và `ingest.ps1` (chờ rà lại lượt 2), các thẻ hướng dẫn (vòng sửa lượt 2).
-- Cập nhật spec, tasks, bảng nguồn hồ sơ và thẻ theo phạm vi nhựa mới (đã cập nhật theo 20 hồ sơ).
+- Không còn script hay thẻ nào đang ở vòng sửa. `apply-config.ps1`, `measure.ps1`, `ingest.ps1` và bộ thẻ hướng dẫn đã qua rà; chưa cái nào chạy với máy thật.
+- Spec, tasks, bảng nguồn hồ sơ và thẻ đã theo phạm vi nhựa mới (20 hồ sơ).
 
 **Chưa làm**
 
@@ -185,7 +185,7 @@ Thẻ hướng dẫn từng nhựa, theo máy:
 | Tinmorry PETG-ECO | [voron_TIN-PETGECO.md](calibration/guides/voron_TIN-PETGECO.md) | [bambu_TIN-PETGECO.md](calibration/guides/bambu_TIN-PETGECO.md) |
 | Tinmorry ABS Pro | [voron_TIN-ABSPRO.md](calibration/guides/voron_TIN-ABSPRO.md) | [bambu_TIN-ABSPRO.md](calibration/guides/bambu_TIN-ABSPRO.md) |
 
-Bảo trì máy Bambu theo bảng: [calibration/bambu/MAINTENANCE.md](calibration/bambu/MAINTENANCE.md). Thẻ chung cho nửa 2 của mỗi buổi (in và đo mẫu chuẩn): [NUA-2_mau-chuan.md](calibration/guides/NUA-2_mau-chuan.md). Lịch chi tiết: [RUN-DAY.md](calibration/guides/RUN-DAY.md). Các thẻ đang ở vòng sửa lượt 2, nội dung có thể đổi.
+Bảo trì máy Bambu theo bảng: [calibration/bambu/MAINTENANCE.md](calibration/bambu/MAINTENANCE.md). Thẻ chung cho nửa 2 của mỗi buổi (in và đo mẫu chuẩn): [NUA-2_mau-chuan.md](calibration/guides/NUA-2_mau-chuan.md). Lịch chi tiết: [RUN-DAY.md](calibration/guides/RUN-DAY.md). Các thẻ đã qua hai lượt rà; mọi bước trong Orca và trên máy Bambu vẫn chưa thử trên máy thật.
 
 ## Bản đồ thư mục
 
@@ -241,9 +241,9 @@ Chạy bằng Windows PowerShell 5.1 từ thư mục gốc repo. Cột "Chạm m
 | `scripts/fleet/inventory.ps1` | Kiểm kê 6 máy ra CSV và Markdown | Chỉ đọc | Chạy offline ra CSV 6 dòng; qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
 | `scripts/fleet/snapshot-voron.ps1` | Chụp cấu hình hai Voron kèm băm | Chỉ đọc | Qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
 | `scripts/fleet/bambu-read.ps1` | Đọc trạng thái Bambu qua MQTT; chỉ gửi "pushall" khi có công tắc `-AllowPushAll` | Đọc; tối đa một gói pushall | Qua phép thử logic và rà bảo mật lượt 2 (kết luận dùng được với mã thật, chạy từng máy ở lần đầu); **chưa dùng mã thật, chưa chạy với máy thật** |
-| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 36/36 ca với Moonraker giả; **chưa chạy với máy thật** |
-| `scripts/voron/measure.ps1` | Đo cộng hưởng lặp lại được, chỉ lệnh trong danh sách cho phép | Chuyển động, không đùn nhựa, không gia nhiệt | Đã sửa lượt 2, chờ rà lại; **chưa chạy với máy thật** |
-| `scripts/calibration/ingest.ps1` | Gộp phiếu `cal` vào `calibration/voron.csv` và `bambu.csv` | Không | Thử trên dữ liệu mẫu; đã sửa lượt 2, chờ rà lại |
+| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 38/38 ca với Moonraker giả, đã qua rà; **chưa chạy với máy thật** |
+| `scripts/voron/measure.ps1` | Đo cộng hưởng lặp lại được, chỉ lệnh trong danh sách cho phép | Chuyển động, không đùn nhựa, không gia nhiệt | Đã qua rà (4 lượt), phép thử cục bộ 11/11; **chưa chạy với máy thật** |
+| `scripts/calibration/ingest.ps1` | Gộp phiếu `cal` vào `calibration/voron.csv` và `bambu.csv` | Không | Thử trên dữ liệu mẫu, đã qua rà |
 | `scripts/calibration/aggregate.ps1` | Gộp số đo mẫu, báo cặp ngoài dung sai, gợi ý hệ số bù | Không | Đạt 5/5 ca; chưa có số đo thật |
 | `scripts/orca/build-profiles.ps1` | Sinh bộ hồ sơ `DHH` từ bảng nguồn | Không | Đạt: pilot 16 file, đủ 32 file, 0 lệch; `-Install` mới thử trên bản sao, **chưa cài vào Orca thật**; có 3 gói zip để nhập, Orca chưa thử nhận |
 | `scripts/orca/inventory-old.ps1` | Kiểm kê hồ sơ Orca cũ ra `profiles/old_inventory.csv` | Không | Đã chạy: 6 máy, 25 vật liệu, 1 quy trình |
