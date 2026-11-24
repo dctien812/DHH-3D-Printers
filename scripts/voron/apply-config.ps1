@@ -108,9 +108,10 @@ function Assert-Idle([string]$When) {
         if (-not ($Restore -and $info.state -in 'error', 'shutdown')) { throw "[$When] klippy state is '$($info.state)', not ready - refusing, nothing written" }
     }
     $st = $null; $ps = $null
-    try { $st = (Get-Mr '/printer/objects/query?print_stats=state&configfile=save_config_pending&extruder=target&heater_bed=target&idle_timeout=state').result.status; $ps = $st.print_stats.state }
+    try { $st = (Get-Mr '/printer/objects/query?print_stats=state&configfile=save_config_pending&extruder=target&heater_bed=target&idle_timeout=state').result.status; $ps = Get-Field (Get-Field $st 'print_stats') 'state' }
     catch { if ($ready) { throw } }       # no print_stats while klippy is down
     if ($ps -in 'printing', 'paused') { throw "[$When] print_stats.state is '$ps' - refusing, nothing written" }
+    if ($ready -and $null -eq $ps) { throw "[$When] reply has no print_stats.state - refusing, nothing written" }
     if ($ready -and $ps -notin 'standby', 'complete', 'cancelled', 'error') { throw "[$When] print_stats.state is '$ps' (unknown) - refusing, nothing written" }
     if ($ready) { Assert-NoSideEffects $When $st }
 }
@@ -121,10 +122,21 @@ function Get-Field($Obj, [string]$Name) {
 
 function Assert-NoSideEffects([string]$When, $s) {
     # klippy is ready here. Restart drops a pending save-config and switches heaters off.
-    if ((Get-Field (Get-Field $s 'configfile') 'save_config_pending') -eq $true -and -not $DiscardPendingSaveConfig) {
+    $sc = Get-Field (Get-Field $s 'configfile') 'save_config_pending'
+    if ($null -eq $sc) { throw "[$When] reply has no configfile.save_config_pending - cannot tell if a save-config change is pending, refusing, nothing written" }
+    if ($sc -eq $true -and -not $DiscardPendingSaveConfig) {
         throw "[$When] a save-config change is pending; a restart will lose it - nothing written. Use -DiscardPendingSaveConfig to accept"
     }
-    if (-not $Restore) {
+    # -Restore skips the heater gate on purpose: a rollback must work even while the machine is heating.
+    foreach ($o in 'extruder', 'heater_bed', 'idle_timeout') {
+        if ($null -eq (Get-Field $s $o)) { 'WARN: reply has no ' + $o + ' - that check was skipped' }
+    }
+    if ($Restore) {
+        foreach ($h in 'extruder', 'heater_bed') {
+            $t = Get-Field (Get-Field $s $h) 'target'
+            if ($null -ne $t -and [double]$t -gt 0) { 'WARN: -Restore while ' + $h + ' target is ' + $t + ' - the restart will switch the heater off' }
+        }
+    } else {
         foreach ($h in 'extruder', 'heater_bed') {
             $t = Get-Field (Get-Field $s $h) 'target'
             if ($null -ne $t -and [double]$t -gt 0) { throw "[$When] $h target is $t - the machine is being heated, refusing, nothing written" }
@@ -227,14 +239,14 @@ try {
     Invoke-MrUpload $bkStage $bkRemoteDir $oldSha | Out-Null
     $chk = Join-Path $script:Stage 'chk\bk'
     if (-not (Get-RemoteFile $bkRemoteRel $chk) -or (Get-Sha $chk) -ne $oldSha) { throw "backup on machine failed verification: config/$bkRemoteRel" }
-    $script:Rollback = $rb
 
     # 4. write new file and verify
     $newStage = Join-Path $script:Stage "new\$leaf"
     Copy-Item -LiteralPath $LocalFile -Destination $newStage
     Assert-Idle 'step 4'
     $recheck = Join-Path $script:Stage 'chk\recheck'
-    if (-not (Get-RemoteFile $RemotePath $recheck) -or (Get-Sha $recheck) -ne $oldSha) { throw "file on machine changed since the hash gate (edited elsewhere?) - new file not written; backup kept at config/$bkRemoteRel" }
+    if (-not (Get-RemoteFile $RemotePath $recheck) -or (Get-Sha $recheck) -ne $oldSha) { throw "file on machine changed since the hash gate (edited elsewhere?) - target file not written; backup at config/$bkRemoteRel and local $bkLocal can be deleted" }
+    $script:Rollback = $rb      # from here the target file may change
     Invoke-MrUpload $newStage $remoteDir $newSha | Out-Null
     $chk2 = Join-Path $script:Stage 'chk\new'
     if (-not (Get-RemoteFile $RemotePath $chk2) -or (Get-Sha $chk2) -ne $newSha) { throw "file on machine does not match the new content after upload" }

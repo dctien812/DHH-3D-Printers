@@ -63,7 +63,7 @@ Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. P
 
 - Hiến chương v1.0.2, 4 bộ spec/plan/tasks, phản biện 2 lượt, chủ dự án duyệt.
 - 001: cây thư mục, thư viện `Fleet.psm1`, sao lưu hồ sơ Orca (66 file, 0 lệch băm); kiểm độc lập đạt 5/5 ([fleet/verify_001_foundation.md](fleet/verify_001_foundation.md)).
-- 002: `apply-config.ps1` thử với Moonraker giả, 17/17 ca đạt ([fleet/verify_002_apply.md](fleet/verify_002_apply.md)).
+- 002: `apply-config.ps1` thử với Moonraker giả, 36/36 ca đạt ([fleet/verify_002_apply.md](fleet/verify_002_apply.md)).
 - 003: bộ sinh hồ sơ, 3 mẫu STL, `aggregate.ps1` đạt kiểm độc lập ([fleet/verify_003_build.md](fleet/verify_003_build.md), [fleet/verify_003_backup.md](fleet/verify_003_backup.md)).
 - Kiểm tra chỉ đọc cả 6 máy: [fleet/precheck/2026-11-24/SUMMARY.md](fleet/precheck/2026-11-24/SUMMARY.md).
 
@@ -241,7 +241,7 @@ Chạy bằng Windows PowerShell 5.1 từ thư mục gốc repo. Cột "Chạm m
 | `scripts/fleet/inventory.ps1` | Kiểm kê 6 máy ra CSV và Markdown | Chỉ đọc | Chạy offline ra CSV 6 dòng; qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
 | `scripts/fleet/snapshot-voron.ps1` | Chụp cấu hình hai Voron kèm băm | Chỉ đọc | Qua rà bảo mật lượt 2, dùng được với máy thật; **chưa chạy với máy thật** |
 | `scripts/fleet/bambu-read.ps1` | Đọc trạng thái Bambu qua MQTT; chỉ gửi "pushall" khi có công tắc `-AllowPushAll` | Đọc; tối đa một gói pushall | Qua phép thử logic và rà bảo mật lượt 2 (kết luận dùng được với mã thật, chạy từng máy ở lần đầu); **chưa dùng mã thật, chưa chạy với máy thật** |
-| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 17/17 ca với Moonraker giả; đang thêm ca thử cho phần sửa mới; **chưa chạy với máy thật** |
+| `scripts/voron/apply-config.ps1` | Cổng duy nhất để ghi cấu hình lên Voron (kiểm máy rảnh, so băm, sao lưu, ghi, khởi động lại) | **Ghi** (cấu hình) | 36/36 ca với Moonraker giả; **chưa chạy với máy thật** |
 | `scripts/voron/measure.ps1` | Đo cộng hưởng lặp lại được, chỉ lệnh trong danh sách cho phép | Chuyển động, không đùn nhựa, không gia nhiệt | Đã sửa lượt 2, chờ rà lại; **chưa chạy với máy thật** |
 | `scripts/calibration/ingest.ps1` | Gộp phiếu `cal` vào `calibration/voron.csv` và `bambu.csv` | Không | Thử trên dữ liệu mẫu; đã sửa lượt 2, chờ rà lại |
 | `scripts/calibration/aggregate.ps1` | Gộp số đo mẫu, báo cặp ngoài dung sai, gợi ý hệ số bù | Không | Đạt 5/5 ca; chưa có số đo thật |
@@ -268,7 +268,7 @@ Tất cả do chủ dự án quyết ngày 2026-11-24 (sổ ghi: [.office/ledger
 | Quyết định | Mã sổ ghi |
 |---|---|
 | Thứ tự ưu tiên Tin cậy, Đồng bộ, Chất lượng, Tốc độ; Bambu giữ cloud; OrcaSlicer cho cả 6 máy | K1 |
-| Duyệt kế hoạch gồm hiến chương v1.0.1 và 4 đặc tả; "TTeccS A1 Mini" đúng là máy trong phạm vi | K6 |
+| Duyệt kế hoạch gồm hiến chương v1.0.1 và 4 đặc tả; xác nhận máy A1 Mini trong phạm vi | K6 |
 | Tiêu chí 0,1 mm trên 100 mm; Z 0,1 mm trên 20 mm; lỗ Ø8 0,15 mm; ABS chưa đạt thì in bù, không nới | K2, K4 |
 | Cho phép riêng gói pushall tới Bambu; hồ sơ mới có tiền tố "DHH" | K4 |
 | Không chuyển hai Voron sang Kalico; đưa V2.4 về Klipper chính (nạp lại MCU, có người ở cạnh máy) | 002-T024 |
