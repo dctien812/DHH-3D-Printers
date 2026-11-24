@@ -3,7 +3,7 @@
 Phiếu chính là trang [docs/phieu.html](docs/phieu.html): 83 câu, có ô chọn và ô ghi, chia theo từng máy, tự lưu trên trình duyệt, điền xong bấm "Gửi lên GitHub" hoặc "Chép câu trả lời".
 
 - Mở trên máy tính: nháy đúp file `docs\phieu.html` trong thư mục dự án.
-- Mở bằng link: cần bật GitHub Pages cho repo (Settings → Pages → nhánh main, thư mục /docs).
+- Mở bằng link: <https://dctien812.github.io/DHH-3D-Printers/phieu.html> (GitHub Pages đã bật ngày 2026-11-25).
 
 **Không ghi mã truy cập, serial hay mật khẩu của máy Bambu vào phiếu.**
 

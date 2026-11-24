@@ -70,7 +70,7 @@ Các thẻ đang được rà, nội dung có thể đổi.
 Điền ở nhóm của máy này trong phiếu [docs/phieu.html](../../docs/phieu.html) (xem [PHIEU-DIEN.md](../../PHIEU-DIEN.md)). Cần trước ngày làm: động cơ X/Y đang lắp thật và điện áp driver (24 V hay 48 V), đai X/Y (hãng, bề rộng, thời gian chạy), đầu nóng Rapido đời nào, đầu phun (hãng, vật liệu, thời gian dùng), tấm in cho từng nhựa, và cáp USB để nạp bo Octopus Max kèm việc có tới được nút BOOT không. Các mục còn lại: nguồn, ray trượt, kiểu đầu in, Orbiter 2.5, bàn nhiệt, buồng, lọc khí, đường nạp nhựa, hộp sấy, mod khác, lần bảo trì gần nhất.
 
 > [!NOTE]
-> Link web của phiếu cần bật GitHub Pages cho repo, hiện **chưa bật**. Cách mở: tải file `docs/phieu.html` về máy tính rồi nháy đúp.
+> Mở phiếu trên web: <https://dctien812.github.io/DHH-3D-Printers/phieu.html> (điền được trên điện thoại; câu trả lời lưu trên trình duyệt đang dùng).
 
 > [!WARNING]
 > Không ghi mã truy cập, serial hay mật khẩu vào phiếu hay vào repo.

@@ -57,7 +57,7 @@ Các thẻ đang được rà, nội dung có thể đổi.
 Điền ở nhóm của máy này trong phiếu [docs/phieu.html](../../docs/phieu.html) (xem [PHIEU-DIEN.md](../../PHIEU-DIEN.md)). Gồm: lỗi / HMS đang treo trên màn hình (ghi mã, hoặc "không có"), đầu phun đang lắp (cỡ, loại), tấm in, tổng giờ in nếu máy hiển thị, lần bảo trì gần nhất.
 
 > [!NOTE]
-> Link web của phiếu cần bật GitHub Pages cho repo, hiện **chưa bật**. Cách mở: tải file `docs/phieu.html` về máy tính rồi nháy đúp.
+> Mở phiếu trên web: <https://dctien812.github.io/DHH-3D-Printers/phieu.html> (điền được trên điện thoại; câu trả lời lưu trên trình duyệt đang dùng).
 
 > [!WARNING]
 > Không ghi mã truy cập, serial hay mật khẩu vào phiếu hay vào repo.

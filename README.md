@@ -90,7 +90,7 @@ Mỗi đặc tả có `spec.md`, `plan.md`, `tasks.md` trong cùng thư mục. C
 > Không ghi mã truy cập, số serial hay mật khẩu vào phiếu hoặc bất kỳ file nào trong repo.
 
 > [!NOTE]
-> Phiếu là trang web tĩnh, nằm ở `docs/phieu.html`. Mở trên máy tính bằng cách tải file về rồi nháy đúp. Link web cần bật GitHub Pages cho repo (Settings, Pages, nhánh main, thư mục /docs): **chưa bật**. Xem file trên GitHub chỉ thấy mã HTML.
+> Mở phiếu trên web: <https://dctien812.github.io/DHH-3D-Printers/phieu.html>. Trang phiếu là trang công khai nhưng không chứa thông tin riêng; câu trả lời chỉ lưu trên trình duyệt của người điền cho tới khi bấm gửi hoặc chép.
 
 ## Mục tiêu và tiêu chí nghiệm thu
 
