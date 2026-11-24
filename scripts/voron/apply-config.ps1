@@ -60,7 +60,7 @@ if ($BaseUrl) {
 # ---------------------------------------------------------------- inputs
 # allow-list: [dir/]*name.cfg|name.conf ; dir segments have no dots; nothing under backups/
 if ($RemotePath -notmatch '^([A-Za-z0-9_][A-Za-z0-9_-]*/)*[A-Za-z0-9_][A-Za-z0-9_.-]*\.(cfg|conf)$' -or $RemotePath -match '^backups(/|$)') {
-    throw "-RemotePath must be a relative .cfg or .conf file inside the config root (not under backups/): $RemotePath"
+    throw "-RemotePath must be a relative path to a .cfg or .conf file inside the config root (not under backups/): $RemotePath"
 }
 if ($RemotePath.Split('/')[-1] -ieq 'moonraker.conf' -and -not $AllowMoonrakerConf) {
     throw "writing moonraker.conf needs -AllowMoonrakerConf"
@@ -107,20 +107,20 @@ function Assert-Idle([string]$When) {
         # -Restore must work when the new file put klippy into error/shutdown
         if (-not ($Restore -and $info.state -in 'error', 'shutdown')) { throw "[$When] klippy state is '$($info.state)', not ready - refusing, nothing written" }
     }
-    try { $ps = (Get-Mr '/printer/objects/query?print_stats=state').result.status.print_stats.state }
-    catch { if ($ready) { throw }; $ps = $null }       # no print_stats while klippy is down
+    $st = $null; $ps = $null
+    try { $st = (Get-Mr '/printer/objects/query?print_stats=state&configfile=save_config_pending&extruder=target&heater_bed=target&idle_timeout=state').result.status; $ps = $st.print_stats.state }
+    catch { if ($ready) { throw } }       # no print_stats while klippy is down
     if ($ps -in 'printing', 'paused') { throw "[$When] print_stats.state is '$ps' - refusing, nothing written" }
     if ($ready -and $ps -notin 'standby', 'complete', 'cancelled', 'error') { throw "[$When] print_stats.state is '$ps' (unknown) - refusing, nothing written" }
-    if ($ready) { Assert-NoSideEffects $When }
+    if ($ready) { Assert-NoSideEffects $When $st }
 }
 
 function Get-Field($Obj, [string]$Name) {
     if ($null -ne $Obj -and $Obj.PSObject.Properties.Name -contains $Name) { $Obj.$Name } else { $null }
 }
 
-function Assert-NoSideEffects([string]$When) {
+function Assert-NoSideEffects([string]$When, $s) {
     # klippy is ready here. Restart drops a pending save-config and switches heaters off.
-    $s = (Get-Mr '/printer/objects/query?configfile=save_config_pending&extruder=target&heater_bed=target&idle_timeout=state').result.status
     if ((Get-Field (Get-Field $s 'configfile') 'save_config_pending') -eq $true -and -not $DiscardPendingSaveConfig) {
         throw "[$When] a save-config change is pending; a restart will lose it - nothing written. Use -DiscardPendingSaveConfig to accept"
     }
