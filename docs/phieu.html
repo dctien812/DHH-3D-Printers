@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phiếu thông tin dàn máy in 3D</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mu:#5b6570;--bd:#c5ccd3;--ac:#0b62d6;--actx:#fff;--ok:#1a7f37}
+@media (prefers-color-scheme:dark){:root{--bg:#14171a;--card:#1e2327;--tx:#e8ebee;--mu:#9aa5b0;--bd:#3a434b;--ac:#5aa2ff;--actx:#0b1220;--ok:#56d364}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:12px}
+h1{font-size:1.4rem;margin:8px 0}
+h2{font-size:1.15rem;margin:24px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--ac)}
+.intro{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px}
+.q{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;margin:10px 0}
+.q.done{border-left:4px solid var(--ok)}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend,.lb{font-weight:600;padding:0;margin-bottom:6px}
+.id{color:var(--ac);margin-right:6px}
+.hint{color:var(--mu);font-size:1rem;margin:0 0 6px}
+.opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;margin:6px 0;cursor:pointer}
+.opt input{width:24px;height:24px;flex:none}
+input[type=text],input[type=number],textarea{width:100%;min-height:48px;padding:8px 10px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px}
+.row{display:flex;align-items:center;gap:8px}
+.unit{color:var(--mu);white-space:nowrap}
+details{margin-top:8px}
+summary{min-height:44px;display:flex;align-items:center;color:var(--ac);cursor:pointer}
+button{min-height:48px;padding:8px 16px;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--ac);background:var(--card);color:var(--ac);cursor:pointer}
+button.main{background:var(--ac);color:var(--actx)}
+.bar{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;margin:24px 0}
+.cnt{font-weight:700;margin-bottom:8px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+#msg{min-height:1.5em;color:var(--ok)}
+#out{min-height:160px;font-family:ui-monospace,Consolas,monospace;font-size:16px}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<h1>Phiếu thông tin dàn máy in 3D</h1>
+<p class="intro">Phiếu này hỏi những thông tin còn thiếu về 6 máy in (Voron Trident 250, Voron 2.4 300, Bambu H2S, P1S, A1, A1 Mini) để hoàn thiện hồ sơ in và lịch hiệu chuẩn. Câu nào chưa biết thì chọn "Không rõ" hoặc bỏ trống; điền dần cũng được, câu trả lời được lưu ngay trên trình duyệt này. <strong>Không ghi mã truy cập, số serial hay mật khẩu của máy vào phiếu.</strong> Điền xong thì bấm "Gửi lên GitHub" hoặc "Chép câu trả lời" rồi dán vào chat.</p>
+<div id="form"></div>
+<div class="bar">
+<div class="cnt" id="cnt" aria-live="polite"></div>
+<div class="btns">
+<button type="button" class="main" id="bGh">Gửi lên GitHub</button>
+<button type="button" id="bCopy">Chép câu trả lời</button>
+<button type="button" id="bDl">Tải file .txt</button>
+<button type="button" id="bClr">Xóa hết</button>
+</div>
+<div id="msg" role="status"></div>
+<label class="lb" for="out">Văn bản câu trả lời (nếu nút chép không chạy, bôi đen rồi chép tay)</label>
+<textarea id="out" readonly></textarea>
+</div>
+</main>
+<script>
+const TEN_PHIEU = "Phiếu thông tin dàn máy in 3D";
+/*BAT_DAU_CAU_HOI*/
+// kieu: chon | nhieu | so | chu. ngan = câu hỏi rút gọn dùng khi xuất văn bản.
+function cau(id, nhom, q, ngan, kieu, opts, unit, goiy){
+  return {id:id, nhom:nhom, q:q, ngan:ngan, kieu:kieu, opts:opts || [], unit:unit || "", goiy:goiy || ""};
+}
+function nhomChung(){
+  const n = "A. Tên hồ sơ";
+  return [
+    cau("A3", n, "Tên máy trong bộ hồ sơ Orca mới: DHH Trident 0.4, DHH V2.4 0.4, DHH H2S 0.4, DHH P1S 0.4, DHH A1 0.4, DHH A1 Mini 0.4.", "Tên máy trong hồ sơ", "chon", ["Giữ như vậy"], "", "muốn đổi thì chọn Khác và ghi tên mong muốn")
+  ];
+}
+function nhomNhua(){
+  const n = "B. Nhựa và dụng cụ";
+  return [
+    cau("B1", n, "Bambu PLA trắng (cho 4 máy Bambu): có mấy cuộn, còn khoảng bao nhiêu?", "Bambu PLA trắng", "chu", [], "", "ví dụ 2 cuộn, một cuộn mới, một cuộn còn nửa"),
+    cau("B2", n, "Bambu PETG Basic trắng: có mấy cuộn, còn khoảng bao nhiêu?", "Bambu PETG Basic trắng", "chu"),
+    cau("B3", n, "Tinmorry PETG-ECO trắng: có mấy cuộn, còn khoảng bao nhiêu?", "Tinmorry PETG-ECO trắng", "chu"),
+    cau("B4", n, "Tinmorry ABS Pro trắng: có mấy cuộn, còn khoảng bao nhiêu?", "Tinmorry ABS Pro trắng", "chu"),
+    cau("B5", n, "Khi hiệu chuẩn, dùng cuộn thế nào?", "Cách dùng cuộn", "chon", ["Một cuộn chuyền qua các máy", "Mỗi máy một cuộn riêng"]),
+    cau("B6", n, "Sấy nhựa bằng gì?", "Thiết bị sấy", "chon", ["Máy sấy nhựa chuyên dụng", "AMS có sấy (AMS 2 Pro / AMS HT)", "Lò / tủ sấy", "Không sấy"]),
+    cau("B7", n, "Nhiệt độ và thời gian sấy thường dùng cho từng loại?", "Nhiệt và giờ sấy", "chu", [], "", "ví dụ PLA 50 °C 6 giờ; PETG 65 °C 8 giờ; ABS 80 °C 6 giờ"),
+    cau("B8", n, "Thước cặp đang có loại nào?", "Thước cặp", "chon", ["Điện tử 0,01 mm", "Cơ 0,02 mm", "Cơ 0,05 mm", "Chưa có"]),
+    cau("B9", n, "Đo độ căng đai bằng gì? (chọn mọi thứ đang có)", "Dụng cụ đo đai", "nhieu", ["Ứng dụng đo tần số trên điện thoại", "Đồng hồ đo lực căng đai", "Chỉ ước lượng bằng tay"])
+  ];
+}
+function nhomVoron(p, ten, dongCo, coUsb){
+  const n = ten;
+  const ds = [
+    cau(p + "1", n, "Động cơ X/Y đang lắp thật là loại nào (mã in trên thân)? Cấu hình đang khai: " + dongCo + ".", "Động cơ X/Y", "chon", ["Đúng như cấu hình khai"], "", "khác thì chọn Khác và ghi mã"),
+    cau(p + "2", n, "Điện áp cấp cho driver X/Y?", "Điện áp driver X/Y", "chon", ["24 V", "48 V"]),
+    cau(p + "3", n, "Nguồn: hãng và công suất?", "Nguồn", "chu", [], "", "ví dụ Mean Well LRS-350-24"),
+    cau(p + "4", n, "Đai X/Y của hãng nào?", "Hãng đai", "chon", ["Gates", "LDO / theo bộ kit", "Không rõ hãng"]),
+    cau(p + "5", n, "Đai X/Y rộng bao nhiêu?", "Bề rộng đai", "chon", ["6 mm", "9 mm"]),
+    cau(p + "6", n, "Đai X/Y đã chạy bao lâu?", "Tuổi đai", "chu", [], "", "ví dụ khoảng 6 tháng, hoặc từ lúc lắp máy"),
+    cau(p + "7", n, "Ray trượt X/Y cỡ nào?", "Cỡ ray X/Y", "chon", ["MGN9", "MGN12"], "", "biết hãng thì ghi ở ghi chú"),
+    cau(p + "8", n, "Đầu nóng Rapido đời nào?", "Đầu nóng", "chon", ["Rapido 1 HF", "Rapido 1 UHF", "Rapido 2 HF", "Rapido 2 UHF"]),
+    cau(p + "9", n, "Đầu phun làm bằng gì?", "Vật liệu đầu phun", "chon", ["Đồng", "Đồng mạ", "Thép tôi", "Carbide / đầu ruby"], "", "ghi hãng ở ghi chú nếu biết"),
+    cau(p + "10", n, "Đầu phun đã dùng bao lâu?", "Tuổi đầu phun", "chu", [], "", "ví dụ khoảng 300 giờ in"),
+    cau(p + "11", n, "Kiểu đầu in?", "Kiểu đầu in", "chon", ["Stealthburner", "Xol", "Dragon Burner", "A4T"]),
+    cau(p + "12", n, "Quạt làm mát chi tiết loại gì?", "Quạt làm mát chi tiết", "chu", [], "", "ví dụ 2 quạt 4010, hoặc CPAP"),
+    cau(p + "13", n, "Bộ đùn có đúng là Orbiter 2.5 không?", "Bộ đùn", "chon", ["Đúng, Orbiter 2.5"]),
+    cau(p + "14", n, "Bàn nhiệt: công suất, điện AC hay DC, độ dày tấm nhôm?", "Bàn nhiệt", "chu", [], "", "ví dụ 600 W AC, nhôm 8 mm"),
+    cau(p + "15", n, "Đang dùng những tấm in nào? (chọn mọi tấm đang dùng)", "Tấm in", "nhieu", ["PEI nhám", "PEI trơn", "PEO / PET hoa văn", "Garolite"], "", "tấm nào cho nhựa nào thì ghi ở ghi chú"),
+    cau(p + "16", n, "Vách buồng làm bằng gì?", "Vách buồng", "chon", ["Acrylic", "Polycarbonate", "Tấm nhôm nhựa (ACM)"]),
+    cau(p + "17", n, "Buồng có dán cách nhiệt không?", "Cách nhiệt buồng", "chon", ["Có", "Không"]),
+    cau(p + "18", n, "Có sưởi buồng chủ động không?", "Sưởi buồng", "chon", ["Có", "Không"]),
+    cau(p + "19", n, "Bộ lọc khí loại gì?", "Lọc khí", "chon", ["Nevermore có than hoạt tính", "Quạt hút ra ngoài", "Không có"]),
+    cau(p + "20", n, "Bộ đệm nhựa và đường nạp đang lắp gì?", "Bộ đệm và đường nạp", "chu", [], "", "ví dụ Mellow LLL Plus + cảm biến OSS"),
+    cau(p + "21", n, "Cuộn nhựa đặt ở đâu khi in?", "Vị trí cuộn nhựa", "chon", ["Trong hộp sấy, nạp qua ống", "Giá treo ngoài, không sấy", "Trong buồng máy"]),
+    cau(p + "22", n, "Có mod nào khác ảnh hưởng chuyển động hoặc nhiệt không?", "Mod khác", "chu", [], "", "ví dụ kẹp bàn kinematic, top hat, gia cố khung"),
+    cau(p + "23", n, "Lần bảo trì gần nhất làm gì, khi nào?", "Bảo trì gần nhất", "chu", [], "", "ví dụ tra dầu ray tháng 10, thay đầu phun tháng 9")
+  ];
+  if(coUsb) ds.push(cau(p + "24", n, "Để nạp lại bo Octopus Max: có cáp USB và tới được nút BOOT trên bo không?", "Cáp USB và nút BOOT", "chon", ["Có cáp, tới được nút BOOT", "Có cáp, nút BOOT khó tới", "Chưa có cáp phù hợp"]));
+  return ds;
+}
+function nhomBambu(p, ten, coAms){
+  const n = ten;
+  const ds = [
+    cau(p + "1", n, "Trên màn hình máy có lỗi / mã HMS nào đang treo không?", "Lỗi / HMS đang treo", "chon", ["Không có lỗi nào"], "", "có lỗi thì chọn Khác và ghi mã"),
+    cau(p + "2", n, "Đầu phun đang lắp cỡ nào?", "Cỡ đầu phun", "chon", ["0,4 mm", "0,2 mm", "0,6 mm", "0,8 mm"]),
+    cau(p + "3", n, "Đầu phun đang lắp loại gì?", "Loại đầu phun", "chon", ["Thép không gỉ", "Thép tôi", "High flow"]),
+    cau(p + "4", n, "Đang dùng những tấm in nào? (chọn mọi tấm đang dùng)", "Tấm in", "nhieu", ["PEI nhám", "PEI trơn", "Cool Plate / SuperTack", "Engineering Plate"]),
+    cau(p + "5", n, "Tổng giờ in máy hiển thị?", "Tổng giờ in", "so", [], "giờ", "không thấy thì bỏ trống"),
+    cau(p + "6", n, "Lần bảo trì gần nhất làm gì, khi nào?", "Bảo trì gần nhất", "chu", [], "", "ví dụ tra dầu ray, tra mỡ vít me tháng 10")
+  ];
+  if(coAms){
+    ds.push(cau(p + "7", n, "Đang gắn AMS loại nào? (chọn mọi bộ đang gắn)", "Loại AMS", "nhieu", ["AMS 2 Pro", "AMS HT", "AMS đời đầu"], "", "số bộ thì ghi ở ghi chú"));
+    ds.push(cau(p + "8", n, "Khi in ABS, nhựa đi qua AMS hay nạp từ cuộn ngoài?", "ABS qua AMS", "chon", ["Qua AMS", "Cuộn ngoài"]));
+  }
+  return ds;
+}
+const CAU_HOI = [].concat(
+  nhomChung(),
+  nhomNhua(),
+  nhomVoron("T", "C. Voron Trident 250", "LDO-42STH48-2804AH (1,8°)", false),
+  nhomVoron("V", "D. Voron 2.4 300", "LDO-42STH48-2004MAH (0,9°)", true),
+  nhomBambu("H", "E. Bambu H2S", true),
+  nhomBambu("P", "F. Bambu P1S", false),
+  nhomBambu("M", "G. Bambu A1", false),
+  nhomBambu("N", "H. Bambu A1 Mini", false)
+);
+/*KET_THUC_CAU_HOI*/
+
+const KHO = "phieu-may-in-nhap-v1";
+const KHONG_ROI = "Không rõ", KHAC = "Khác";
+let dap = {}; // id -> {v: chuỗi | mảng, khac: chuỗi, note: chuỗi}
+
+function luu(){ try{ localStorage.setItem(KHO, JSON.stringify(dap)); }catch(e){} }
+function nap(){
+  try{
+    const s = localStorage.getItem(KHO);
+    if(s){ const o = JSON.parse(s); if(o && typeof o === "object") dap = o; }
+  }catch(e){ dap = {}; }
+}
+function lay(id){
+  if(!dap[id] || typeof dap[id] !== "object") dap[id] = {};
+  const d = dap[id];
+  if(typeof d.khac !== "string") d.khac = "";
+  if(typeof d.note !== "string") d.note = "";
+  return d;
+}
+function chuoiTraLoi(c){
+  const d = lay(c.id);
+  if(c.kieu === "so" || c.kieu === "chu"){
+    const t = (typeof d.v === "string" ? d.v : "").trim();
+    return t ? (c.unit ? t + " " + c.unit : t) : "";
+  }
+  const kq = [];
+  const ds = c.kieu === "nhieu" ? (Array.isArray(d.v) ? d.v : []) : (typeof d.v === "string" && d.v ? [d.v] : []);
+  ds.forEach(function(x){
+    if(x === KHAC){ const k = d.khac.trim(); kq.push(k ? KHAC + ": " + k : KHAC); }
+    else kq.push(x);
+  });
+  return kq.join("; ");
+}
+function daTraLoi(c){
+  const d = lay(c.id);
+  if(c.kieu === "so" || c.kieu === "chu") return chuoiTraLoi(c) !== "";
+  const ds = c.kieu === "nhieu" ? (Array.isArray(d.v) ? d.v : []) : (d.v ? [d.v] : []);
+  return ds.length > 0;
+}
+
+function tao(tag, cls, text){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text !== undefined) e.textContent = text;
+  return e;
+}
+
+function dungCau(c, card){
+  const d = lay(c.id);
+  const tieuDe = function(parent, tag){
+    const h = tao(tag, tag === "legend" ? "" : "lb");
+    h.appendChild(tao("span", "id", c.id));
+    h.appendChild(document.createTextNode(c.q));
+    parent.appendChild(h);
+    return h;
+  };
+  const capNhat = function(){ card.classList.toggle("done", daTraLoi(c)); luu(); demCap(); };
+
+  if(c.kieu === "so" || c.kieu === "chu"){
+    const lb = tao("label", "lb"); lb.htmlFor = "i-" + c.id;
+    lb.appendChild(tao("span", "id", c.id));
+    lb.appendChild(document.createTextNode(c.q));
+    card.appendChild(lb);
+    if(c.goiy) card.appendChild(tao("p", "hint", "Gợi ý: " + c.goiy));
+    const row = tao("div", "row");
+    const inp = document.createElement("input");
+    inp.id = "i-" + c.id;
+    inp.type = c.kieu === "so" ? "number" : "text";
+    if(c.kieu === "so"){ inp.inputMode = "decimal"; inp.step = "any"; inp.min = "0"; }
+    inp.autocomplete = "off";
+    inp.value = typeof d.v === "string" ? d.v : "";
+    inp.addEventListener("input", function(){ d.v = inp.value; capNhat(); });
+    row.appendChild(inp);
+    if(c.unit) row.appendChild(tao("span", "unit", c.unit));
+    card.appendChild(row);
+  } else {
+    const fs = tao("fieldset");
+    tieuDe(fs, "legend");
+    if(c.goiy) fs.appendChild(tao("p", "hint", "Gợi ý: " + c.goiy));
+    const nhieu = c.kieu === "nhieu";
+    if(nhieu && !Array.isArray(d.v)) d.v = [];
+    if(!nhieu && typeof d.v !== "string") d.v = "";
+    const khacBox = document.createElement("input");
+    khacBox.type = "text"; khacBox.id = "k-" + c.id; khacBox.autocomplete = "off";
+    khacBox.value = d.khac;
+    const khacLb = tao("label", "lb", "Ghi rõ lựa chọn khác"); khacLb.htmlFor = khacBox.id;
+    const khacWrap = tao("div"); khacWrap.appendChild(khacLb); khacWrap.appendChild(khacBox);
+    const hienKhac = function(){
+      const on = nhieu ? d.v.indexOf(KHAC) >= 0 : d.v === KHAC;
+      khacWrap.hidden = !on;
+    };
+    khacBox.addEventListener("input", function(){ d.khac = khacBox.value; capNhat(); });
+    const dsOpt = c.opts.concat([KHONG_ROI, KHAC]);
+    dsOpt.forEach(function(o, i){
+      const lab = tao("label", "opt");
+      const inp = document.createElement("input");
+      inp.type = nhieu ? "checkbox" : "radio";
+      inp.name = "q-" + c.id; inp.value = o;
+      inp.checked = nhieu ? d.v.indexOf(o) >= 0 : d.v === o;
+      inp.addEventListener("change", function(){
+        if(nhieu){
+          const k = d.v.indexOf(o);
+          if(inp.checked && k < 0) d.v.push(o);
+          if(!inp.checked && k >= 0) d.v.splice(k, 1);
+        } else d.v = o;
+        hienKhac(); capNhat();
+      });
+      lab.appendChild(inp); lab.appendChild(tao("span", "", o));
+      fs.appendChild(lab);
+    });
+    fs.appendChild(khacWrap);
+    hienKhac();
+    card.appendChild(fs);
+  }
+
+  const det = document.createElement("details");
+  det.appendChild(tao("summary", "", "Ghi chú (tùy chọn)"));
+  const nl = tao("label", "lb", "Ghi chú cho câu " + c.id); nl.htmlFor = "n-" + c.id;
+  const ta = document.createElement("textarea");
+  ta.id = "n-" + c.id; ta.rows = 2; ta.value = d.note;
+  ta.addEventListener("input", function(){ d.note = ta.value; luu(); });
+  det.appendChild(nl); det.appendChild(ta);
+  if(d.note) det.open = true;
+  card.appendChild(det);
+  card.classList.toggle("done", daTraLoi(c));
+}
+
+function dung(){
+  const f = document.getElementById("form");
+  while(f.firstChild) f.removeChild(f.firstChild);
+  let nhomCu = "";
+  CAU_HOI.forEach(function(c){
+    if(c.nhom !== nhomCu){ f.appendChild(tao("h2", "", c.nhom)); nhomCu = c.nhom; }
+    const card = tao("div", "q");
+    dungCau(c, card);
+    f.appendChild(card);
+  });
+  demCap();
+}
+
+function demCap(){
+  const x = CAU_HOI.filter(daTraLoi).length;
+  document.getElementById("cnt").textContent = "Đã trả lời " + x + "/" + CAU_HOI.length;
+  document.getElementById("out").value = xuat();
+}
+
+function homNay(){
+  const n = new Date(), p = function(v){ return (v < 10 ? "0" : "") + v; };
+  return n.getFullYear() + "-" + p(n.getMonth() + 1) + "-" + p(n.getDate());
+}
+function xuat(){
+  const dong = [TEN_PHIEU + " - ngày điền " + homNay()];
+  CAU_HOI.forEach(function(c){
+    const d = lay(c.id);
+    const tl = daTraLoi(c) ? chuoiTraLoi(c) : "(chưa trả lời)";
+    const nt = d.note.trim().replace(/\s*[\r\n]+\s*/g, " ");
+    dong.push(c.id + " | " + c.ngan + ": " + tl + (nt ? " (" + nt + ")" : ""));
+  });
+  return dong.join("\n");
+}
+
+function bao(t){ document.getElementById("msg").textContent = t; }
+
+document.getElementById("bCopy").addEventListener("click", function(){
+  const out = document.getElementById("out");
+  out.value = xuat();
+  const lui = function(){
+    out.focus(); out.select();
+    bao("Không chép tự động được. Văn bản đã được chọn sẵn ở ô bên dưới, hãy giữ và chọn Sao chép.");
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(out.value).then(function(){ bao("Đã chép. Hãy dán vào chat."); }, lui);
+    } else lui();
+  }catch(e){ lui(); }
+});
+document.getElementById("bGh").addEventListener("click", function(){
+  // Mo trang tao issue da dien san; nguoi dien bam "Submit new issue" (can tai khoan GitHub). Repo rieng tu: chi chu repo thay.
+  const t = xuat();
+  document.getElementById("out").value = t;
+  const u = "https://github.com/dctien812/DHH-3D-Printers/issues/new?title=" +
+    encodeURIComponent("Phiếu máy in " + homNay()) + "&body=" + encodeURIComponent("```\n" + t + "\n```");
+  bao("Đang mở GitHub: đăng nhập nếu được hỏi rồi bấm nút xanh \"Submit new issue\". Không có tài khoản GitHub thì dùng \"Chép câu trả lời\".");
+  window.open(u, "_blank");
+});
+document.getElementById("bDl").addEventListener("click", function(){
+  try{
+    const b = new Blob([xuat() + "\n"], {type:"text/plain;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(b);
+    a.download = "phieu-may-in-" + homNay() + ".txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    bao("Đã tạo file .txt.");
+  }catch(e){ bao("Không tải được file, hãy dùng ô văn bản bên dưới."); }
+});
+document.getElementById("bClr").addEventListener("click", function(){
+  if(!confirm("Xóa hết câu trả lời đã điền?")) return;
+  dap = {};
+  try{ localStorage.removeItem(KHO); }catch(e){}
+  dung(); bao("Đã xóa hết.");
+});
+
+nap();
+dung();
+</script>
+</body>
+</html>

@@ -1,15 +1,19 @@
 # Phiếu cần điền
 
-Mỗi máy có một thư mục riêng trong [machines/](machines/); phiếu của máy nào nằm trong README của máy đó. Điền thẳng trên GitHub (biểu tượng bút chì → sửa → Commit changes) hoặc trả lời trong chat.
+Phiếu chính là trang [docs/phieu.html](docs/phieu.html): 83 câu, có ô chọn và ô ghi, chia theo từng máy, tự lưu trên trình duyệt, điền xong bấm "Gửi lên GitHub" hoặc "Chép câu trả lời".
 
-**KHÔNG ghi mã truy cập, serial hay mật khẩu của máy Bambu vào repo này.** Những thứ đó chỉ nằm trong file cục bộ `secrets\bambu.local.json` trên máy tính.
+- Mở trên máy tính: nháy đúp file `docs\phieu.html` trong thư mục dự án.
+- Mở bằng link: cần bật GitHub Pages cho repo (Settings → Pages → nhánh main, thư mục /docs).
 
-| Phiếu | Nội dung |
+**Không ghi mã truy cập, serial hay mật khẩu của máy Bambu vào phiếu.**
+
+Thông tin đã biết của từng máy nằm trong [machines/](machines/).
+
+## Đã trả lời ngày 2026-11-24
+
+| Câu hỏi | Trả lời |
 |---|---|
-| [machines/CHUNG.md](machines/CHUNG.md) | Quyết định đang chờ, nhựa và dụng cụ |
-| [machines/Voron-Trident-250/](machines/Voron-Trident-250/README.md) | Phần cứng Trident |
-| [machines/Voron-2.4-300/](machines/Voron-2.4-300/README.md) | Phần cứng V2.4 |
-| [machines/Bambu-H2S/](machines/Bambu-H2S/README.md) | Lỗi treo, đầu phun, AMS |
-| [machines/Bambu-P1S/](machines/Bambu-P1S/README.md) | Lỗi treo, đầu phun |
-| [machines/Bambu-A1/](machines/Bambu-A1/README.md) | Lỗi treo, đầu phun |
-| [machines/Bambu-A1-Mini/](machines/Bambu-A1-Mini/README.md) | Lỗi treo, đầu phun |
+| Dòng Bambu PETG | PETG Basic |
+| SAVE_CONFIG đang treo trên hai Voron | Bỏ |
+| Chia việc thành nhiều ngày | Đồng ý; chia lại theo phạm vi nhựa mới |
+| Phạm vi nhựa theo máy | PLA: chỉ 4 máy Bambu. PETG: cả 6 máy. ABS / ASA: hai Voron, H2S, P1S |
