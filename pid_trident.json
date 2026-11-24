@@ -1,0 +1,24 @@
+﻿{
+    "ip":  "192.0.2.90",
+    "started":  "2026-11-09T15:54:58",
+    "extruder":  {
+                     "kp":  21.23,
+                     "ki":  5.242,
+                     "kd":  21.496,
+                     "target":  270,
+                     "start_temp":  23.9,
+                     "chamber":  22.9,
+                     "seconds":  75
+                 },
+    "heater_bed":  {
+                       "kp":  37.981,
+                       "ki":  2.482,
+                       "kd":  145.279,
+                       "target":  110,
+                       "start_temp":  23.8,
+                       "chamber":  23.1,
+                       "seconds":  356
+                   },
+    "status":  "ok",
+    "finished":  "2026-11-09T16:02:10"
+}

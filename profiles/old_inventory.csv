@@ -1,0 +1,33 @@
+tên,loại,tệp,hãng,loại_nhựa,máy,mã_nhựa,phạm_vi,lý_do,trùng,thiếu_cặp,shrink_xy,flow_ratio,mvs,pa,inherits
+Bambu Lab A1 0.4,máy,machine\Bambu Lab A1 0.4.json,,,A1,,trong,,,BAMBU-PETG,,,,,Bambu Lab A1 0.4 nozzle
+Bambu Lab A1 mini 0.4,máy,machine\Bambu Lab A1 mini 0.4.json,,,A1M,,trong,,,BAMBU-PETG,,,,,Bambu Lab A1 mini 0.4 nozzle
+Bambu Lab H2S 0.4,máy,machine\Bambu Lab H2S 0.4.json,,,H2S,,trong,,,BAMBU-PLA;BAMBU-PETG,,,,,Bambu Lab H2S 0.4 nozzle
+Bambu Lab P1S 0.4,máy,machine\Bambu Lab P1S 0.4.json,,,P1S,,trong,,,BAMBU-PETG,,,,,Bambu Lab P1S 0.4 nozzle
+Voron 2.4 300 0.4,máy,machine\Voron 2.4 300 0.4.json,,,V24,,trong,,,BAMBU-PLA;BAMBU-PETG;TIN-PETGECO,,,,,Voron 2.4 300 0.4 nozzle
+Voron Trident 250 0.4,máy,machine\Voron Trident 250 0.4.json,,,TRI,,trong,,,BAMBU-PLA;BAMBU-PETG;TIN-PETGECO,,,,,Voron Trident 250 0.4 nozzle
+2.4 - SUNLU ABS (XY 99.57),vật_liệu,filament\2.4 - SUNLU ABS (XY 99.57).json,SUNLU,ABS,V24,,ngoài,hãng SUNLU,,,99.57,0.965,22,0.0256,PolyLite ABS @System
+2.4 - Tinmorry ABS Pro,vật_liệu,filament\2.4 - Tinmorry ABS Pro.json,Tinmorry,ABS,V24,TIN-ABSPRO,trong,,2.4 - Tinmorry ABS Pro (XY 99.39),,,0.965,22,0.0256,PolyLite ABS @System
+2.4 - Tinmorry ABS Pro (XY 99.39),vật_liệu,filament\2.4 - Tinmorry ABS Pro (XY 99.39).json,Tinmorry,ABS,V24,TIN-ABSPRO,trong,,2.4 - Tinmorry ABS Pro,,99.39,0.965,22,0.0256,PolyLite ABS @System
+ABS(H2S-Bambu-TINMORRY),vật_liệu,filament\ABS(H2S-Bambu-TINMORRY).json,Tinmorry,ABS,H2S,TIN-ABSPRO,trong,,,,,0.96,,,Generic ABS @BBL H2S 0.4 nozzle
+ABS-pro(X1C P1S-Bambu-TINMORRY),vật_liệu,filament\ABS-pro(X1C P1S-Bambu-TINMORRY).json,Tinmorry,ABS,P1S,TIN-ABSPRO,trong,,,,,0.96,20,,Generic ABS
+ASA(H2S-Bambu-TINMORRY),vật_liệu,filament\ASA(H2S-Bambu-TINMORRY).json,Tinmorry,ASA,H2S,,ngoài,loại ASA không thuộc 4 nhựa,,,,0.97,,,Generic ASA @BBL H2S 0.4 nozzle
+"ASA(P1S,X1C-Bambu-TINMORRY)",vật_liệu,"filament\ASA(P1S,X1C-Bambu-TINMORRY).json",Tinmorry,ASA,P1S,,ngoài,loại ASA không thuộc 4 nhựa,,,,0.97,15,,Generic ASA
+Fiberon ASA-CF - P1S,vật_liệu,filament\Fiberon ASA-CF - P1S.json,Fiberon,ASA-CF,P1S,,ngoài,loại ASA-CF,,,99.84,0.95,12,,Bambu ASA-CF @BBL X1C
+P1S - HUTI ABS (XY 99.44),vật_liệu,filament\P1S - HUTI ABS (XY 99.44).json,HUTI,ABS,P1S,,ngoài,hãng HUTI,,,99.44,,,,Generic ABS
+PETG  CF（A1mini-Bambu-TINMORRY）,vật_liệu,filament\PETG  CF（A1mini-Bambu-TINMORRY）.json,Tinmorry,PETG-CF,A1M,,ngoài,loại PETG-CF không thuộc 4 nhựa,,,,,12,,Generic PETG-CF @BBL A1M
+PETG -ECO（P1P P1S X1C-Bambu-TINMORRY）,vật_liệu,filament\PETG -ECO（P1P P1S X1C-Bambu-TINMORRY）.json,Tinmorry,PETG-ECO,P1S,TIN-PETGECO,trong,,,,,,,0.04,Generic PETG
+PETG-ECO (A1-Bambu-TINMORRY),vật_liệu,filament\PETG-ECO (A1-Bambu-TINMORRY).json,Tinmorry,PETG-ECO,A1,TIN-PETGECO,trong,,,,,0.96,12,,Generic PETG @BBL A1
+PETG-ECO(A1mini-bambu-TINMORRY),vật_liệu,filament\PETG-ECO(A1mini-bambu-TINMORRY).json,Tinmorry,PETG-ECO,A1M,TIN-PETGECO,trong,,,,,,13,,Generic PETG @BBL A1M
+PETG-ECO(H2S-Bambu-TINMORRY),vật_liệu,filament\PETG-ECO(H2S-Bambu-TINMORRY).json,Tinmorry,PETG-ECO,H2S,TIN-PETGECO,trong,,,,,,,,Generic PETG @BBL H2S
+PLA( P1S X1 X1C-Bambu-TINMORRY),vật_liệu,filament\PLA( P1S X1 X1C-Bambu-TINMORRY).json,Tinmorry,PLA,P1S,BAMBU-PLA,trong,,,,,0.97,18,,Generic PLA
+PLA(A1-Bambu-TINMORRY),vật_liệu,filament\PLA(A1-Bambu-TINMORRY).json,Tinmorry,PLA,A1,BAMBU-PLA,trong,,,,,0.97,18,,Generic PLA @BBL A1
+PLA(A1mini-Bambu-TINMORRY),vật_liệu,filament\PLA(A1mini-Bambu-TINMORRY).json,Tinmorry,PLA,A1M,BAMBU-PLA,trong,,,,,0.96,15,,Generic PLA @BBL A1M
+PLA(P1P-Bambu-TINMORRY),vật_liệu,filament\PLA(P1P-Bambu-TINMORRY).json,Tinmorry,PLA,P1P,BAMBU-PLA,ngoài,máy P1P không thuộc 6 máy,,,,0.97,,,Generic PLA @BBL P1P
+R3D PETG Basic @Bambu Lab P1S 0.4 nozzle,vật_liệu,filament\base\R3D PETG Basic @Bambu Lab P1S 0.4 nozzle.json,R3D,PETG,P1S,,ngoài,hãng R3D,,,100,0.95,12,0.04,
+Sunlu ABS - P1S (XY 99.45),vật_liệu,filament\Sunlu ABS - P1S (XY 99.45).json,SUNLU,ABS,P1S,,ngoài,hãng SUNLU,,,99.45,,,,Generic ABS
+TPU(A1-Bambu-TINMORRY),vật_liệu,filament\TPU(A1-Bambu-TINMORRY).json,Tinmorry,TPU,A1,,ngoài,loại TPU,,,,0.98,,,Bambu TPU 95A @BBL A1
+TPU(A1mini-Bambu-TINMORRY),vật_liệu,filament\TPU(A1mini-Bambu-TINMORRY).json,Tinmorry,TPU,A1M,,ngoài,loại TPU,,,,0.98,,,Bambu TPU 95A @BBL A1M
+TPU(P1S X1 X1C-Bambu-TINMORRY),vật_liệu,filament\TPU(P1S X1 X1C-Bambu-TINMORRY).json,Tinmorry,TPU,P1S,,ngoài,loại TPU,,,,0.97,,,Bambu TPU 95A @BBL X1C
+Trident - Tinmorry ABS Pro,vật_liệu,filament\Trident - Tinmorry ABS Pro.json,Tinmorry,ABS,TRI,TIN-ABSPRO,trong,,Trident - Tinmorry ABS Pro (XY 99.6),,,0.965,18,,PolyLite ABS @System
+Trident - Tinmorry ABS Pro (XY 99.6),vật_liệu,filament\Trident - Tinmorry ABS Pro (XY 99.6).json,Tinmorry,ABS,TRI,TIN-ABSPRO,trong,,Trident - Tinmorry ABS Pro,,99.6,0.965,18,,PolyLite ABS @System
+0.20mm Standard - Voron,quy_trình,process\0.20mm Standard - Voron.json,,,TRI;V24,,trong,,,,,,,,0.20mm Standard @Voron

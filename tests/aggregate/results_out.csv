@@ -1,0 +1,7 @@
+﻿máy,nhựa,cuộn,X,Y,Z,lỗ,đạt,ngày,vòng,mới_nhất,lệch_X,lệch_Y,lệch_Z,lệch_lỗ,đạt_X,đạt_Y,đạt_Z,đạt_lỗ,bù_X_pct,bù_Y_pct,lắp_chéo,lắp_chéo_với,file
+A1M,BAMBU-PLA,PLA-T01,100.14,100,20.06,8,không,2026-01-10,1,có,0.14,0,0.06,0,không,đạt,đạt,đạt,99.86,100,,,2026-01-10_A1M_BAMBU-PLA.csv
+H2S,BAMBU-PLA,PLA-T01,100,100,20,7.82,không,2026-01-13,1,có,0,0,0,-0.18,đạt,đạt,đạt,không,100,100,,,2026-01-13_H2S_BAMBU-PLA.csv
+P1S,BAMBU-PLA,PLA-T01,100.06,100.03,20.03,8.05,đạt,2026-01-10,1,có,0.06,0.03,0.03,0.05,đạt,đạt,đạt,đạt,99.94,99.97,,,2026-01-10_P1S_BAMBU-PLA.csv
+TRI,BAMBU-PLA,PLA-T01,100,100.02,19.98,7.82,không,2026-01-11,1,không,0,0.02,-0.02,-0.18,đạt,đạt,đạt,không,100,99.98,không,P1S,2026-01-11_TRI_BAMBU-PLA.csv
+TRI,BAMBU-PLA,PLA-T01,100,100.02,19.98,8.03,đạt,2026-01-18,2,có,0,0.02,-0.02,0.03,đạt,đạt,đạt,đạt,100,99.98,được,P1S,2026-01-18_TRI_BAMBU-PLA.csv
+V24,BAMBU-PLA,PLA-T01,100.1,99.9,20.1,8.15,đạt,2026-01-12,1,có,0.1,-0.1,0.1,0.15,đạt,đạt,đạt,đạt,99.9,100.1,,,2026-01-12_V24_BAMBU-PLA.csv

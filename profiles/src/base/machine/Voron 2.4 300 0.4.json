@@ -1,0 +1,30 @@
+{
+	"from": "User",
+	"inherits": "Voron 2.4 300 0.4 nozzle",
+	"machine_end_gcode": "SET_SKEW CLEAR=1\nEND_PRINT",
+	"machine_start_gcode": "START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] MATERIAL=[filament_type] CHAMBER=[chamber_temperature] SIZE={first_layer_print_min[0]}_{first_layer_print_min[1]}_{first_layer_print_max[0]}_{first_layer_print_max[1]} \n\n\n",
+	"min_layer_height": [
+		"0.08"
+	],
+	"name": "Voron 2.4 300 0.4",
+	"print_host": "192.0.2.89",
+	"printable_height": "290",
+	"printer_extruder_id": [
+		"1"
+	],
+	"printer_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"printer_settings_id": "Voron 2.4 300 0.4",
+	"retract_before_wipe": [
+		"0%"
+	],
+	"retract_lift_below": [
+		"249"
+	],
+	"support_multi_bed_types": "1",
+	"version": "1.8.0.0",
+	"z_hop_types": [
+		"Auto Lift"
+	]
+}

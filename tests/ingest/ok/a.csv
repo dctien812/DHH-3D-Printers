@@ -1,0 +1,5 @@
+máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
+TRI,BAMBU-PETG,pa,0.040,,đo,pa_line_1,2026-11-01,PETG-001,250C
+TRI,BAMBU-PETG,pa,0.045,,đo,pa_line_2,2026-11-05,PETG-001,250C
+V24,BAMBU-PLA,k,,,chưa_đo,,,,
+A1M,BAMBU-PLA,mvs,20,mm3/s,mặc_định,Bambu,2026-11-01,,

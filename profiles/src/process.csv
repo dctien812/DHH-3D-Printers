@@ -1,0 +1,7 @@
+máy,tên_hồ_sơ,cha,tệp_nền,trạng_thái,nguồn
+TRI,DHH 0.20 Sync @Voron Trident 250,0.20mm Standard @Voron,process\0.20mm Standard - Voron.json,kế_thừa,"Bản sao quy trình cũ 0.20mm Standard - Voron (gia tốc, tốc độ đang dùng trên hai Voron)"
+V24,DHH 0.20 Sync @Voron 2.4 300,0.20mm Standard @Voron,process\0.20mm Standard - Voron.json,kế_thừa,"Bản sao quy trình cũ 0.20mm Standard - Voron (gia tốc, tốc độ đang dùng trên hai Voron)"
+H2S,DHH 0.20 Sync @H2S,0.20mm Standard @BBL H2S,,mặc_định,"Hồ sơ hệ thống 0.20mm Standard @BBL H2S, không ghi đè giá trị nào"
+P1S,DHH 0.20 Sync @P1S,0.20mm Standard @BBL X1C,,mặc_định,"Hồ sơ hệ thống 0.20mm Standard @BBL X1C, không ghi đè giá trị nào"
+A1,DHH 0.20 Sync @A1,0.20mm Standard @BBL A1,,mặc_định,"Hồ sơ hệ thống 0.20mm Standard @BBL A1, không ghi đè giá trị nào"
+A1M,DHH 0.20 Sync @A1 Mini,0.20mm Standard @BBL A1M,,mặc_định,"Hồ sơ hệ thống 0.20mm Standard @BBL A1M, không ghi đè giá trị nào"

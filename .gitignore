@@ -1,0 +1,12 @@
+# Bí mật: không bao giờ đưa lên
+secrets/
+*.local.json
+
+# Tài liệu tải về của bên thứ ba và file nén
+monolith_dl/
+*.zip
+
+# Đầu ra thử tạm
+tests/tmp/
+tests/profiles_out/
+*.tmp
