@@ -18,7 +18,7 @@ nóng hoặc in do người dùng khởi động trên máy hoặc từ Orca.
 
 - [ ] T001 [P] Tra web: ghi chú phát hành firmware chính thức và lịch bảo trì chính thức cho H2S, P1S, A1, A1 Mini (wiki.bambulab.com từng trả 402; thử mục support và release notes của bambulab.com); tìm thay đổi liên quan kết nối OrcaSlicer và plugin mạng. Trang nào bị chặn thì trưởng phòng nhờ người dùng mở và dán nội dung ở Buổi A2 — KC: mỗi kết luận kèm URL chính thức và ngày; trang bị chặn ghi "bị chặn", nguồn bên thứ ba phải ghi rõ là bên thứ ba (vai: explorer; gọi `model: sonnet`, không đọc file trên máy trong cùng lượt)
 - [ ] T002 [P] Tìm hiểu K: đọc hồ sơ Bambu trong Orca ở `%APPDATA%\OrcaSlicer\user\<id>` (gộp chung lượt với 003:T005), nơi K được lưu (máy hay hồ sơ), cách tránh bù hai lần; đề xuất phép thử A/B cho T011 — KC: báo cáo ghi `đường_dẫn:dòng`, nêu rõ điều chưa có nguồn (vai: explorer; tìm trong dự án, không gọi web)
-- [ ] T003 [P] Viết khung `calibration\bambu\MAINTENANCE.md` và `fleet\firmware\TEMPLATE.md` (cột: máy, bản đang chạy, bản mới, thay đổi liên quan, khuyến nghị, nguồn, ngày) — KC: đủ cột (vai: software-engineer)
+- [x] T003 [P] Viết khung `calibration\bambu\MAINTENANCE.md` và `fleet\firmware\TEMPLATE.md` (cột: máy, bản đang chạy, bản mới, thay đổi liên quan, khuyến nghị, nguồn, ngày) — KC: đủ cột (vai: software-engineer)
 
 ## Phase 2: Foundational
 
@@ -36,8 +36,8 @@ nóng hoặc in do người dùng khởi động trên máy hoặc từ Orca.
 
 ## Phase 4: User Story 2 — Hiệu chuẩn vật liệu trên từng máy Bambu (P2)
 
-- [ ] T010 [P] [US2] Viết `calibration\guides\bambu_<nhựa>.md` cho 4 nhựa (H2S ghi theo đường AMS dùng hằng ngày; ABS chỉ H2S và P1S, buồng đóng, thông gió): lưu lượng thể tích tối đa, PA/K, flow theo thứ tự hiệu chuẩn của Orca (nhiệt dùng mặc định, ghi `mặc_định`), điền `calibration\entry\cal\<ngày>_<máy>_<nhựa>.csv` kèm cuộn và điều kiện sấy; lưu ý bù K chỉ ở một nơi — KC: người chưa biết dự án làm theo được; T024 rà trước Buổi C (vai: software-engineer)
-- [ ] T024 [US2] (trước T011) Rà `calibration\guides\bambu_*.md`: làm theo được, không bước nào đòi văn phòng gửi lệnh tới máy, phần an toàn ABS đủ — KC: báo cáo ba mức, không còn Nghiêm trọng hay Quan trọng (vai: checker)
+- [x] T010 [P] [US2] Viết `calibration\guides\bambu_<nhựa>.md` cho 4 nhựa (H2S ghi theo đường AMS dùng hằng ngày; ABS chỉ H2S và P1S, buồng đóng, thông gió): lưu lượng thể tích tối đa, PA/K, flow theo thứ tự hiệu chuẩn của Orca (nhiệt dùng mặc định, ghi `mặc_định`), điền `calibration\entry\cal\<ngày>_<máy>_<nhựa>.csv` kèm cuộn và điều kiện sấy; lưu ý bù K chỉ ở một nơi — KC: người chưa biết dự án làm theo được; T024 rà trước Buổi C (vai: software-engineer)
+- [x] T024 [US2] (trước T011) Rà `calibration\guides\bambu_*.md`: làm theo được, không bước nào đòi văn phòng gửi lệnh tới máy, phần an toàn ABS đủ — KC: báo cáo ba mức, không còn Nghiêm trọng hay Quan trọng (vai: checker)
 - [ ] T011 [US2] [Buổi C, nửa 1] Pilot Bambu PLA trắng trên H2S (qua AMS), P1S, A1, A1 Mini: chạy hiệu chuẩn theo thẻ, kèm thử A/B cho K (một mẫu với hiệu chuẩn động lực dòng chảy tự động của máy bật, một mẫu tắt, cùng nhựa, cùng hồ sơ) theo đề xuất T002; điền entry; sau đó trưởng phòng chạy 003:T028 rồi mới in mẫu chuẩn (003:T015) — KC: 4 entry BAMBU-PLA, mỗi tham số là số đo hoặc `chưa_đo` (vai: người dùng)
 - [ ] T012 [US2] [Buổi D1, nửa 1] Bambu PETG Basic trắng trên 4 máy Bambu (chỉ sau khi pilot đạt) — KC: 4 entry BAMBU-PETG (vai: người dùng)
 - [ ] T013 [US2] [Buổi D2, nửa 1] Tinmorry PETG-ECO trắng trên 4 máy Bambu — KC: 4 entry TIN-PETGECO (vai: người dùng)
