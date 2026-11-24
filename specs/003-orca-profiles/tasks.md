@@ -32,7 +32,7 @@ chạy T028 để đưa số vào hồ sơ; nửa 2 người dùng in và đo m�
 
 - [ ] T001 [P] Tra web: (1) đồng bộ cloud của Orca có ghi đè hồ sơ cục bộ không; (2) H2S có hồ sơ gốc trong Orca 2.5.2 không; (3) cách nhập/xuất Preset Bundle, nhập khi Orca đang mở có đè được không — KC: mỗi kết luận kèm URL; mục nào không có nguồn thì ghi "chưa có nguồn" (vai: explorer; gọi `model: sonnet`, không đọc file trên máy trong cùng lượt)
 - [ ] T002 [P] Viết `scripts\orca\inventory-old.ps1` đọc `%APPDATA%\OrcaSlicer\user\<id>\{machine,filament,process}` (chỉ đọc) và sinh `profiles\old_inventory.csv`: tên, loại, hãng suy ra, máy, trong hay ngoài phạm vi (TPU, ASA-CF, SUNLU, HUTI là ngoài), trùng, thiếu cặp, hệ số co ngót XY và các số có sẵn để kế thừa — KC: 6 máy, 25 vật liệu, 1 quy trình (đếm đệ quy, gồm thư mục con `filament\base\`); T003 đếm lại (vai: software-engineer)
-- [ ] T003 Đối chiếu độc lập: (1) so SHA256 từng file của `profiles\orca_backup\2026-11-24\` với `%APPDATA%\OrcaSlicer\user` (SC-004); (2) đếm dòng `profiles\old_inventory.csv` so với thư mục thật — KC: đầu ra lệnh vào `fleet\verify_003_backup.md`, 0 file lệch, đúng 6/25/1 khi đếm đệ quy (vai: test-engineer)
+- [x] T003 Đối chiếu độc lập: (1) so SHA256 từng file của `profiles\orca_backup\2026-11-24\` với `%APPDATA%\OrcaSlicer\user` (SC-004); (2) đếm dòng `profiles\old_inventory.csv` so với thư mục thật — KC: đầu ra lệnh vào `fleet\verify_003_backup.md`, 0 file lệch, đúng 6/25/1 khi đếm đệ quy (vai: test-engineer)
 
 ## Phase 2: Foundational (chặn mọi user story)
 
