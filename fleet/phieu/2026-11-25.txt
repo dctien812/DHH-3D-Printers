@@ -1,0 +1,85 @@
+Phiếu thông tin dàn máy in 3D - ngày điền 2026-11-25
+(Chủ máy dán vào chat ngày 2026-11-25 vì nút gửi GitHub báo "URL too long"; trưởng phòng chép nguyên văn.)
+A3 | Tên máy trong hồ sơ: Giữ như vậy
+B1 | Bambu PLA trắng: Bambu PLA hiện có các màu #11800, #11202, #11501, #11803 (mã màu bambu, tự tìm trên mạng xem màu gì nhé)
+B2 | Bambu PETG Basic trắng: Hiện đang hết
+B3 | Tinmorry PETG-ECO trắng: Có khoảng 20kg (mỗi cuộn là 1kg)
+B4 | Tinmorry ABS Pro trắng: Có khoảng 20kg (mỗi cuộn là 1kg)
+B5 | Cách dùng cuộn: Mỗi máy một cuộn riêng
+B6 | Thiết bị sấy: Khác: H2S sấy trong AMS 2 Pro, 2 máy Voron và máy P1S sấy trong Sunlu S4, A1 và A1 Mini thì đang chưa có sấy, sấy ở máy sấy hoa quả ngoài rồi gắn lên thanh giữ cuộn nhựa để in
+B7 | Nhiệt và giờ sấy: PLA 50 độ - 24 tiếng, PETG 65-70 độ 24 tiếng, ABS 70 độ 24 - 48 tiếng, máy sấy của các máy H2S, Voron, P1S là gần như chạy cả ngày không nghỉ
+B8 | Thước cặp: Khác: Thước cặp điện tử Mitutoyo 500-181-30 dài 150mm
+B9 | Dụng cụ đo đai: Chỉ ước lượng bằng tay; Khác: Tớ có BIQU Belter Belt Tension Tool (https://biqu.equipment/products/biqu-belter-belt-tension-tool)
+T1 | Động cơ X/Y: Đúng như cấu hình khai
+T2 | Điện áp driver X/Y: 24 V
+T3 | Nguồn: Mean Well LRS-350-24
+T4 | Hãng đai: Khác: Đai Gates LL-2GT-9 EPDM
+T5 | Bề rộng đai: 9 mm
+T6 | Tuổi đai: Máy mới lắp trục Monolith 2WD LDO CNC từ tháng 8, nên đai mới dùng từ tháng 8
+T7 | Cỡ ray X/Y: Khác: Y là MGN9, X là MGN12, hãng hình như là hiwin hết (cũ)
+T8 | Đầu nóng: Rapido 2 HF
+T9 | Vật liệu đầu phun: Khác: Phaetus Silicon Carbide 0.4mm
+T10 | Tuổi đầu phun: Cũng lâu phết rồi, không nhớ nữa
+T11 | Kiểu đầu in: A4T
+T12 | Quạt làm mát chi tiết: 2 quạt GDStime 4010 24v 12000rpm
+T13 | Bộ đùn: Khác: Trident là Orbiter 2.0
+T14 | Bàn nhiệt: 600 W AC, nhôm 8 mm
+T15 | Tấm in: PEI nhám
+T16 | Vách buồng: Khác: Structural Panel của Monolith, nhôm dày 3mm, foam cao su neophrene 3mm
+T17 | Cách nhiệt buồng: Không
+T18 | Sưởi buồng: Không
+T19 | Lọc khí: Không có
+T20 | Bộ đệm và đường nạp: Cảm biến OSS
+T21 | Vị trí cuộn nhựa: Trong hộp sấy, nạp qua ống
+T22 | Mod khác: có lắp tophat
+T23 | Bảo trì gần nhất: Từ lúc lắp trục monolith, là từ tháng 8 lắp lại đó
+V1 | Động cơ X/Y: Đúng như cấu hình khai
+V2 | Điện áp driver X/Y: 24 V
+V3 | Nguồn: Mean Well LRS-350-24
+V4 | Hãng đai: Khác: Giống của Trident
+V5 | Bề rộng đai: 9 mm
+V6 | Tuổi đai: Cùng thời gian với trident
+V7 | Cỡ ray X/Y: Khác: Giống Trident, Y là MGN9, X là MGN12, hãng không rõ
+V8 | Đầu nóng: Rapido 2 UHF
+V9 | Vật liệu đầu phun: Khác: Phaetus Silicon Carbide
+V10 | Tuổi đầu phun: Không nhớ luôn
+V11 | Kiểu đầu in: A4T
+V12 | Quạt làm mát chi tiết: 2 quạt GDSTime 4010 24v 12000rpm
+V13 | Bộ đùn: Đúng, Orbiter 2.5
+V14 | Bàn nhiệt: 600 W AC, nhôm 8 mm
+V15 | Tấm in: PEI nhám
+V16 | Vách buồng: Khác: Giống trident, nhôm 3mm, foam cao su neophrene 3mm
+V17 | Cách nhiệt buồng: Không
+V18 | Sưởi buồng: Không
+V19 | Lọc khí: Nevermore có than hoạt tính
+V20 | Bộ đệm và đường nạp: Mellow LLL Plus cùng cảm biến oSS
+V21 | Vị trí cuộn nhựa: Trong hộp sấy, nạp qua ống
+V22 | Mod khác: Có tophat (chuẩn bị lắp)
+V23 | Bảo trì gần nhất: Không nhớ luôn
+V24 | Cáp USB và nút BOOT: Khác: Toàn bộ thiết bị phần cứng ở dưới đáy máy, nên nếu làm mà không cần đụng vào thì là tốt nhất, vì k phải lật ngược máy lên rất là mất công
+H1 | Lỗi / HMS đang treo: Không có lỗi nào
+H2 | Cỡ đầu phun: 0,4 mm
+H3 | Loại đầu phun: Thép tôi
+H4 | Tấm in: PEI nhám; Cool Plate / SuperTack
+H5 | Tổng giờ in: (chưa trả lời)
+H6 | Bảo trì gần nhất: Cũng lâu phết rồi đấy
+H7 | Loại AMS: AMS 2 Pro
+H8 | ABS qua AMS: Qua AMS
+P1 | Lỗi / HMS đang treo: Không có lỗi nào
+P2 | Cỡ đầu phun: 0,4 mm
+P3 | Loại đầu phun: Thép tôi
+P4 | Tấm in: PEI nhám; Cool Plate / SuperTack
+P5 | Tổng giờ in: (chưa trả lời)
+P6 | Bảo trì gần nhất: Khoảng tầm tháng 8 tháng 9
+M1 | Lỗi / HMS đang treo: Không có lỗi nào
+M2 | Cỡ đầu phun: 0,4 mm
+M3 | Loại đầu phun: Thép tôi
+M4 | Tấm in: PEI nhám; Cool Plate / SuperTack
+M5 | Tổng giờ in: (chưa trả lời)
+M6 | Bảo trì gần nhất: Mới cách đây 1 tháng
+N1 | Lỗi / HMS đang treo: Không có lỗi nào
+N2 | Cỡ đầu phun: 0,4 mm
+N3 | Loại đầu phun: Thép tôi
+N4 | Tấm in: PEI nhám; Cool Plate / SuperTack
+N5 | Tổng giờ in: (chưa trả lời)
+N6 | Bảo trì gần nhất: Khoảng 4 - 5 tháng trước

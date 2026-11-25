@@ -84,3 +84,12 @@ selftest 46 OK + 18 --app, rc=0. t_harness.py 21/21 dump + 16/16 --app + 6/6 loi
 - c (Katapult 8K lap kin den 0x2000): UNKNOWN (dung oan, ghi nhan).
 - d (anh danh lua: app chay tu 0, "katapult" o dau, FF sat truoc ung vien, 16 byte vector, klipper sau): ebb36 -> BOOTLOADER_8K, octopus -> BOOTLOADER_128K (SAI tu tin, rui ro con lai da biet; d1b: anh octopus voi --board auto cung BOOTLOADER_128K).
 Danh gia: firmware Klipper that dong thoi co chuoi katapult o phan dau, FF >= 4 KiB lien truoc 0x20000 (hoac >=16 byte truoc 0x2000), dung 16 byte giong vector o ung vien, chuoi klipper sau: kho xay ra tinh co (bon dac diem doc lap); khong the khang dinh chua tung gap vi chua kiem firmware that.
+
+---
+# Luot 5 (T025b: --app tren build that)
+Chay tu tests\dump\: t_harness5.py (5 file that, tu parse vector, ma rieng), t_gate.sh (khoi cong 4.3 dong 368 / 4.4 dong 404, thay lenh nap bang echo).
+- Bang vector that (tu doc): octopus_off0 RESET=0x08007A45; octopus_off128k 0x08027A61; trident 0x08027A4D; ebb_off0 0x08007B51; ebb_off8k 0x08009B7D. Cac muc khac nam trong anh. Khop .config (CONFIG_FLASH_APPLICATION_ADDRESS). 0 lech giua script va du doan doc lap (5 file x 3 board x cac offset).
+- --board dung: octopus_off0 -> 0x0 OK, 0x20000 MISMATCH; off128k va trident -> 0x20000 OK, 0x0 MISMATCH; ebb_* -> 0x0 va 0x2000 AMBIGUOUS (rc5), 0x20000 MISMATCH (auto). Sai board: file octopus_off128k/trident voi --board ebb36 -> MISMATCH; ebb voi --board octopus -> MISMATCH; NHUNG octopus_off0 voi --board ebb36/auto -> AMBIGUOUS rc5 (cong EBB chap nhan rc5).
+- Cap nhat ky vong: t_harness.py 7/16 ca --app doi (dung predict() doc lap; file 0x30000 hop nhieu offset -> AMBIGUOUS) va t_harness2.py (h): RESET lo+0x1000/0x3000 -> OK khi file du lon, vi cua so 0x1000 da bo. Selftest 73 OK, 0 SAI rc0. Che do dump khong doi (h1 21/21, h2 20/20, h3 14/14, h4 8/8).
+- Cong: tat ca to hop dung -> NAP; sai file/cfg cho Octopus -> CHAN; EBB OFF=8K voi FILE=off0 + cfg off0 -> CHAN (grep). Ca grep qua nhung FILE khong khop cfg tren EBB (off0<->off8k) -> NAP (cong khong phan biet, co the ghi nhan); file octopus_off0 qua cong EBB (cfg ebb khop) -> rc5 -> NAP.
+- Cat cut octopus_off128k (--board octopus --app 0x20000): 16 B, 64 B, 4 KiB, 0x7000, 0x7C00, 0x8000 -> MISMATCH; 0x9000 (36 KiB, da qua RESET 0x7A61) -> OK sai (khong co kiem do dai/CRC).

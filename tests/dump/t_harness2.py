@@ -75,7 +75,9 @@ for rel in (0x0FFC, 0x1000, 0x3000, 0x0100):
         a = img(sz); struct.pack_into("<4I", a, 0, 0x24080000, (B+0x20000+rel)|1, 0, 0)
         p = D+"/t2_app_%x_%x.bin"%(rel,sz); open(p,"wb").write(bytes(a))
         rc,out,err = run(["--app","0x20000",p])
-        print("RESET=lo+0x%04X size=0x%X -> %s rc=%d" % (rel,sz,[l for l in out.splitlines() if l.startswith("KET")],rc))
+        # Luot 5: cua so 0x1000 bi bo; ky vong moi = RESET nam trong [lo, lo+size) thi OK (khong ung vien khac khop vi RESET >= 0x08020000)
+        exp = "OK" if rel < sz else "MISMATCH"
+        print("RESET=lo+0x%04X size=0x%X exp=%s -> %s rc=%d" % (rel,sz,exp,[l for l in out.splitlines() if l.startswith("KET")],rc))
 print("=== (i) ma thoat")
 for args in (["--help"],["/nonexistent"],["--board","zzz",D+"/t2_c_hang128K_khong_chuoi_FF.bin"],["--app"],["--app","0x20000"],["--app","zz",D+"/t2_c_hang128K_khong_chuoi_FF.bin"],[],[D+"/t_c6a_toan_FF.bin"],[D+"/t_c6d_3byte.bin"]):
     rc,out,err = run(args)

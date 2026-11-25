@@ -1,0 +1,48 @@
+OK  c1_app0_nho_co_chuoi                                           mong doi NO_BOOTLOADER          duoc NO_BOOTLOADER
+OK  c2_app_lon_vector_gia_0x20000                                  mong doi UNKNOWN                duoc UNKNOWN
+OK  c2b_app_lon_vector_gia_0x2000                                  mong doi UNKNOWN                duoc UNKNOWN
+OK  c2c_app_lon_bang_con_tro_gia_co_khoang_FF_nhung_khong_chuoi_boot mong doi UNKNOWN                duoc UNKNOWN
+OK  c3_katapult_128K_kalico                                        mong doi BOOTLOADER_128K        duoc BOOTLOADER_128K
+OK  c4_ebb36_katapult_8K                                           mong doi BOOTLOADER_8K          duoc BOOTLOADER_8K
+OK  c5_chi_bootloader                                              mong doi BOOTLOADER_ONLY_NO_APP duoc BOOTLOADER_ONLY_NO_APP
+OK  c6a_toan_FF                                                    mong doi EMPTY                  duoc EMPTY
+OK  c6b_toan_00                                                    mong doi EMPTY                  duoc EMPTY
+OK  c6c_rong                                                       mong doi EMPTY                  duoc EMPTY
+OK  c6d_3_byte                                                     mong doi UNKNOWN                duoc UNKNOWN
+OK  c6f_chi_4KiB_ung_dung                                          mong doi UNKNOWN                duoc UNKNOWN
+OK  c6g_dump_dung_128KiB                                           mong doi UNKNOWN                duoc UNKNOWN
+OK  c8_ebb36_CAN_only_khong_chuoi                                  mong doi UNKNOWN                duoc UNKNOWN
+OK  c9a_katapult_o_vung_app_khong_klipper                          mong doi UNKNOWN                duoc UNKNOWN
+OK  c9b_katapult_o_vung_app_co_klipper                             mong doi UNKNOWN                duoc UNKNOWN
+OK  c9c_klipper_utf16                                              mong doi NO_BOOTLOADER          duoc NO_BOOTLOADER
+OK  c_hang128K_khong_chuoi_FF --board octopus                      mong doi UNKNOWN                duoc UNKNOWN
+OK  c_hang128K_khong_chuoi_FF auto                                 mong doi UNKNOWN                duoc UNKNOWN
+OK  f3_hang128K_FF --board ebb36                                   mong doi UNKNOWN                duoc UNKNOWN
+OK  d_hang128K_lap_day_khong_FF --board octopus                    mong doi UNKNOWN                duoc UNKNOWN
+OK  d_hang128K_lap_day_khong_FF auto                               mong doi UNKNOWN                duoc UNKNOWN
+OK  j_hang_lap_day_app_NMI_ngoai_flash                             mong doi UNKNOWN                duoc UNKNOWN
+OK  j_hang_lap_day_app_NMI_ngoai_flash --board octopus             mong doi UNKNOWN                duoc UNKNOWN
+OK  a1_FFgap_vecgia_klipper@0x400                                  mong doi UNKNOWN                duoc UNKNOWN
+OK  a2_FFgap_vecgia_klipper@0x25000                                mong doi UNKNOWN                duoc UNKNOWN
+OK  a2_FFgap_vecgia_klipper@0x25000 --board octopus                mong doi UNKNOWN                duoc UNKNOWN
+OK  b1_ebb36_FFgap_vecgia_klipper@0x400                            mong doi UNKNOWN                duoc UNKNOWN
+OK  b2_ebb36_FFgap_vecgia_klipper@0x3000                           mong doi UNKNOWN                duoc UNKNOWN
+OK  b2_ebb36_FFgap_vecgia_klipper@0x3000 auto                      mong doi UNKNOWN                duoc UNKNOWN
+OK  e1_kat8K_zlib_that --board ebb36                               mong doi BOOTLOADER_8K          duoc BOOTLOADER_8K
+OK  e1b_kat8K_zlib_that auto                                       mong doi BOOTLOADER_8K          duoc BOOTLOADER_8K
+OK  e2_kat8K_78_9c_rac                                             mong doi UNKNOWN                duoc UNKNOWN
+OK  e3_kat8K_zlib_khong_phai_dict                                  mong doi UNKNOWN                duoc UNKNOWN
+OK  f1_dump_octopus_katapult --board ebb36                         mong doi UNKNOWN                duoc UNKNOWN
+OK  f1b_dump_octopus_katapult --board octopus                      mong doi BOOTLOADER_128K        duoc BOOTLOADER_128K
+OK  f2_dump_ebb36_katapult --board octopus                         mong doi UNKNOWN                duoc UNKNOWN
+OK  f4_app0 --board ebb36                                          mong doi NO_BOOTLOADER          duoc NO_BOOTLOADER
+OK  h3b1_app_lien_mach_canboot_vecgia@0x2000 --board ebb36         mong doi UNKNOWN                duoc UNKNOWN
+OK  h3b2_app_lien_mach_canboot_vecgia@0x20000 --board octopus      mong doi UNKNOWN                duoc UNKNOWN
+OK  r5i_vector0_muc5_tro_vao_app --board ebb36                     mong doi UNKNOWN                duoc UNKNOWN
+OK  r5ii_8K_khong_FF_sat_truoc --board ebb36                       mong doi UNKNOWN                duoc UNKNOWN
+OK  r5ii_128K_FF_sat_truoc_chi_2KiB --board octopus                mong doi UNKNOWN                duoc UNKNOWN
+OK  r5ii_8K_dung_16_byte_FF --board ebb36                          mong doi BOOTLOADER_8K          duoc BOOTLOADER_8K
+OK  k2_ebb36_zlib_dict                                             mong doi BOOTLOADER_8K          duoc BOOTLOADER_8K
+OK  k3_ebb36_khong_bootloader_zlib_dict                            mong doi NO_BOOTLOADER          duoc NO_BOOTLOADER
+kiem --app (18 to hop): OK
+TU KIEM: DAT

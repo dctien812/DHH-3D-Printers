@@ -318,10 +318,26 @@ document.getElementById("bGh").addEventListener("click", function(){
   // Mo trang tao issue da dien san; nguoi dien bam "Submit new issue" (can tai khoan GitHub). Repo rieng tu: chi chu repo thay.
   const t = xuat();
   document.getElementById("out").value = t;
-  const u = "https://github.com/dctien812/DHH-3D-Printers/issues/new?title=" +
-    encodeURIComponent("Phiếu máy in " + homNay()) + "&body=" + encodeURIComponent("```\n" + t + "\n```");
-  bao("Đang mở GitHub: đăng nhập nếu được hỏi rồi bấm nút xanh \"Submit new issue\". Không có tài khoản GitHub thì dùng \"Chép câu trả lời\".");
-  window.open(u, "_blank");
+  const body = "```\n" + t + "\n```";
+  const goc = "https://github.com/dctien812/DHH-3D-Printers/issues/new?title=" + encodeURIComponent("Phiếu máy in " + homNay());
+  const u = goc + "&body=" + encodeURIComponent(body);
+  if(u.length <= 6000){
+    bao("Đang mở GitHub: đăng nhập nếu được hỏi rồi bấm nút xanh \"Submit new issue\". Không có tài khoản GitHub thì dùng \"Chép câu trả lời\".");
+    window.open(u, "_blank");
+    return;
+  }
+  // Qua dai cho URL (GitHub tra "URL too long"): chep vao bo nho tam, mo trang issue trong de dan vao.
+  const xong = function(){ bao("Phiếu dài nên đã CHÉP SẴN câu trả lời. Ở trang GitHub vừa mở: bấm vào ô Description, nhấn Ctrl+V (điện thoại: giữ rồi chọn Dán), rồi bấm \"Submit new issue\"."); };
+  const lui = function(){
+    const out = document.getElementById("out"); out.value = body; out.focus(); out.select();
+    bao("Phiếu dài, không chép tự động được. Hãy chép văn bản đã chọn sẵn ở ô bên dưới, rồi dán vào ô Description ở trang GitHub vừa mở và bấm \"Submit new issue\".");
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(body).then(xong, lui);
+    else lui();
+  }catch(e){ lui(); }
+  const w = window.open(goc, "_blank");
+  if(!w) bao("Trình duyệt chặn mở tab mới. Câu trả lời vẫn ở ô bên dưới; dùng nút \"Chép câu trả lời\" rồi dán vào chat.");
 });
 document.getElementById("bDl").addEventListener("click", function(){
   try{

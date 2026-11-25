@@ -68,7 +68,18 @@ tests = []
 for sz in (0x4000, 0x30000):
     p128 = appf("app128_%x"%sz, sz, 0x20000); p0 = appf("app0_%x"%sz, sz, 0)
     p8 = appf("app8k_%x"%sz, sz, 0x2000)
-    for f,off,exp in ((p128,"0x20000","OK"),(p128,"0x0","MISMATCH"),(p0,"0x0","OK"),(p0,"0x20000","MISMATCH"),(p8,"0x2000","OK"),(p8,"0x0","MISMATCH"),(p8,"0x20000","MISMATCH"),(p128,"0x2000","MISMATCH")):
+    # Luot 5: quy tac --app doi (RESET va cac muc vector phai nam trong [lo, lo+size); fit o >1 ung vien -> AMBIGUOUS).
+    # Ky vong tinh bang ham doc lap predict() (theo mo ta cua truong phong), thay cho bang cung cu: file 0x30000 bao trum
+    # nhieu offset nen mot so ca MISMATCH cu thanh AMBIGUOUS/OK tuy file; ly do tung ca in kem.
+    def fits(b, off, nv=16):
+        e = struct.unpack_from("<%dI" % min(nv, len(b)//4), b, 0); lo = B+off; hi = lo+len(b)
+        return 0x20000000 <= e[0] < 0x40000000 and (e[1] & 1) == 1 and all(x in (0, 0xFFFFFFFF) or lo <= x < hi for x in e[1:])
+    def predict(b, off):
+        if not fits(b, off): return "MISMATCH"
+        return "AMBIGUOUS" if any(fits(b, c) for c in (0, 0x2000, 0x20000) if c != off) else "OK"
+    for f,off,_old in ((p128,"0x20000","OK"),(p128,"0x0","MISMATCH"),(p0,"0x0","OK"),(p0,"0x20000","MISMATCH"),(p8,"0x2000","OK"),(p8,"0x0","MISMATCH"),(p8,"0x20000","MISMATCH"),(p128,"0x2000","MISMATCH")):
+        exp = predict(open(f,"rb").read(), int(off,0))
+        if exp != _old: exp += "(cu:%s)" % _old
         rc,out,err = run(["--app",off,f])
         kl = [l for l in out.splitlines() if l.startswith("KET LUAN")]
         print("%-22s --app %-8s exp=%-8s got=%s rc=%d" % (os.path.basename(f),off,exp,kl,rc))

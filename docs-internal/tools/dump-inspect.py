@@ -7,8 +7,9 @@ in kem danh sach bang chung da dung.
 
 Dung:
   python3 dump-inspect.py <dump.bin> [--board octopus|ebb36|auto] [--base 0x08000000]
-  python3 dump-inspect.py --app <offset> <build.bin> [--base 0x08000000]
+  python3 dump-inspect.py --app <offset> <build.bin> [--board octopus|ebb36|auto] [--base 0x08000000]
   python3 dump-inspect.py --selftest [--write <thu_muc>]
+      (them: neu co fleet/reflash/2026-11-25 canh repo thi kiem --app tren cac ban build that)
   python3 dump-inspect.py --help
 
 --board: octopus = ung vien offset 128 KiB (0x20000), can dump >= 0x20010 byte;
@@ -22,10 +23,14 @@ NO_BOOTLOADER, BOOTLOADER_8K, BOOTLOADER_128K, BOOTLOADER_ONLY_NO_APP, EMPTY, UN
 Ma thoat: 0 ket luan chac (NO_BOOTLOADER, BOOTLOADER_*, BOOTLOADER_ONLY_NO_APP),
           2 UNKNOWN, 3 EMPTY, 1 loi dung sai / khong doc duoc file.
 
-Che do --app: kiem file .bin vua build (chi chua ung dung) co bang vector khop offset khong;
-dong cuoi  KET LUAN APP: APP_OFFSET_OK (ma 0) | APP_OFFSET_MISMATCH (ma 4).
-RESET phai nam trong [base+offset, base+offset+0x1000): gioi han 0x1000 la CHON, chua kiem
-chung tren ban build that (xem tai lieu muc 8).
+Che do --app: kiem PHU file .bin vua build (chi chua ung dung) co bang vector khop offset khong;
+can cu chinh cua offset la CONFIG_FLASH_APPLICATION_ADDRESS trong .config da dung de build.
+Hop le tai offset: SP trong RAM; RESET le; RESET va moi muc khac 0/0xFFFFFFFF trong N muc dau
+nam trong [base+offset, base+offset+kich_thuoc_file) (N = 64 voi --board octopus, 16 voi ebb36/auto).
+Dong cuoi  KET LUAN APP: APP_OFFSET_OK (ma 0) | APP_OFFSET_MISMATCH (ma 4)
+           | APP_OFFSET_AMBIGUOUS (ma 5: anh cung hop le o offset ung vien khac cua bo
+             (0 va cac ung vien cua --board), khong phan biet duoc; dua vao .config).
+Voi EBB36 ban build ~47 KiB phu ca 0 lan 0x2000 nen thuong ra AMBIGUOUS.
 
 Quy tac phan loai la suy luan tu cau truc bang vector Cortex-M, CHUA kiem chung tren dump
 that cua hai bo. UNKNOWN nghia la KHONG DU CAN CU: khong nap, dung theo D1.
@@ -40,7 +45,11 @@ BOOT_NAMES = ("katapult", "canboot")
 APP_NAMES = ("klipper", "kalico")
 BOARDS = {"octopus": (0x20000,), "ebb36": (0x2000,), "auto": (0x2000, 0x20000)}
 VIEW_OFFSETS = (0x0, 0x2000, 0x20000)
-APP_RESET_WINDOW = 0x1000
+# --app: so muc vector kiem. 16 = cac ngoai le loi (dung cho ca M0+ va M7). Octopus (H723, M7) dung 64:
+# ban build that 0.13.0-822 co 63/63 muc nam trong vung nap (fleet\reflash\2026-11-25).
+# EBB36 (G0B1, M0+) chi 16: bang vector ngan hon, cac muc sau la du lieu.
+APP_NVEC = {"octopus": 64, "ebb36": 16, "auto": 16}
+APP_EXIT = {"APP_OFFSET_OK": 0, "APP_OFFSET_MISMATCH": 4, "APP_OFFSET_AMBIGUOUS": 5}
 # Khoang FF toi thieu sat truoc ung vien de coi [0, c) la bootloader da ket thuc.
 # 0x2000: 16 byte la GIA DINH "Katapult khong lap kin 8 KiB", chua kiem chung tren ban that.
 BOOT_TAIL_FF = {0x2000: 16, 0x20000: 0x1000}
@@ -229,20 +238,46 @@ def report(d, base, board):
     return verdict
 
 
-def check_app(d, off, base):
-    lo = base + off
-    v = read_vec(d, 0, lo)  # file ung dung: bang vector o byte 0, nap tai base+off
-    if v is None:
+def app_fits(d, off, base, nvec):
+    """File ung dung (bang vector o byte 0) co hop voi dia chi nap base+off khong.
+    Tra ve (hop, ly_do). Dieu kien: SP trong RAM; RESET le; RESET va moi muc khac 0/0xFFFFFFFF
+    trong nvec muc dau nam trong [base+off, base+off+len)."""
+    lo, hi = base + off, base + off + len(d)
+    ents = struct.unpack_from("<%dI" % min(nvec, len(d) // 4), d, 0)
+    if not RAM_LO <= ents[0] < RAM_HI:
+        return False, "SP=0x%08X khong nam trong RAM" % ents[0]
+    if not ents[1] & 1:
+        return False, "RESET=0x%08X chan" % ents[1]
+    bad = [(i, x) for i, x in enumerate(ents) if i > 0 and x not in (0, 0xFFFFFFFF) and not lo <= x < hi]
+    if bad:
+        return False, "%d muc vector ngoai [0x%08X, 0x%08X), dau tien #%d=0x%08X" % ((len(bad), lo, hi) + bad[0])
+    return True, "%d muc dau: moi muc khac 0/FFFFFFFF nam trong [0x%08X, 0x%08X)" % (len(ents), lo, hi)
+
+
+def check_app(d, off, base, board="auto"):
+    """Tra ve APP_OFFSET_OK | APP_OFFSET_MISMATCH | APP_OFFSET_AMBIGUOUS (va in ra)."""
+    nvec = APP_NVEC.get(board, 16)
+    print("offset kiem: 0x%X, board %s, so muc vector kiem: %d, kich thuoc file 0x%X" % (off, board, nvec, len(d)))
+    if len(d) < 16:
         print("file qua ngan (< 16 byte)")
         print("KET LUAN APP: APP_OFFSET_MISMATCH")
-        return False
-    in_win = lambda x: lo <= x < lo + min(APP_RESET_WINDOW, len(d))
-    ok = (RAM_LO <= v["sp"] < RAM_HI and (v["reset"] & 1) == 1 and in_win(v["reset"])
-          and all(x == 0 or ((x & 1) == 1 and lo <= x < lo + len(d)) for x in (v["nmi"], v["hf"])))
-    print("offset kiem: 0x%X; RESET phai nam trong 0x%08X-0x%08X" % (off, lo, lo + min(APP_RESET_WINDOW, len(d))))
-    print("SP=0x%08X RESET=0x%08X NMI=0x%08X HARDFAULT=0x%08X" % (v["sp"], v["reset"], v["nmi"], v["hf"]))
-    print("KET LUAN APP: %s" % ("APP_OFFSET_OK" if ok else "APP_OFFSET_MISMATCH"))
-    return ok
+        return "APP_OFFSET_MISMATCH"
+    sp, rv, nmi, hf = struct.unpack_from("<4I", d, 0)
+    print("SP=0x%08X RESET=0x%08X NMI=0x%08X HARDFAULT=0x%08X" % (sp, rv, nmi, hf))
+    ok, why = app_fits(d, off, base, nvec)
+    print("tai 0x%X: %s" % (off, why))
+    if not ok:
+        res = "APP_OFFSET_MISMATCH"
+    else:
+        others = [c for c in sorted({0} | set(BOARDS[board])) if c != off and app_fits(d, c, base, nvec)[0]]
+        if others:
+            print("anh cung hop le o offset ung vien khac: %s; anh KHONG du de phan biet, "
+                  "dua vao CONFIG_FLASH_APPLICATION_ADDRESS trong .config da dung de build" % ", ".join("0x%X" % c for c in others))
+            res = "APP_OFFSET_AMBIGUOUS"
+        else:
+            res = "APP_OFFSET_OK"
+    print("KET LUAN APP: %s" % res)
+    return res
 
 
 # ---------------------------------------------------------------- tu kiem
@@ -410,23 +445,88 @@ def selftest(write_dir=None):
             os.makedirs(write_dir, exist_ok=True)
             with open(os.path.join(write_dir, "s_" + re.sub(r"[^A-Za-z0-9_.]+", "_", name) + ".bin"), "wb") as f:
                 f.write(bytes(img))
-    for sz in (0x4000, 0x30000):
-        for rel, offs in ((0x20000, {0x20000: True, 0x0: False, 0x2000: False}),
-                          (0x0, {0x0: True, 0x20000: False, 0x2000: False}),
-                          (0x2000, {0x2000: True, 0x0: False, 0x20000: False})):
-            app = _img(sz)
-            struct.pack_into("<4I", app, 0, 0x24080000, base + rel + 0x101, base + rel + 0x103, base + rel + 0x105)
-            for off, want in offs.items():
-                import io
-                import contextlib
-                with contextlib.redirect_stdout(io.StringIO()):
-                    got = check_app(bytes(app), off, base)
-                if got != want:
-                    bad += 1
-                    print("SAI  --app 0x%X voi file build cho 0x%X (size 0x%X): mong doi %s" % (off, rel, sz, want))
-    print("kiem --app (18 to hop): %s" % ("OK" if bad == 0 else "co SAI o tren"))
+    import io
+    import contextlib
+
+    def app_check(app, off, board):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return check_app(bytes(app), off, base, board)
+
+    n_app = 0
+    for name, app, off, board, want in _app_cases(base):
+        got = app_check(app, off, board)
+        n_app += 1
+        if got not in want:
+            bad += 1
+        print("%s --app %-46s mong doi %-42s duoc %s" % ("OK " if got in want else "SAI", name, "/".join(want), got))
+    print("kiem --app (%d ca dung giong ban build that): %s" % (n_app, "OK" if bad == 0 else "co SAI o tren"))
+    # tuy chon: ban build that, neu co mat canh repo (khong co tren Pi thi bo qua)
+    real = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "fleet", "reflash", "2026-11-25")
+    ok_amb = ("APP_OFFSET_OK", "APP_OFFSET_AMBIGUOUS")
+    real_cases = (("octopus_off0_klipper-0.13.0-822.bin", "octopus", {0x0: ("APP_OFFSET_OK",), 0x20000: ("APP_OFFSET_MISMATCH",)}),
+                  ("octopus_off128k_klipper-0.13.0-822.bin", "octopus", {0x20000: ("APP_OFFSET_OK",), 0x0: ("APP_OFFSET_MISMATCH",)}),
+                  ("trident_out_klipper.bin", "octopus", {0x20000: ("APP_OFFSET_OK",), 0x0: ("APP_OFFSET_MISMATCH",)}),
+                  ("ebb_off0_klipper-0.13.0-822.bin", "ebb36", {0x0: ok_amb, 0x2000: ok_amb}),
+                  ("ebb_off8k_klipper-0.13.0-822.bin", "ebb36", {0x2000: ok_amb, 0x0: ok_amb}))
+    for fn, board, offs in real_cases:
+        p = os.path.join(real, fn)
+        if not os.path.isfile(p):
+            print("(bo qua ban build that: khong co %s)" % fn)
+            continue
+        with open(p, "rb") as f:
+            data = f.read()
+        for off, want in offs.items():
+            got = app_check(data, off, board)
+            if got not in want:
+                bad += 1
+            print("%s --app that %-40s 0x%-6X %-8s mong doi %-42s duoc %s"
+                  % ("OK " if got in want else "SAI", fn, off, board, "/".join(want), got))
     print("TU KIEM: %s" % ("DAT" if bad == 0 else "%d LOI" % bad))
     return bad == 0
+
+
+def _app_build(base, rel, size, sp, n_handlers):
+    """Anh ung dung dung giong ban build Klipper that: RESET cach dau ~31 KiB, n_handlers muc vector
+    tro vao ma trong anh, cac muc sau (neu co) la du lieu (vd M0+), phan con lai la ma."""
+    lo = base + rel
+    a = bytearray(size)
+    _code(a, 0, size)
+    words = [sp, (lo + 0x7A45) | 1] + [(lo + 0x7B00 + 2 * i) | 1 for i in range(2, n_handlers)]
+    words += [0x4B072200 + i for i in range(64 - len(words))]
+    struct.pack_into("<64I", a, 0, *words)
+    return a
+
+
+def _app_cases(base):
+    O, M, A = ("APP_OFFSET_OK",), ("APP_OFFSET_MISMATCH",), ("APP_OFFSET_AMBIGUOUS",)
+    o0 = _app_build(base, 0x0, 0xBEF0, 0x20020000, 64)
+    o128 = _app_build(base, 0x20000, 0xBF80, 0x20020000, 64)
+    e0 = _app_build(base, 0x0, 0xB7B0, 0x20024000, 38)
+    e8 = _app_build(base, 0x2000, 0xB838, 0x20024000, 38)
+    o0_bad40 = bytearray(o0); struct.pack_into("<I", o0_bad40, 40 * 4, (base + 0x30001) | 1)
+    sp_flash = bytearray(o0); struct.pack_into("<I", sp_flash, 0, base + 0x1000)
+    rst_even = bytearray(o0); struct.pack_into("<I", rst_even, 4, base + 0x7A44)
+    e8_small = _app_build(base, 0x2000, 0x1800, 0x20024000, 16)
+    struct.pack_into("<I", e8_small, 4, (base + 0x2000 + 0x101) | 1)
+    for i in range(2, 16):
+        struct.pack_into("<I", e8_small, 4 * i, (base + 0x2000 + 0x200 + 2 * i) | 1)
+    return (("octopus_off0 tai 0x0 --board octopus", o0, 0x0, "octopus", O),
+            ("octopus_off0 tai 0x20000 --board octopus", o0, 0x20000, "octopus", M),
+            ("octopus_off0 tai 0x0 auto (0x2000 cung hop)", o0, 0x0, "auto", A),
+            ("octopus_off128k tai 0x20000 --board octopus", o128, 0x20000, "octopus", O),
+            ("octopus_off128k tai 0x0 --board octopus", o128, 0x0, "octopus", M),
+            ("octopus_off128k tai 0x20000 auto", o128, 0x20000, "auto", O),
+            ("ebb_off0 tai 0x0 --board ebb36", e0, 0x0, "ebb36", A),
+            ("ebb_off0 tai 0x2000 --board ebb36", e0, 0x2000, "ebb36", A),
+            ("ebb_off8k tai 0x2000 --board ebb36", e8, 0x2000, "ebb36", A),
+            ("ebb_off8k tai 0x0 --board ebb36", e8, 0x0, "ebb36", A),
+            ("ebb_off8k tai 0x20000 --board ebb36", e8, 0x20000, "ebb36", M),
+            ("ebb_off8k nho 6 KiB tai 0x2000 --board ebb36", e8_small, 0x2000, "ebb36", O),
+            ("ebb_off8k nho 6 KiB tai 0x0 --board ebb36", e8_small, 0x0, "ebb36", M),
+            ("octopus_off0 muc #40 ra ngoai --board octopus", o0_bad40, 0x0, "octopus", M),
+            ("octopus_off0 SP trong flash", sp_flash, 0x0, "octopus", M),
+            ("octopus_off0 RESET chan", rst_even, 0x0, "octopus", M),
+            ("file 3 byte", bytearray(b"\x01\x02\x03"), 0x0, "auto", M))
 
 
 def parse_int(s, what):
@@ -478,7 +578,7 @@ def main(argv):
             return 1
         if a.app is not None:
             off = parse_int(a.app, "--app")
-            return 0 if check_app(d, off, base) else 4
+            return APP_EXIT[check_app(d, off, base, a.board)]
         return EXIT[report(d, base, a.board)]
     except SystemExit_ as e:
         sys.stderr.write("loi dung sai: %s\n" % e.msg)

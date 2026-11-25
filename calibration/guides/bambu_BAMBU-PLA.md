@@ -1,4 +1,4 @@
-# Thẻ hiệu chuẩn Bambu: Bambu PLA trắng (BAMBU-PLA)
+# Thẻ hiệu chuẩn Bambu: Bambu PLA Matte (BAMBU-PLA)
 
 Máy: **H2S** (có AMS, nạp qua AMS như dùng hằng ngày), **P1S**, **A1**, **A1M** (A1 Mini). Hai Voron không in PLA trong đợt này.
 Buổi: **Ngày 1, nửa 1** (pilot, 004:T011). Pilot chưa đạt thì PETG và ABS không chạy.
@@ -6,7 +6,7 @@ Trạng thái thẻ: soạn theo tài liệu hãng (`specs\004-bambu-calibration
 
 Thứ tự: **1 lưu lượng thể tích tối đa (mvs) → 2 K → 3 flow ratio** (theo hướng dẫn hiệu chuẩn của Orca; người dùng chốt, ghi ở `.office\ledger.md`). Nhiệt in: **mặc định của hồ sơ, không chỉnh**, ghi `mặc_định`.
 Văn phòng **không gửi lệnh điều khiển nào tới máy Bambu** (ngoài `pushall` chỉ-đọc theo hiến chương III): mọi lần in do bạn bấm trong Orca hoặc trên máy.
-Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini` (`profiles\NAMING.md`); nhựa `DHH Bambu PLA @<Máy>`.
+Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini` (`profiles\NAMING.md`); nhựa `DHH Bambu PLA Matte @<Máy>`.
 
 ## A. Quy tắc K (đọc trước)
 
@@ -26,8 +26,8 @@ Tên hồ sơ: `<Máy>` là H2S = `H2S`, P1S = `P1S`, A1 = `A1`, A1M = `A1 Mini`
 
 - [ ] Máy rảnh, không in, không báo lỗi; đã bảo trì và hiệu chuẩn hãng hôm trước (`calibration\bambu\MAINTENANCE.md`).
 - [ ] Bàn sạch (nước rửa bát hoặc IPA theo loại bàn của bạn).
-- [ ] Orca đã nhập hồ sơ pilot: máy `DHH <Máy> 0.4`, nhựa `DHH Bambu PLA @<Máy>`, quy trình `DHH 0.20 Sync @<Máy>`. Không thấy thì dừng, báo trưởng phòng.
-- [ ] Nhựa: cuộn Bambu PLA trắng, nhãn mã cuộn ví dụ `BAMBU-PLA-01` (ghi giống hệt vào `cuộn`). Sấy theo nhãn hãng; dự án chưa có số sấy từ nguồn nào: ghi nhiệt độ và giờ **thực tế** vào `điều_kiện` (hoặc `không_sấy`). H2S: ghi thêm thời gian cuộn đã nằm trong AMS.
+- [ ] Orca đã nhập hồ sơ pilot: máy `DHH <Máy> 0.4`, nhựa `DHH Bambu PLA Matte @<Máy>`, quy trình `DHH 0.20 Sync @<Máy>`. Không thấy thì dừng, báo trưởng phòng.
+- [ ] Nhựa: cuộn Bambu PLA Matte (chủ máy chốt 2026-11-25: chưa có cuộn trắng, dùng màu Matte đang có, ví dụ mã 11800, 11202; màu không đổi hồ sơ), nhãn mã cuộn ví dụ `BAMBU-PLA-01` (ghi giống hệt vào `cuộn`). Sấy theo nhãn hãng; dự án chưa có số sấy từ nguồn nào: ghi nhiệt độ và giờ **thực tế** vào `điều_kiện` (hoặc `không_sấy`). H2S: ghi thêm thời gian cuộn đã nằm trong AMS.
 - [ ] Thước cặp, điện thoại chụp ảnh, `calibration\entry\cal\TEMPLATE_cal.csv`.
 
 ## C. Các bước
