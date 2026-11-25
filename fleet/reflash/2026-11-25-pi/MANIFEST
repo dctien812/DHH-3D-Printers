@@ -1,0 +1,4 @@
+octopus_off0 dea5c42008e66a672e3ada62ca2d8a81171baa056475a5f06e6944c08405ab04 /home/pi/mcu-build/octopus_off0_klipper-0.13.0-822.bin /home/pi/mcu-build/octopus_off0.config 0x8000000
+octopus_off128k 4fa4edbcb946a51994f04fe120aa8717a5f85ac5758f4f2fc8111fd7358e178b /home/pi/mcu-build/octopus_off128k_klipper-0.13.0-822.bin /home/pi/mcu-build/octopus_off128k.config 0x8020000
+ebb36_off0 7a4f46d6681bd81b0f8c9c46ef1276320154ea9eab61e8b17fc2134052725a3e /home/pi/mcu-build/ebb_off0_klipper-0.13.0-822.bin /home/pi/mcu-build/ebb_off0.config 0x8000000
+ebb36_off8k d47669c0d7976ed3ff8b13d323856a2de01e09700f44404e61bac2baa3ee25d7 /home/pi/mcu-build/ebb_off8k_klipper-0.13.0-822.bin /home/pi/mcu-build/ebb_off8k.config 0x8002000

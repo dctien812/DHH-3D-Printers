@@ -102,7 +102,7 @@ function Get-MqttPacketFromBuffer {
     <# Removes one complete packet from the front of a List[byte]; $null if not complete yet.
        Returns Type (1..14), Flags, Body. #>
     [CmdletBinding()]
-    param([Parameter(Mandatory)][System.Collections.Generic.List[byte]]$Buffer)
+    param([Parameter(Mandatory)][AllowEmptyCollection()][System.Collections.Generic.List[byte]]$Buffer)
     if ($Buffer.Count -lt 2) { return $null }
     $rl = ConvertFrom-MqttRemainingLength -Bytes $Buffer -Offset 1
     if ($null -eq $rl) { return $null }
