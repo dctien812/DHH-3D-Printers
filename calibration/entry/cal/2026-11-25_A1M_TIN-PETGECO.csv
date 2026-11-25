@@ -1,0 +1,2 @@
+máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
+A1M,TIN-PETGECO,mvs,25.2,mm3/s,đo,Orca Max volumetric speed test lần 2; chủ máy đo thước cặp; báo trong chat 2026-11-25,2026-11-25,TIN-PETGECO-GREEN-01,Start=15; End=30; Step=0.5; cao=21mm chỗ xấu đầu tiên (hụt nhựa + sần) → 15+21×0.5=25.5; điểm tốt cuối ước ~20.5mm → 25.2; lần 1 Start=5; End=20; Step=0.5 đẹp toàn bộ (≥20); màu xanh lá; Flow Dynamics Auto; sấy: chưa ghi
