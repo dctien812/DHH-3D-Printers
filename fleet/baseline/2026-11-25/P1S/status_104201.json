@@ -1,0 +1,81 @@
+{
+    "_meta":  {
+                  "machine":  "P1S",
+                  "read_at":  "2026-11-25 10:42:01",
+                  "source":  "MQTT 8883 report",
+                  "mode":  "subscribe+pushall",
+                  "messages":  7,
+                  "cert_sha256":  "6f870784b293cb8b41ca0f42dcac6f056d5d82d76b4a8ec43488fd3d3cb5dc9d",
+                  "dropped_unknown_keys":  33,
+                  "dropped_secret_rule_keys":  1
+              },
+    "print":  {
+                  "upgrade_state":  {
+                                        "progress":  "",
+                                        "status":  "IDLE",
+                                        "consistency_request":  false,
+                                        "dis_state":  0,
+                                        "err_code":  0,
+                                        "force_upgrade":  false,
+                                        "message":  "0%, 0B/s",
+                                        "module":  "",
+                                        "new_version_state":  2,
+                                        "cur_state_code":  0,
+                                        "idx2":  2956140722,
+                                        "new_ver_list":  [
+
+                                                         ]
+                                    },
+                  "nozzle_temper":  26.28125,
+                  "nozzle_target_temper":  0,
+                  "bed_temper":  21.3125,
+                  "bed_target_temper":  0,
+                  "chamber_temper":  5,
+                  "heatbreak_fan_speed":  "0",
+                  "cooling_fan_speed":  "0",
+                  "big_fan1_speed":  "0",
+                  "big_fan2_speed":  "0",
+                  "mc_percent":  100,
+                  "mc_remaining_time":  0,
+                  "ams_status":  0,
+                  "spd_mag":  100,
+                  "spd_lvl":  2,
+                  "print_error":  0,
+                  "lifecycle":  "product",
+                  "wifi_signal":  "-9dBm",
+                  "gcode_state":  "FINISH",
+                  "stg_cur":  0,
+                  "print_type":  "idle",
+                  "home_flag":  24331528,
+                  "sdcard":  true,
+                  "layer_num":  0,
+                  "total_layer_num":  0,
+                  "nozzle_diameter":  "0.4",
+                  "nozzle_type":  "stainless_steel",
+                  "hms":  [
+
+                          ],
+                  "ams":  {
+                              "ams":  [
+
+                                      ],
+                              "ams_exist_bits":  "0",
+                              "tray_exist_bits":  "0",
+                              "tray_is_bbl_bits":  "0",
+                              "tray_tar":  "255",
+                              "tray_now":  "254",
+                              "tray_pre":  "254",
+                              "tray_read_done_bits":  "0",
+                              "tray_reading_bits":  "0",
+                              "version":  15,
+                              "insert_flag":  true,
+                              "power_on_flag":  false
+                          },
+                  "lights_report":  [
+                                        {
+                                            "node":  "chamber_light",
+                                            "mode":  "on"
+                                        }
+                                    ]
+              }
+}

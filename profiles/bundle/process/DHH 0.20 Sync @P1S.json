@@ -1,0 +1,10 @@
+{
+	"compatible_printers": [
+		"DHH P1S 0.4"
+	],
+	"from": "User",
+	"inherits": "0.20mm Standard @BBL X1C",
+	"name": "DHH 0.20 Sync @P1S",
+	"print_settings_id": "DHH 0.20 Sync @P1S",
+	"version": "2.5.1.0"
+}

@@ -1,0 +1,15 @@
+{
+	"compatible_printers": [
+		"DHH A1 0.4"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"filament_settings_id": [
+		"DHH Bambu PETG Basic @A1"
+	],
+	"from": "User",
+	"inherits": "Bambu PETG Basic @BBL A1",
+	"name": "DHH Bambu PETG Basic @A1",
+	"version": "2.5.1.0"
+}

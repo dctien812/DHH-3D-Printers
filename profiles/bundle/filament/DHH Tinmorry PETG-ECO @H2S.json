@@ -1,0 +1,48 @@
+{
+	"activate_air_filtration": [
+		"1",
+		"0",
+		"0"
+	],
+	"compatible_printers": [
+		"DHH H2S 0.4"
+	],
+	"complete_print_exhaust_fan_speed": [
+		"100",
+		"70",
+		"70"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard",
+		"Direct Drive High Flow",
+		"Direct Drive E3D High Flow"
+	],
+	"filament_retraction_length": [
+		"0.6",
+		"0.6",
+		"0.6"
+	],
+	"filament_settings_id": [
+		"DHH Tinmorry PETG-ECO @H2S"
+	],
+	"from": "User",
+	"inherits": "Generic PETG @BBL H2S",
+	"name": "DHH Tinmorry PETG-ECO @H2S",
+	"nozzle_temperature": [
+		"245",
+		"245",
+		"245"
+	],
+	"nozzle_temperature_initial_layer": [
+		"250",
+		"250",
+		"250"
+	],
+	"textured_plate_temp": [
+		"75"
+	],
+	"textured_plate_temp_initial_layer": [
+		"75"
+	],
+	"version": "2.5.1.0"
+}

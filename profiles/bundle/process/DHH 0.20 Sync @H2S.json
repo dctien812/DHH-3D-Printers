@@ -1,0 +1,10 @@
+{
+	"compatible_printers": [
+		"DHH H2S 0.4"
+	],
+	"from": "User",
+	"inherits": "0.20mm Standard @BBL H2S",
+	"name": "DHH 0.20 Sync @H2S",
+	"print_settings_id": "DHH 0.20 Sync @H2S",
+	"version": "2.5.1.0"
+}

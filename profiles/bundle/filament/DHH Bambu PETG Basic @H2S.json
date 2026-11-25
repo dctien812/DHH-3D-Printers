@@ -1,0 +1,17 @@
+{
+	"compatible_printers": [
+		"DHH H2S 0.4"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard",
+		"Direct Drive High Flow",
+		"Direct Drive E3D High Flow"
+	],
+	"filament_settings_id": [
+		"DHH Bambu PETG Basic @H2S"
+	],
+	"from": "User",
+	"inherits": "Bambu PETG Basic @BBL H2S",
+	"name": "DHH Bambu PETG Basic @H2S",
+	"version": "2.5.1.0"
+}

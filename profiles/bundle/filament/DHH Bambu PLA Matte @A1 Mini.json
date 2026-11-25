@@ -1,0 +1,15 @@
+{
+	"compatible_printers": [
+		"DHH A1 Mini 0.4"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"filament_settings_id": [
+		"DHH Bambu PLA Matte @A1 Mini"
+	],
+	"from": "User",
+	"inherits": "Bambu PLA Matte @BBL A1M",
+	"name": "DHH Bambu PLA Matte @A1 Mini",
+	"version": "2.5.1.0"
+}

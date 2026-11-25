@@ -7,6 +7,7 @@
 		"0.08"
 	],
 	"name": "Voron Trident 250 0.4",
+	"printable_height": "205",
 	"print_host": "192.0.2.90",
 	"printer_extruder_id": [
 		"1"

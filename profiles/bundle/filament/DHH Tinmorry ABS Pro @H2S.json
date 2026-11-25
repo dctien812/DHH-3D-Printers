@@ -1,0 +1,51 @@
+{
+	"chamber_temperature": [
+		"50"
+	],
+	"compatible_printers": [
+		"DHH H2S 0.4"
+	],
+	"fan_max_speed": [
+		"50",
+		"50",
+		"50"
+	],
+	"fan_min_speed": [
+		"20",
+		"20",
+		"20"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard",
+		"Direct Drive High Flow",
+		"Direct Drive E3D High Flow"
+	],
+	"filament_flow_ratio": [
+		"0.96",
+		"0.96",
+		"0.96"
+	],
+	"filament_retraction_length": [
+		"0.8",
+		"0.8",
+		"0.8"
+	],
+	"filament_settings_id": [
+		"DHH Tinmorry ABS Pro @H2S"
+	],
+	"from": "User",
+	"inherits": "Bambu ABS @BBL H2S",
+	"name": "DHH Tinmorry ABS Pro @H2S",
+	"nozzle_temperature": [
+		"260",
+		"260",
+		"260"
+	],
+	"textured_plate_temp": [
+		"100"
+	],
+	"textured_plate_temp_initial_layer": [
+		"100"
+	],
+	"version": "2.5.1.0"
+}

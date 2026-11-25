@@ -1,0 +1,69 @@
+{
+	"chamber_minimal_temperature": [
+		"45"
+	],
+	"chamber_temperature": [
+		"45"
+	],
+	"compatible_printers": [
+		"DHH Voron Trident 250 0.4"
+	],
+	"default_filament_colour": [
+		"#C0C0C0"
+	],
+	"enable_pressure_advance": [
+		"1"
+	],
+	"fan_min_speed": [
+		"30"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"filament_flow_ratio": [
+		"0.965"
+	],
+	"filament_max_volumetric_speed": [
+		"18"
+	],
+	"filament_retraction_length": [
+		"0.32"
+	],
+	"filament_retraction_speed": [
+		"40"
+	],
+	"filament_settings_id": [
+		"DHH Tinmorry ABS Pro @Voron Trident 250"
+	],
+	"filament_shrink": [
+		"99.6%"
+	],
+	"filament_vendor": [
+		""
+	],
+	"from": "User",
+	"hot_plate_temp": [
+		"110"
+	],
+	"hot_plate_temp_initial_layer": [
+		"110"
+	],
+	"inherits": "PolyLite ABS @System",
+	"name": "DHH Tinmorry ABS Pro @Voron Trident 250",
+	"overhang_fan_speed": [
+		"100"
+	],
+	"overhang_fan_threshold": [
+		"95%"
+	],
+	"pressure_advance": [
+		"0.02"
+	],
+	"textured_plate_temp": [
+		"110"
+	],
+	"textured_plate_temp_initial_layer": [
+		"110"
+	],
+	"version": "2.5.1.0"
+}

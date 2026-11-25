@@ -1,0 +1,48 @@
+{
+	"compatible_printers": [
+		"DHH P1S 0.4"
+	],
+	"fan_max_speed": [
+		"40",
+		"40"
+	],
+	"fan_min_speed": [
+		"20",
+		"20"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard",
+		"Direct Drive High Flow"
+	],
+	"filament_flow_ratio": [
+		"0.96",
+		"0.96"
+	],
+	"filament_max_volumetric_speed": [
+		"20",
+		"20"
+	],
+	"filament_settings_id": [
+		"DHH Tinmorry ABS Pro @P1S"
+	],
+	"from": "User",
+	"inherits": "Generic ABS",
+	"name": "DHH Tinmorry ABS Pro @P1S",
+	"nozzle_temperature_initial_layer": [
+		"270",
+		"270"
+	],
+	"nozzle_temperature_range_low": [
+		"260"
+	],
+	"overhang_fan_speed": [
+		"100"
+	],
+	"textured_plate_temp": [
+		"100"
+	],
+	"textured_plate_temp_initial_layer": [
+		"100"
+	],
+	"version": "2.5.1.0"
+}

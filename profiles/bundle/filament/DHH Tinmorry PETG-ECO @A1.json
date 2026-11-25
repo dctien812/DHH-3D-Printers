@@ -1,0 +1,27 @@
+{
+	"compatible_printers": [
+		"DHH A1 0.4"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"filament_flow_ratio": [
+		"0.96"
+	],
+	"filament_max_volumetric_speed": [
+		"12"
+	],
+	"filament_settings_id": [
+		"DHH Tinmorry PETG-ECO @A1"
+	],
+	"from": "User",
+	"inherits": "Generic PETG @BBL A1",
+	"name": "DHH Tinmorry PETG-ECO @A1",
+	"nozzle_temperature": [
+		"245"
+	],
+	"nozzle_temperature_initial_layer": [
+		"240"
+	],
+	"version": "2.5.1.0"
+}
