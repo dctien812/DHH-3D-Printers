@@ -1,0 +1,84 @@
+{
+    "_meta":  {
+                  "machine":  "A1M",
+                  "read_at":  "2026-11-25 12:11:45",
+                  "source":  "MQTT 8883 report",
+                  "mode":  "subscribe+pushall",
+                  "messages":  7,
+                  "cert_sha256":  "fa4d57876c042dff61f61f3670e2d558dddc65f0f5dc917b29cac6c8d0267784",
+                  "dropped_unknown_keys":  35,
+                  "dropped_secret_rule_keys":  5
+              },
+    "print":  {
+                  "nozzle_temper":  140.15625,
+                  "nozzle_target_temper":  170,
+                  "bed_temper":  49.3125,
+                  "bed_target_temper":  80,
+                  "chamber_temper":  5,
+                  "heatbreak_fan_speed":  "9",
+                  "cooling_fan_speed":  "0",
+                  "big_fan1_speed":  "0",
+                  "big_fan2_speed":  "0",
+                  "mc_percent":  2,
+                  "mc_remaining_time":  40,
+                  "ams_status":  768,
+                  "spd_mag":  100,
+                  "spd_lvl":  2,
+                  "print_error":  0,
+                  "lifecycle":  "product",
+                  "wifi_signal":  "-46dBm",
+                  "gcode_state":  "RUNNING",
+                  "stg_cur":  7,
+                  "print_type":  "cloud",
+                  "home_flag":  846153127,
+                  "sdcard":  true,
+                  "layer_num":  0,
+                  "total_layer_num":  101,
+                  "nozzle_diameter":  "0.4",
+                  "nozzle_type":  "hardened_steel",
+                  "upgrade_state":  {
+                                        "progress":  "",
+                                        "status":  "IDLE",
+                                        "consistency_request":  false,
+                                        "dis_state":  0,
+                                        "err_code":  0,
+                                        "force_upgrade":  false,
+                                        "message":  "",
+                                        "module":  "",
+                                        "new_version_state":  2,
+                                        "cur_state_code":  1,
+                                        "idx2":  621851616,
+                                        "new_ver_list":  [
+
+                                                         ],
+                                        "mc_for_ams_firmware":  {
+                                                                    "status":  "IDLE",
+                                                                    "firmware":  [
+                                                                                     {
+                                                                                         "id":  0
+                                                                                     },
+                                                                                     {
+                                                                                         "id":  1
+                                                                                     }
+                                                                                 ]
+                                                                }
+                                    },
+                  "hms":  [
+                              {
+                                  "attr":  50331904,
+                                  "code":  196616,
+                                  "action":  0,
+                                  "timestamp":  1795583456
+                              }
+                          ],
+                  "ams":  {
+                              "tray_tar":  "254"
+                          },
+                  "lights_report":  [
+                                        {
+                                            "node":  "chamber_light",
+                                            "mode":  "on"
+                                        }
+                                    ]
+              }
+}
