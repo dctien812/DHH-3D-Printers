@@ -45,7 +45,7 @@ Sao chép `TEMPLATE_cal.csv` thành `calibration\entry\cal\<ngày>_<máy>_TIN-AB
 
 **Cách nhập:** mở bằng Notepad hoặc VS Code (không Excel); lưu **UTF-8**; số thập phân **dấu chấm**; **không dấu phẩy trong ô chữ** (dùng dấu chấm phẩy); **xóa dòng mẫu** của `TEMPLATE_cal.csv` (dòng có `ĐIỀN_NGUỒN`), script từ chối dòng mẫu.
 
-`mvs`: `giá_trị` = điểm tốt cuối; `điều_kiện` ghi cả điểm tốt cuối và điểm xấu đầu. Ví dụ dòng (số **giả**):
+`mvs`: `giá_trị` = điểm tốt cuối (giới hạn đo được, chưa trừ biên); mức đặt sau biên ghi ở `profiles\src\materials.csv` với trạng thái `đo` và được giữ khi dựng; `điều_kiện` ghi cả điểm tốt cuối và điểm xấu đầu. Ví dụ dòng (số **giả**):
 
 ```
 TRI,TIN-ABSPRO,flow_ratio,XX,tỷ_lệ,đo,Orca Flow Rate Pass 2; ảnh 2026-12-07_TRI_TIN-ABSPRO_flow.jpg,2026-12-07,TIN-ABSPRO-01,buồng đóng; sấy <nhiệt/giờ thực tế>

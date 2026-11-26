@@ -48,8 +48,10 @@ Mọi tên cha đã đối chiếu có trong `%APPDATA%\OrcaSlicer\system\*.opc`
 
 - Số của hãng này không gắn cho hãng khác: hồ sơ Bambu PLA và Bambu PETG Basic không kế thừa flow hay lưu lượng từ hồ sơ cũ nhãn Tinmorry; để theo hồ sơ cha và ghi `mặc_định`.
 - Bốn trạng thái theo `docs\data-formats.md`: `đo`, `kế_thừa`, `mặc_định`, `chưa_đo`. Số `đo` trong `calibration\voron.csv` hoặc
-  `calibration\bambu.csv` (nếu có) thắng số trong `materials.csv`. Ô trống thì hồ sơ không ghi đè khóa đó.
-- Máy Bambu: hồ sơ không đặt `pressure_advance` (K do máy quản lý, `specs\004-bambu-calibration\research.md`).
+  `calibration\bambu.csv` (nếu có) thắng số trong `materials.csv`. Ngoại lệ `mvs`: ô mvs trong `materials.csv` có số và trạng thái `đo`
+  (mức đặt sau khi trừ biên an toàn) thì được giữ; phiếu ghi giới hạn đo được. Ô trống thì hồ sơ không ghi đè khóa đó.
+- Máy Bambu: hồ sơ không đặt `pressure_advance` (K do máy quản lý, `specs\004-bambu-calibration\research.md`). Ngoại lệ P1S (chỉ hiệu
+  chuẩn K tay): `pa` có trạng thái `đo` thì đưa vào hồ sơ (chủ máy chốt 2026-11-26).
 - Máy Voron: PA lấy từ hồ sơ Orca (`enable_pressure_advance` + `pressure_advance`). V2.4 ABS Pro 0,0256 kế thừa từ hồ sơ cũ.
   Các cặp Voron còn lại 0,02 nhãn `mặc_định` (giá trị đang chạy trên máy, `fleet\precheck\2026-11-24\SUMMARY.md`).
 - Khóa phụ của hồ sơ cũ cùng cặp (`default_filament_colour`, `filament_vendor`, `activate_air_filtration`,

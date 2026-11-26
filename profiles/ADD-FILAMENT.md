@@ -50,7 +50,7 @@ Mỗi dòng có 23 cột:
 Bốn trạng thái (`docs\data-formats.md`): `đo`, `kế_thừa`, `mặc_định`, `chưa_đo`.
 - Ô có số thì phải có trạng thái khác `chưa_đo` và có nguồn. Thiếu thì dựng báo lỗi.
 - **Số của hãng này không gắn cho hãng khác.** Hãng mới chưa đo thì để trống số và ghi `chưa_đo`. Nhiệt in để theo hồ sơ cha thì ghi `mặc_định`.
-- Số `đo` trong `calibration\voron.csv` hoặc `calibration\bambu.csv` (hai file này do `scripts\calibration\ingest.ps1` tạo ở bước 8; chưa có cho tới khi chạy lần đầu) tự thắng số trong `profiles\src\materials.csv` khi dựng.
+- Số `đo` trong `calibration\voron.csv` hoặc `calibration\bambu.csv` (hai file này do `scripts\calibration\ingest.ps1` tạo ở bước 8; chưa có cho tới khi chạy lần đầu) tự thắng số trong `profiles\src\materials.csv` khi dựng. **Ngoại lệ `mvs`:** phiếu ghi giới hạn đo được (điểm tốt cuối), còn `materials.csv` ghi mức đặt sau biên an toàn. Khi `materials.csv` đã có `mvs` với `mvs_trạng_thái` = `đo` thì giữ số đó, không lấy từ calibration; `mvs` trống hoặc trạng thái khác `đo` thì calibration vẫn thắng.
 
 **Ví dụ một dòng hoàn chỉnh. Đây là hãng giả `ACME-PETG`, KHÔNG phải nhựa thật, đừng chép vào bảng thật:**
 

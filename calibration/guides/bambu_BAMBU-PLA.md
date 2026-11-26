@@ -69,7 +69,7 @@ Sao chép `TEMPLATE_cal.csv` thành `calibration\entry\cal\<ngày>_<máy>_BAMBU-
 
 **Cách nhập (dễ hỏng nếu làm khác):** mở bằng Notepad hoặc VS Code, **không dùng Excel**; lưu **UTF-8**; số thập phân **dấu chấm** (`0.040`); **không dấu phẩy trong ô chữ** (`nguồn`, `điều_kiện`: dùng dấu chấm phẩy); **xóa dòng mẫu** của `TEMPLATE_cal.csv` (dòng có `ĐIỀN_NGUỒN`), script từ chối dòng mẫu.
 
-`mvs`: `giá_trị` = điểm tốt cuối; `điều_kiện` ghi cả điểm tốt cuối và điểm xấu đầu. Ví dụ dòng (số **giả**):
+`mvs`: `giá_trị` = điểm tốt cuối (giới hạn đo được, chưa trừ biên); mức đặt sau biên ghi ở `profiles\src\materials.csv` với trạng thái `đo` và được giữ khi dựng; `điều_kiện` ghi cả điểm tốt cuối và điểm xấu đầu. Ví dụ dòng (số **giả**):
 
 ```
 H2S,BAMBU-PLA,k,XX,-,đo,máy tự đo (Flow Dynamics On); ảnh 2026-12-05_H2S_BAMBU-PLA_k.jpg,2026-12-05,BAMBU-PLA-01,AMS khe 1; máy có chạy quy trình đo K; K đọc ở màn hình máy

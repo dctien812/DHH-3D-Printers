@@ -41,7 +41,7 @@ Sao chép `TEMPLATE_cal.csv` thành `calibration\entry\cal\<ngày>_<máy>_BAMBU-
 - **Không dùng dấu phẩy trong ô chữ** (nhất là `nguồn`, `điều_kiện`); dùng dấu chấm phẩy để ngăn ý.
 - **Xóa dòng mẫu** của `TEMPLATE_cal.csv` (dòng có chữ `ĐIỀN_NGUỒN`, `ĐIỀN_CUỘN`); script từ chối dòng mẫu.
 
-`mvs`: `giá_trị` = điểm tốt cuối (số đã đặt tạm); `điều_kiện` ghi cả hai điểm. Ví dụ dòng (số **giả**):
+`mvs`: `giá_trị` = điểm tốt cuối (số đã đặt tạm; giới hạn đo được, chưa trừ biên); mức đặt sau biên ghi ở `profiles\src\materials.csv` với trạng thái `đo` và được giữ khi dựng; `điều_kiện` ghi cả hai điểm. Ví dụ dòng (số **giả**):
 
 ```
 TRI,BAMBU-PETG,mvs,XX,mm3/s,đo,Orca Max flowrate; ảnh 2026-12-06_TRI_BAMBU-PETG_mvs.jpg,2026-12-06,BAMBU-PETG-01,tốt_cuối=XX; xấu_đầu=YY; sấy <nhiệt/giờ thực tế>

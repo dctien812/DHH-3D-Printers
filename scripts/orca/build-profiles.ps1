@@ -7,6 +7,7 @@
   Them goi import: <OutDir>\import\DHH_printer.zip, DHH_filament.zip, DHH_process.zip (moi zip chua cac .json cung loai,
   de nhap bang File > Import). Dinh dang CHUA thu nhap tren Orca that.
   So 'do' trong calibration\voron.csv va calibration\bambu.csv (neu co) thang so trong materials.csv.
+  NGOAI LE mvs: neu materials.csv co mvs voi mvs_trang_thai = 'do' thi giu so do (muc dat sau bien an toan), khong lay tu calibration.
 .PARAMETER Set       pilot = 6 may + 6 quy trinh + 4 vat lieu BAMBU-PLA (16 file); all = 6 + 6 + 20 (32 file).
 .PARAMETER OutDir    Thu muc dau ra (mac dinh profiles\bundle). Duong dan tuong doi tinh tu thu muc goc du an.
 .PARAMETER Verify    Doc lai JSON da sinh, so tung gia tri voi bang nguon, in bang lech; thoat 1 neu co lech.
@@ -146,7 +147,9 @@ function Get-Plan {
             if ($Status -notcontains $st) { throw "$($row.'tên_hồ_sơ'): $p trang_thai khong hop le '$st'" }
             if ($val -and ($st -eq 'chưa_đo' -or -not $so)) { throw "$($row.'tên_hồ_sơ'): $p co so nhung thieu trang_thai/nguon" }
             $ck = "$($row.'máy')|$($row.'nhựa')|$p"
-            if ($cal.ContainsKey($ck)) { $val = $cal[$ck].'giá_trị' }
+            # mvs: phieu ghi gioi han do duoc, materials.csv ghi muc dat sau bien an toan; co 'đo' + so thi giu materials.csv
+            $keepMvs = ($p -eq 'mvs' -and $val -and $st -eq 'đo')
+            if ($cal.ContainsKey($ck) -and -not $keepMvs) { $val = $cal[$ck].'giá_trị' }
             $v[$p] = $val
         }
         # Bambu: K do may quan ly, khong dat pressure_advance. Ngoai le: P1S (chi hieu chuan K tay) khi pa co trang thai 'đo' (chu may chot 2026-11-26)
