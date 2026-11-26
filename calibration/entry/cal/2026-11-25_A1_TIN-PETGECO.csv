@@ -1,2 +1,3 @@
 máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
 A1,TIN-PETGECO,mvs,25.2,mm3/s,đo,Orca Max volumetric speed test; chủ máy đo thước cặp; báo trong chat 2026-11-25,2026-11-25,TIN-PETGECO-GREEN-01,Start=15; End=30; Step=0.5; cao=21mm chỗ xấu đầu tiên → 15+21×0.5=25.5; điểm tốt cuối ước ~20.5mm → 25.2; cùng cuộn xanh lá với A1M (đồng bộ); Flow Dynamics Auto; sấy: chưa ghi
+A1,TIN-PETGECO,flow_ratio,0.968,tỷ_lệ,đo,Orca Flow Rate Pass 2 (bỏ Pass 1; gốc tạm 0.998 = kết quả Pass 1 của A1M); chủ máy chọn tấm; báo trong chat 2026-11-26,2026-11-26,TIN-PETGECO-GREEN-01,gốc tạm 0.998; Pass 2 tấm -3 → 0.998×0.97=0.968 (trùng A1M); tấm không ở biên dải; Flow Dynamics On
