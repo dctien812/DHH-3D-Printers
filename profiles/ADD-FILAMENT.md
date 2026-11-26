@@ -39,7 +39,7 @@ Mỗi dòng có 23 cột:
 | `nhựa` | mã nhựa ở bước 1 |
 | `tên_hồ_sơ` | tên hồ sơ ở bước 1 |
 | `cha` | tên hồ sơ hệ thống của Orca, xem bước 4 |
-| `pa`, `pa_trạng_thái`, `pa_nguồn` | Voron: PA lấy từ hồ sơ Orca (số, ví dụ `0.02`). Bambu: để trống `pa`, trạng thái `chưa_đo`, nguồn ghi `K do máy in quản lý`; script bỏ qua `pa` của máy Bambu |
+| `pa`, `pa_trạng_thái`, `pa_nguồn` | Voron: PA lấy từ hồ sơ Orca (số, ví dụ `0.02`). Bambu (H2S, A1, A1M): để trống `pa`, trạng thái `chưa_đo`, nguồn ghi `K do máy in quản lý`; script bỏ qua `pa` của các máy này. **Ngoại lệ P1S** (chỉ hiệu chuẩn K tay; chủ máy chốt 2026-11-26): ghi K đo được vào `pa` với trạng thái `đo`, script đưa vào hồ sơ (`enable_pressure_advance` + `pressure_advance`); trạng thái khác `đo` thì bỏ qua |
 | `flow_ratio`, `flow_ratio_trạng_thái`, `flow_ratio_nguồn` | hệ số flow |
 | `mvs`, `mvs_trạng_thái`, `mvs_nguồn` | lưu lượng thể tích tối đa (mm³/s) |
 | `shrink_xy`, `shrink_xy_trạng_thái`, `shrink_xy_nguồn` | co ngót XY, đơn vị %, ví dụ `99.6` |
@@ -144,7 +144,7 @@ Giữ Preferences, "Auto sync user presets" ở trạng thái tắt như hiện 
 
 Không chép lại các thẻ. Mở thẻ gần nhất rồi làm theo:
 
-| Nhựa mới giống | Máy Voron (PA) | Máy Bambu (K do máy quản lý) |
+| Nhựa mới giống | Máy Voron (PA) | Máy Bambu (K do máy quản lý; P1S: K tay ghi vào hồ sơ) |
 |---|---|---|
 | PETG | `calibration\guides\voron_TIN-PETGECO.md` | `calibration\guides\bambu_TIN-PETGECO.md` |
 | ABS | `calibration\guides\voron_TIN-ABSPRO.md` | `calibration\guides\bambu_TIN-ABSPRO.md` |
@@ -159,7 +159,7 @@ Sau khi số vào hồ sơ (bước 8 và dựng lại, cài lại), làm nửa 
 - Dòng `đo` phải có `nguồn`, `ngày`, `cuộn`. Thiếu một thì script từ chối.
 - `chưa_đo` thì để trống `giá_trị`. Không điền số ước lượng với nhãn `đo`.
 - Ngày dạng `YYYY-MM-DD`, không ở tương lai. Xóa dòng mẫu (có chữ `ĐIỀN`).
-- Dòng `k` chỉ để ghi nhận; `scripts\orca\build-profiles.ps1` không đưa K vào hồ sơ (máy Bambu tự quản lý K).
+- Dòng `k` chỉ để ghi nhận; `scripts\orca\build-profiles.ps1` không đưa K vào hồ sơ (máy Bambu tự quản lý K). Riêng P1S, K tay ghi ở cột `pa` của `profiles\src\materials.csv` với trạng thái `đo` (xem bước 3).
 
 **Phiếu mẫu chuẩn:** chép `calibration\entry\part\TEMPLATE_part.csv` thành `calibration\entry\part\<ngày>_<máy>_<mã nhựa>.csv`. `vòng` = 1 cho lần in đầu chưa bù; mỗi lần in lại sau khi bù tăng thêm 1.
 

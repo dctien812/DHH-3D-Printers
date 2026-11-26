@@ -149,7 +149,8 @@ function Get-Plan {
             if ($cal.ContainsKey($ck)) { $val = $cal[$ck].'giá_trị' }
             $v[$p] = $val
         }
-        if ($mr.'loại' -ne 'voron') { $v['pa'] = '' }   # Bambu: K do may quan ly, khong dat pressure_advance
+        # Bambu: K do may quan ly, khong dat pressure_advance. Ngoai le: P1S (chi hieu chuan K tay) khi pa co trang thai 'đo' (chu may chot 2026-11-26)
+        if ($mr.'loại' -ne 'voron' -and -not ($row.'máy' -eq 'P1S' -and $row.'pa_trạng_thái' -eq 'đo')) { $v['pa'] = '' }
         $d = [ordered]@{
             from = 'User'; name = $row.'tên_hồ_sơ'; inherits = $row.'cha'; version = $OrcaVersion
             filament_settings_id = [string[]]@($row.'tên_hồ_sơ')
@@ -226,7 +227,7 @@ function Test-Plan($plan, [string]$Root, [switch]$UserMode) {
         foreach ($k in $actual.Keys) {
             if (-not $it.Data.Contains($k)) { & $add $rel $k '(khong co)' (Format-Val $actual[$k]) }
             if ($Forbidden -contains $k) { & $add $rel $k '(cam)' 'co' }
-            if ($it.Class -eq 'bambu' -and $it.Type -eq 'filament' -and $k -match '^(enable_)?pressure_advance$') { & $add $rel $k '(Bambu khong dat PA)' (Format-Val $actual[$k]) }
+            if ($it.Class -eq 'bambu' -and $it.Type -eq 'filament' -and $k -match '^(enable_)?pressure_advance$' -and -not $it.Data.Contains($k)) { & $add $rel $k '(Bambu khong dat PA)' (Format-Val $actual[$k]) }
         }
         if ($sys.Count -gt 0 -and -not $sys.Contains("$($it.Type)/$($actual['inherits'])")) { & $add $rel 'inherits' 'ten ho so he thong co that' "$($actual['inherits'])" }
     }
