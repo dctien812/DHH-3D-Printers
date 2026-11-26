@@ -13,5 +13,6 @@
                                      "Direct Drive Standard"
                                  ],
     "printer_settings_id":  "Bambu Lab A1 mini 0.4",
-    "version":  "2.1.0.0"
+    "version":  "2.1.0.0",
+    "z_offset":  "-0.02"
 }

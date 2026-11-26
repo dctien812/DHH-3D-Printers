@@ -13,5 +13,6 @@
 		"Direct Drive Standard"
 	],
 	"printer_settings_id": "DHH A1 Mini 0.4",
-	"version": "2.1.0.0"
+	"version": "2.1.0.0",
+	"z_offset": "-0.02"
 }
