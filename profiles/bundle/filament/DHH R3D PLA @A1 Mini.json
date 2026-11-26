@@ -8,6 +8,9 @@
 	"filament_extruder_variant": [
 		"Direct Drive Standard"
 	],
+	"filament_max_volumetric_speed": [
+		"25"
+	],
 	"filament_settings_id": [
 		"DHH R3D PLA @A1 Mini"
 	],

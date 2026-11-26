@@ -1,0 +1,2 @@
+máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
+A1M,R3D-PLA,mvs,32,mm3/s,đo,Orca Max volumetric speed test; chủ máy đo thước cặp; báo trong chat 2026-11-26,2026-11-26,R3D-PLA-01,Start=15; End=35; Step=0.5; cao=34mm rất mịn → 15+34×0.5=32; phía trên chỉ gợn do rung (không hụt nhựa) → giới hạn đùn ≥32; đặt hồ sơ 25 (~80%); Flow Dynamics Auto; màu: chưa ghi
