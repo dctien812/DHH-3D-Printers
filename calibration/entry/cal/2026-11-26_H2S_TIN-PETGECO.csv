@@ -1,2 +1,3 @@
 máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
 H2S,TIN-PETGECO,mvs,,mm3/s,chưa_đo,Orca Max volumetric speed test; chủ máy nhận xét bằng mắt 2026-11-26,2026-11-26,TIN-PETGECO-WHITE-01,Start=15; End=30; Step=0.5; đoạn cuối hơi sần; chủ máy không đo chiều cao; hai lần End=40 lỗi quá tải đùn lúc đo K; cuộn trắng trong AMS 2 Pro; chủ máy chốt đặt 20 đồng bộ A1/A1M
+H2S,TIN-PETGECO,flow_ratio,,tỷ_lệ,chưa_đo,Orca Flow Rate Pass 1 + Pass 2 trên H2S; chủ máy chọn tấm 2026-11-26,2026-11-26,TIN-PETGECO-WHITE-01,gốc 0.95; Pass 1 tấm 0; Pass 2 tấm 0 (biên trên → thật ≥0.95); chưa in Pass 2 gốc 0.998; chủ máy chốt dùng 0.968 như A1/A1M

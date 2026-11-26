@@ -17,6 +17,11 @@
 		"Direct Drive High Flow",
 		"Direct Drive E3D High Flow"
 	],
+	"filament_flow_ratio": [
+		"0.968",
+		"0.968",
+		"0.968"
+	],
 	"filament_max_volumetric_speed": [
 		"20",
 		"20",
