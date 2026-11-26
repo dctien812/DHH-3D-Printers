@@ -1,2 +1,3 @@
 máy,nhựa,tham_số,giá_trị,đơn_vị,trạng_thái,nguồn,ngày,cuộn,điều_kiện
 A1M,R3D-PLA,mvs,32,mm3/s,đo,Orca Max volumetric speed test; chủ máy đo thước cặp; báo trong chat 2026-11-26,2026-11-26,R3D-PLA-01,Start=15; End=35; Step=0.5; cao=34mm rất mịn → 15+34×0.5=32; phía trên chỉ gợn do rung (không hụt nhựa) → giới hạn đùn ≥32; đặt hồ sơ 25 (~80%); Flow Dynamics Auto; màu: chưa ghi
+A1M,R3D-PLA,flow_ratio,0.936,tỷ_lệ,đo,Orca Flow Rate Pass 1 (-5) rồi Pass 2 (-2); chủ máy chọn tấm; báo trong chat 2026-11-26/27,2026-11-26,R3D-PLA-01,gốc 0.98 (Generic PLA @BBL A1M); Pass 1 tấm -5 → 0.931; Pass 2 gốc tạm 0.955 tấm -2 → 0.955×0.98=0.936; Flow Dynamics On
