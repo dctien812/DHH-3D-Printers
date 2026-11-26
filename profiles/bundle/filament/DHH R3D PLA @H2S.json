@@ -1,0 +1,35 @@
+{
+	"compatible_printers": [
+		"DHH H2S 0.4"
+	],
+	"filament_density": [
+		"1.21",
+		"1.21",
+		"1.21"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard",
+		"Direct Drive High Flow",
+		"Direct Drive E3D High Flow"
+	],
+	"filament_settings_id": [
+		"DHH R3D PLA @H2S"
+	],
+	"filament_vendor": [
+		"R3D"
+	],
+	"from": "User",
+	"inherits": "Generic PLA @BBL H2S",
+	"name": "DHH R3D PLA @H2S",
+	"nozzle_temperature_range_high": [
+		"220",
+		"220",
+		"220"
+	],
+	"nozzle_temperature_range_low": [
+		"190",
+		"190",
+		"190"
+	],
+	"version": "2.5.1.0"
+}

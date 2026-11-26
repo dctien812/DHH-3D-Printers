@@ -1,0 +1,27 @@
+{
+	"compatible_printers": [
+		"DHH A1 0.4"
+	],
+	"filament_density": [
+		"1.21"
+	],
+	"filament_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"filament_settings_id": [
+		"DHH R3D PLA @A1"
+	],
+	"filament_vendor": [
+		"R3D"
+	],
+	"from": "User",
+	"inherits": "Generic PLA @BBL A1",
+	"name": "DHH R3D PLA @A1",
+	"nozzle_temperature_range_high": [
+		"220"
+	],
+	"nozzle_temperature_range_low": [
+		"190"
+	],
+	"version": "2.5.1.0"
+}
