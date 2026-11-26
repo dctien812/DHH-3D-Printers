@@ -1,0 +1,374 @@
+{
+    "_meta":  {
+                  "machine":  "H2S",
+                  "read_at":  "2026-11-26 10:35:32",
+                  "source":  "MQTT 8883 report",
+                  "mode":  "subscribe+pushall",
+                  "messages":  19,
+                  "cert_sha256":  "d88d69edf6de976bbcc8cfbddba7adf1579893e12f8fd37304db4056c33001e0",
+                  "dropped_unknown_keys":  71,
+                  "dropped_secret_rule_keys":  19
+              },
+    "print":  {
+                  "ams":  {
+                              "ams":  [
+                                          {
+                                              "dry_setting":  {
+                                                                  "dry_duration":  24,
+                                                                  "dry_filament":  "ABS",
+                                                                  "dry_temperature":  65
+                                                              },
+                                              "dry_sf_reason":  [
+                                                                    6
+                                                                ],
+                                              "dry_time":  1424,
+                                              "humidity":  "4",
+                                              "humidity_raw":  "13",
+                                              "id":  "0",
+                                              "info":  "10402023",
+                                              "temp":  "47.5",
+                                              "tray":  [
+                                                           {
+                                                               "bed_temp":  "0",
+                                                               "bed_temp_type":  "0",
+                                                               "cali_idx":  -1,
+                                                               "cols":  [
+                                                                            "FFFFFFFF"
+                                                                        ],
+                                                               "ctype":  0,
+                                                               "drying_temp":  "0",
+                                                               "drying_time":  "0",
+                                                               "id":  "0",
+                                                               "ins_cyc":  1,
+                                                               "nozzle_temp_max":  "280",
+                                                               "nozzle_temp_min":  "240",
+                                                               "remain":  0,
+                                                               "remain_g":  0,
+                                                               "state":  11,
+                                                               "total_len":  330000,
+                                                               "tray_color":  "FFFFFFFF",
+                                                               "tray_diameter":  "1.75",
+                                                               "tray_info_idx":  "GFB99",
+                                                               "tray_sub_brands":  "",
+                                                               "tray_type":  "ABS",
+                                                               "tray_weight":  "0",
+                                                               "xcam_info":  "000000000000000000000000"
+                                                           },
+                                                           {
+                                                               "bed_temp":  "0",
+                                                               "bed_temp_type":  "0",
+                                                               "cali_idx":  -1,
+                                                               "cols":  [
+                                                                            "FFFFFFFF"
+                                                                        ],
+                                                               "ctype":  0,
+                                                               "drying_temp":  "0",
+                                                               "drying_time":  "0",
+                                                               "id":  "1",
+                                                               "ins_cyc":  1,
+                                                               "nozzle_temp_max":  "270",
+                                                               "nozzle_temp_min":  "220",
+                                                               "remain":  0,
+                                                               "remain_g":  0,
+                                                               "state":  11,
+                                                               "total_len":  330000,
+                                                               "tray_color":  "FFFFFFFF",
+                                                               "tray_diameter":  "1.75",
+                                                               "tray_info_idx":  "GFG99",
+                                                               "tray_sub_brands":  "",
+                                                               "tray_type":  "PETG",
+                                                               "tray_weight":  "0",
+                                                               "xcam_info":  "000000000000000000000000"
+                                                           },
+                                                           {
+                                                               "bed_temp":  "0",
+                                                               "bed_temp_type":  "0",
+                                                               "cali_idx":  -1,
+                                                               "cols":  [
+                                                                            "F72323FF"
+                                                                        ],
+                                                               "ctype":  0,
+                                                               "drying_temp":  "0",
+                                                               "drying_time":  "0",
+                                                               "id":  "2",
+                                                               "ins_cyc":  1,
+                                                               "nozzle_temp_max":  "270",
+                                                               "nozzle_temp_min":  "220",
+                                                               "remain":  0,
+                                                               "remain_g":  0,
+                                                               "state":  11,
+                                                               "total_len":  330000,
+                                                               "tray_color":  "F72323FF",
+                                                               "tray_diameter":  "1.75",
+                                                               "tray_info_idx":  "GFG99",
+                                                               "tray_sub_brands":  "",
+                                                               "tray_type":  "PETG",
+                                                               "tray_weight":  "0",
+                                                               "xcam_info":  "000000000000000000000000"
+                                                           },
+                                                           {
+                                                               "id":  "3",
+                                                               "state":  0
+                                                           }
+                                                       ]
+                                          }
+                                      ],
+                              "ams_exist_bits":  "1",
+                              "ams_exist_bits_raw":  "1",
+                              "cali_stat":  0,
+                              "cfs":  [
+
+                                      ],
+                              "insert_flag":  true,
+                              "power_on_flag":  false,
+                              "tray_exist_bits":  "7",
+                              "tray_hall_out_bits":  "0",
+                              "tray_is_bbl_bits":  "7",
+                              "tray_now":  "255",
+                              "tray_pre":  "255",
+                              "tray_read_done_bits":  "7",
+                              "tray_reading_bits":  "0",
+                              "tray_tar":  "255",
+                              "unbind_ams_stat":  0,
+                              "version":  95
+                          },
+                  "ams_status":  0,
+                  "bed_target_temper":  0.0,
+                  "bed_temper":  22.0,
+                  "big_fan1_speed":  "0",
+                  "big_fan2_speed":  "0",
+                  "cooling_fan_speed":  "0",
+                  "device":  {
+                                 "airduct":  {
+                                                 "modeCur":  0,
+                                                 "modeFunc":  0,
+                                                 "modeList":  [
+                                                                  {
+                                                                      "ctrl":  [
+                                                                                   16,
+                                                                                   32,
+                                                                                   48
+                                                                               ],
+                                                                      "modeId":  0,
+                                                                      "off":  [
+                                                                                  96
+                                                                              ]
+                                                                  },
+                                                                  {
+                                                                      "ctrl":  [
+                                                                                   16
+                                                                               ],
+                                                                      "modeId":  1,
+                                                                      "off":  [
+                                                                                  32,
+                                                                                  48
+                                                                              ]
+                                                                  },
+                                                                  {
+                                                                      "ctrl":  [
+                                                                                   48
+                                                                               ],
+                                                                      "modeId":  2,
+                                                                      "off":  [
+
+                                                                              ]
+                                                                  }
+                                                              ],
+                                                 "modeVisable":  7,
+                                                 "parts":  [
+                                                               {
+                                                                   "func":  0,
+                                                                   "id":  16,
+                                                                   "range":  6553600,
+                                                                   "state":  0,
+                                                                   "tar_state":  0
+                                                               },
+                                                               {
+                                                                   "func":  1,
+                                                                   "id":  32,
+                                                                   "range":  6553600,
+                                                                   "state":  0,
+                                                                   "tar_state":  0
+                                                               },
+                                                               {
+                                                                   "func":  2,
+                                                                   "id":  48,
+                                                                   "range":  6553600,
+                                                                   "state":  0,
+                                                                   "tar_state":  0
+                                                               },
+                                                               {
+                                                                   "func":  4,
+                                                                   "id":  96,
+                                                                   "range":  6553600,
+                                                                   "state":  0,
+                                                                   "tar_state":  0
+                                                               }
+                                                           ],
+                                                 "subFunc":  0,
+                                                 "subMode":  0,
+                                                 "subVisable":  7,
+                                                 "version":  1
+                                             },
+                                 "aps":  {
+
+                                         },
+                                 "bed":  {
+                                             "info":  {
+                                                          "temp":  22
+                                                      },
+                                             "state":  0
+                                         },
+                                 "bed_temp":  22,
+                                 "cam":  {
+                                             "laser":  {
+                                                           "cond":  253,
+                                                           "state":  0
+                                                       },
+                                             "timelapse_path":  "",
+                                             "tl_external_free_kb":  12828736,
+                                             "tl_external_total_kb":  60074752,
+                                             "tl_internal_free_kb":  0,
+                                             "tl_internal_total_kb":  0
+                                         },
+                                 "ctc":  {
+                                             "info":  {
+                                                          "temp":  23
+                                                      },
+                                             "state":  0
+                                         },
+                                 "ext_tool":  {
+                                                  "calib":  2,
+                                                  "low_prec":  true,
+                                                  "mount":  0,
+                                                  "mount_3d":  0,
+                                                  "th_temp":  0,
+                                                  "type":  ""
+                                              },
+                                 "extruder":  {
+                                                  "info":  [
+                                                               {
+                                                                   "filam_bak":  [
+
+                                                                                 ],
+                                                                   "hnow":  0,
+                                                                   "hpre":  0,
+                                                                   "htar":  0,
+                                                                   "id":  0,
+                                                                   "info":  1032,
+                                                                   "snow":  65535,
+                                                                   "spre":  65535,
+                                                                   "star":  65535,
+                                                                   "stat":  0,
+                                                                   "temp":  22,
+                                                                   "z_bias":  0.0
+                                                               }
+                                                           ],
+                                                  "state":  1
+                                              },
+                                 "fan":  0,
+                                 "fila_switch":  null,
+                                 "fire_ext":  {
+                                                  "bot_err":  0,
+                                                  "cd":  0,
+                                                  "cd_init":  15,
+                                                  "connect_flag":  0,
+                                                  "drill_flag":  0,
+                                                  "history":  [
+
+                                                              ],
+                                                  "remain_time":  0,
+                                                  "rm_init":  33,
+                                                  "state":  0
+                                              },
+                                 "fourth_axis":  {
+                                                     "connect_flag":  0,
+                                                     "theta_pitch":  -1
+                                                 },
+                                 "holder":  null,
+                                 "laser":  {
+                                               "power":  0
+                                           },
+                                 "nozzle":  {
+                                                "exist":  1,
+                                                "hc":  0,
+                                                "info":  [
+                                                             {
+                                                                 "color_m":  "00000000",
+                                                                 "diameter":  0.4,
+                                                                 "id":  0,
+                                                                 "p_t":  0,
+                                                                 "stat":  0,
+                                                                 "tm":  0,
+                                                                 "type":  "HS05",
+                                                                 "wear":  0.0
+                                                             }
+                                                         ],
+                                                "state":  0
+                                            },
+                                 "plate":  {
+                                               "base":  1,
+                                               "mat":  1
+                                           },
+                                 "screen":  {
+                                                "backlight":  -1
+                                            },
+                                 "type":  1
+                             },
+                  "fail_reason":  "0",
+                  "gcode_state":  "IDLE",
+                  "heatbreak_fan_speed":  "0",
+                  "hms":  [
+
+                          ],
+                  "home_flag":  -1066967656,
+                  "layer_num":  0,
+                  "lights_report":  [
+                                        {
+                                            "mode":  "on",
+                                            "node":  "chamber_light"
+                                        },
+                                        {
+                                            "mode":  "flashing",
+                                            "node":  "work_light"
+                                        },
+                                        {
+                                            "mode":  "on",
+                                            "node":  "chamber_light2"
+                                        }
+                                    ],
+                  "mc_percent":  0,
+                  "mc_remaining_time":  0,
+                  "nozzle_diameter":  "0.4",
+                  "nozzle_target_temper":  0.0,
+                  "nozzle_temper":  22.0,
+                  "nozzle_type":  "HS05",
+                  "print_error":  0,
+                  "print_type":  "",
+                  "sdcard":  true,
+                  "spd_lvl":  2,
+                  "spd_mag":  100,
+                  "stg_cur":  -1,
+                  "total_layer_num":  0,
+                  "upgrade_state":  {
+                                        "ahb_new_version_number":  "",
+                                        "ams_new_version_number":  "",
+                                        "consistency_request":  false,
+                                        "dis_state":  0,
+                                        "err_code":  0,
+                                        "ext_new_version_number":  "",
+                                        "force_upgrade":  false,
+                                        "idx":  5,
+                                        "idx2":  1083381017,
+                                        "lower_limit":  "00.00.00.00",
+                                        "message":  " upgrade init is not ready, can not handle dds request!",
+                                        "module":  "",
+                                        "new_version_state":  2,
+                                        "ota_new_version_number":  "",
+                                        "progress":  "0",
+                                        "rate":  "0B/s",
+                                        "status":  "IDLE"
+                                    },
+                  "wifi_signal":  "-31dBm"
+              }
+}
