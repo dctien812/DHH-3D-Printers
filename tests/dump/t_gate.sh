@@ -1,7 +1,7 @@
 #!/bin/bash
 # Mo phong khoi cong §4.3 (dong 368) va §4.4 (dong 404) cua mcu-reflash-v24.md, thay lenh nap bang echo.
-R=/mnt/d/WORK/3D-Printer-Klipper/fleet/reflash/2026-11-25
-S=/mnt/d/WORK/3D-Printer-Klipper/docs-internal/tools/dump-inspect.py
+R=/mnt/d/TTeccS-3D-Printers-Repo/fleet/reflash/2026-11-25
+S=/mnt/d/TTeccS-3D-Printers-Repo/docs-internal/tools/dump-inspect.py
 mcu_cfgaddr() { :; }
 octo_gate() { # FILE CFG CFGADDR APPOFF
   FILE=$1; CFG=$2; CFGADDR=$3; APPOFF=$4

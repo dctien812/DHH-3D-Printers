@@ -1,7 +1,7 @@
 import os, struct, subprocess
-R = "/mnt/d/WORK/3D-Printer-Klipper/fleet/reflash/2026-11-25/"
-S = "/mnt/d/WORK/3D-Printer-Klipper/docs-internal/tools/dump-inspect.py"
-T = "/mnt/d/WORK/3D-Printer-Klipper/tests/tmp/dump/"
+R = "/mnt/d/TTeccS-3D-Printers-Repo/fleet/reflash/2026-11-25/"
+S = "/mnt/d/TTeccS-3D-Printers-Repo/docs-internal/tools/dump-inspect.py"
+T = "/mnt/d/TTeccS-3D-Printers-Repo/tests/tmp/dump/"
 B = 0x08000000
 FILES = {"octopus_off0": "octopus_off0_klipper-0.13.0-822.bin", "octopus_off128k": "octopus_off128k_klipper-0.13.0-822.bin",
          "ebb_off0": "ebb_off0_klipper-0.13.0-822.bin", "ebb_off8k": "ebb_off8k_klipper-0.13.0-822.bin", "trident": "trident_out_klipper.bin"}

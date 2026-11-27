@@ -1,6 +1,6 @@
 import json, os, random, struct, subprocess, zlib
-D = "/mnt/d/WORK/3D-Printer-Klipper/tests/tmp/dump"
-S = "/mnt/d/WORK/3D-Printer-Klipper/docs-internal/tools/dump-inspect.py"
+D = "/mnt/d/TTeccS-3D-Printers-Repo/tests/tmp/dump"
+S = "/mnt/d/TTeccS-3D-Printers-Repo/docs-internal/tools/dump-inspect.py"
 B = 0x08000000
 def img(n=0x100000): return bytearray(b"\xff" * n)
 def vec(a, off, rel, sp=0x24080000, nmi=None):

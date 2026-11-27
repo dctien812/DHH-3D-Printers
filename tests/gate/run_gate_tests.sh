@@ -1,11 +1,11 @@
 #!/bin/bash
 # Thu cong nap (gate.sh) voi manifest gia lap tro vao fleet/reflash/2026-11-25. Lenh nap thay bang echo.
 # S: noi dat gate.sh (trong repo). G: thu muc lam viec cho file sinh ra (tests/tmp, da gitignore).
-S=/mnt/d/WORK/3D-Printer-Klipper/tests/gate
-G=/mnt/d/WORK/3D-Printer-Klipper/tests/tmp/gate-run
+S=/mnt/d/TTeccS-3D-Printers-Repo/tests/gate
+G=/mnt/d/TTeccS-3D-Printers-Repo/tests/tmp/gate-run
 mkdir -p "$G"
-B=/mnt/d/WORK/3D-Printer-Klipper/fleet/reflash/2026-11-25
-export INSPECT=/mnt/d/WORK/3D-Printer-Klipper/docs-internal/tools/dump-inspect.py
+B=/mnt/d/TTeccS-3D-Printers-Repo/fleet/reflash/2026-11-25
+export INSPECT=/mnt/d/TTeccS-3D-Printers-Repo/docs-internal/tools/dump-inspect.py
 cd "$G" || exit 1
 # --- tao manifest giong khoi lenh trong tai lieu (chi thay $HOME/mcu-build bang $B, ~/reflash-work bang $G)
 M=$G/MANIFEST; : > "$M"
