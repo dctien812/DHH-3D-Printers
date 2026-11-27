@@ -1,4 +1,5 @@
 # Kiem chung 001:T004 (T001 + T003) - 2026-11-24
+> Ghi chú 2026-11-27: IP, tên đăng nhập, MAC và đường dẫn riêng trong file này đã được ẩn danh trước khi đưa lên repo công khai.
 
 Vai: test-engineer. Chay that tren PC; chi GET toi Moonraker, nghe SSDP thu dong. Khong in serial, ma truy cap, user_id.
 

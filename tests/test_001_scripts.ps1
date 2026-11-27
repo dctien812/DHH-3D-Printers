@@ -19,6 +19,29 @@ foreach ($f in 'scripts\fleet\inventory.ps1', 'scripts\fleet\snapshot-voron.ps1'
 Import-Module (Join-Path $root 'scripts\lib\BambuMqtt.psm1') -Force
 Import-Module (Join-Path $root 'scripts\lib\Fleet.psm1') -Force
 
+# fleet config: a fake file in the temp dir via FLEET_CONFIG; the real fleet.local.json is never read here
+$fakeCfg = Join-Path $tmp 'fleet.test.json'
+$fakeObj = [ordered]@{ ssh_user = 'pi'; ssh_key = 'id_ed25519_TEST'; pi_home = '/home/pi'
+    ips = [ordered]@{ TRI = '192.0.2.90'; V24 = '192.0.2.89'; H2S = '192.0.2.61'; P1S = '192.0.2.199'; A1 = '192.0.2.122'; A1M = '192.0.2.149' } }
+($fakeObj | ConvertTo-Json) | Set-Content -LiteralPath $fakeCfg
+$env:FLEET_CONFIG = $fakeCfg
+$c1 = Get-FleetConfig
+Check 'Get-FleetConfig reads FLEET_CONFIG' ($c1.ips.TRI -eq '192.0.2.90' -and $c1.pi_home -eq '/home/pi')
+$ex = Get-FleetConfig -Path (Join-Path $root 'fleet.local.example.json')
+Check 'Get-FleetConfig -Path wins over env; example file is complete' ($ex.ssh_key -eq 'id_ed25519_KEY' -and $ex.ips.A1M -like '192.0.2.*')
+$env:FLEET_CONFIG = Join-Path $tmp 'khong-co.json'
+$msg = ''; try { Get-FleetConfig | Out-Null } catch { $msg = $_.Exception.Message }
+Check 'Get-FleetConfig: missing file -> error names file and example' ($msg -match 'khong-co\.json' -and $msg -match 'fleet\.local\.example\.json')
+$ipsOnly = Join-Path $tmp 'ips-only.json'
+(@{ ips = $fakeObj.ips } | ConvertTo-Json) | Set-Content -LiteralPath $ipsOnly
+Check 'Get-FleetConfig: ssh_user/ssh_key/pi_home are optional' ((Get-FleetConfig -Path $ipsOnly).ips.A1 -eq '192.0.2.122')
+$partial = Join-Path $tmp 'partial.json'
+'{"ssh_user":"leak-me-user","ssh_key":"id_ed25519_TEST","pi_home":"/home/pi","ips":{"TRI":"192.0.2.90"}}' | Set-Content -LiteralPath $partial
+$env:FLEET_CONFIG = $partial
+$msg = ''; try { Get-FleetConfig | Out-Null } catch { $msg = $_.Exception.Message }
+Check 'Get-FleetConfig: missing key -> error names file and key, no value printed' ($msg -match 'partial\.json' -and $msg -match 'ips\.V24' -and $msg -match 'ips\.A1M' -and $msg -notmatch 'leak-me-user|192\.0\.2\.90')
+$env:FLEET_CONFIG = $fakeCfg
+
 # (b) MQTT codec
 foreach ($n in 0, 127, 128, 16383, 16384, 2097151, 2097152, 268435455) {
     $e = ConvertTo-MqttRemainingLength -Length $n
@@ -131,6 +154,7 @@ Check 'no Post/Put/Delete or gcode/script in code' (@($hits | Where-Object { $_.
 $pubCalls = @(Select-String -Path (Join-Path $root 'scripts\fleet\bambu-read.ps1') -Pattern 'New-MqttPublishPacket')
 Check 'bambu-read: exactly one New-MqttPublishPacket' ($pubCalls.Count -eq 1)
 
+Remove-Item Env:FLEET_CONFIG -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath $tmp -Recurse -Force
 "FAILURES: $script:fail"
 exit $script:fail

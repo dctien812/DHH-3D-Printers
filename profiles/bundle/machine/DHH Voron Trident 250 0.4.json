@@ -7,7 +7,7 @@
 		"0.08"
 	],
 	"name": "DHH Voron Trident 250 0.4",
-	"print_host": "192.0.2.90",
+	"print_host": "",
 	"printable_height": "205",
 	"printer_extruder_id": [
 		"1"

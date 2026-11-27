@@ -256,6 +256,7 @@ Chi tiết kiểm: [fleet/verify_001_foundation.md](fleet/verify_001_foundation.
 ## An toàn và bí mật
 
 - Mã truy cập, số serial và tài khoản cloud của máy Bambu **không** đưa lên repo. Chúng nằm trong `secrets/bambu.local.json` trên máy tính; thư mục `secrets/` và `*.local.json` bị `.gitignore` loại.
+- Địa chỉ IP của 6 máy, tên đăng nhập SSH, tên file khóa SSH và thư mục home trên Pi nằm trong `fleet.local.json` ở gốc repo (khớp `*.local.json`, không lên GitHub). Chỉ `ips.*` là bắt buộc; `ssh_user`, `ssh_key`, `pi_home` là tùy chọn, dành cho SSH sau này. Tạo file này bằng cách chép `fleet.local.example.json` thành `fleet.local.json` rồi điền giá trị thật: `Copy-Item fleet.local.example.json fleet.local.json`. Có thể đặt file ở nơi khác qua tham số `-Path` của `Get-FleetConfig` hoặc biến môi trường `FLEET_CONFIG`. Thiếu file hoặc thiếu khóa thì script dừng và báo tên file, tên khóa. `print_host` của hai máy Voron trong `profiles/` để trống; `build-profiles.ps1 -Install` điền từ file này khi cài vào Orca.
 - Không ghi địa chỉ IP, địa chỉ MAC, serial hay tên đăng nhập vào README. Địa chỉ máy trong mạng nội bộ nằm trong dữ liệu kiểm tra và đặc tả, không nhắc lại ở đây.
 - Văn phòng chỉ đọc máy Bambu. Gói duy nhất được gửi là "pushall" (bảo máy gửi lại trạng thái), tối đa một lần mỗi máy và chỉ khi bật công tắc riêng. Mọi lệnh khác bị cấm; việc làm máy chuyển động, nóng lên hoặc in do chủ dự án bấm.
 - Mọi lần ghi cấu hình lên Voron: máy không in, so băm, sao lưu hai nơi, ghi sổ kèm cách hoàn tác.

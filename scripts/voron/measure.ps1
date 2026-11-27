@@ -18,7 +18,8 @@ $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Import-Module (Join-Path $root 'scripts\lib\Fleet.psm1') -Force
 
-$Ips = @{ TRI = '192.0.2.90'; V24 = '192.0.2.89' }
+$cfg = Get-FleetConfig
+$Ips = @{ TRI = $cfg.ips.TRI; V24 = $cfg.ips.V24 }
 # Danh sach G-code duy nhat duoc phep gui (khai bao mot cho). Send-Gcode tu choi moi lenh ngoai danh sach.
 $AllowedGcode = @(
     'G28'

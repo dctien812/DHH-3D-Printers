@@ -10,3 +10,13 @@ monolith_dl/
 tests/tmp/
 tests/profiles_out/
 *.tmp
+
+# Đầu ra có thể chứa IP, MAC hoặc đường dẫn thật
+fleet/inventory.csv
+fleet/inventory.md
+fleet/baseline/*/TRI/
+fleet/baseline/*/V24/
+.office/
+profiles/orca_backup/
+fleet/incidents/*/klippy.log*.gz
+fleet/incidents/*/moonraker.log

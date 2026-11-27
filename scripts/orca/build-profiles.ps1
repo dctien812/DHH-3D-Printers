@@ -12,7 +12,8 @@
 .PARAMETER OutDir    Thu muc dau ra (mac dinh profiles\bundle). Duong dan tuong doi tinh tu thu muc goc du an.
 .PARAMETER Verify    Doc lai JSON da sinh, so tung gia tri voi bang nguon, in bang lech; thoat 1 neu co lech.
 .PARAMETER Install   Chep file MOI vao %APPDATA%\OrcaSlicer\user\<id>. Tu choi neu Orca dang chay hoac file da ton tai
-                     (tru file ten bat dau "DHH " khi co -Force). Chay -Verify truoc.
+                     (tru file ten bat dau "DHH " khi co -Force). Chay -Verify truoc. Dien print_host cua TRI/V24 tu fleet.local.json
+                     (bo suu tap profiles\ de trong); -Verify -UserDir so print_host voi gia tri do.
 .PARAMETER Uninstall Xoa chi cac file ten bat dau "DHH " (.json/.info) trong machine\, filament\, process\ cua user.
 .PARAMETER UserDir   Thu muc user can ghi/xoa/doc (mac dinh: %APPDATA%\OrcaSlicer\user\<id> that). Moi thao tac ghi/xoa chi trong day.
                      Voi -Verify, doc ho so da cai trong UserDir thay vi OutDir. Kiem Orca-dang-chay chi ap dung khi UserDir nam trong %APPDATA%\OrcaSlicer.
@@ -203,6 +204,17 @@ function Get-SystemNames {
     $set
 }
 
+# print_host (Moonraker address of a Voron) is empty in profiles\src and profiles\bundle; the real address
+# lives in fleet.local.json and is filled in only when copying into the Orca user dir (-Install).
+function Get-PrintHost([string]$Code) {
+    if ($Code -notin 'TRI', 'V24') { return $null }
+    if (-not $script:FleetCfg) {
+        Import-Module (Join-Path $PSScriptRoot '..\lib\Fleet.psm1') -Force
+        $script:FleetCfg = Get-FleetConfig
+    }
+    [string]$script:FleetCfg.ips.$Code
+}
+
 function Format-Val($v) {
     if ($v -is [array]) { return 'A:' + (($v | ForEach-Object { "$_" }) -join '|') }
     return 'S:' + "$v"
@@ -222,8 +234,14 @@ function Test-Plan($plan, [string]$Root, [switch]$UserMode) {
         catch { & $add $rel '(file)' 'JSON hop le' $_.Exception.Message; continue }
         $actual = @{}
         foreach ($pr in $j.PSObject.Properties) { $actual[$pr.Name] = $pr.Value }
+        # installed Voron profile: print_host must equal the address in fleet.local.json (value never printed)
+        $host4 = if ($UserMode -and $it.Type -eq 'machine') { Get-PrintHost $it.Code } else { $null }
         foreach ($k in $it.Data.Keys) {
             if (-not $actual.ContainsKey($k)) { & $add $rel $k (Format-Val $it.Data[$k]) '(thieu khoa)'; continue }
+            if ($host4 -and $k -eq 'print_host') {
+                if ("$($actual[$k])" -ne $host4) { & $add $rel $k '(theo fleet.local.json)' '(khac)' }
+                continue
+            }
             $e = Format-Val $it.Data[$k]; $a = Format-Val $actual[$k]
             if ($e -ne $a) { & $add $rel $k $e $a }
         }
@@ -343,11 +361,20 @@ if ($Install) {
         else { $todo += , @($it, $dst) }
     }
     if ($refuse.Count) { throw ("Tu choi ghi de $($refuse.Count) file da ton tai (can ten 'DHH ' va -Force):`n" + ($refuse -join "`n")) }
+    foreach ($t in $todo) { if ($t[0].Type -eq 'machine') { Get-PrintHost $t[0].Code | Out-Null } }   # fail on missing fleet.local.json before any copy
     foreach ($t in $todo) {
         $it = $t[0]; $dst = $t[1]
         if ($PSCmdlet.ShouldProcess($dst, 'Chep file moi')) {
             New-Item -ItemType Directory -Force (Split-Path $dst) | Out-Null
-            Copy-Item -LiteralPath (Join-Path $OutDir "$($it.Type)\$($it.Name).json") -Destination $dst
+            $srcFile = Join-Path $OutDir "$($it.Type)\$($it.Name).json"
+            $ph = if ($it.Type -eq 'machine') { Get-PrintHost $it.Code } else { $null }
+            if ($ph) {
+                $txt = [IO.File]::ReadAllText($srcFile, (New-Object Text.UTF8Encoding $false))
+                $txt2 = [regex]::Replace($txt, '("print_host":\s*)""', { param($m) $m.Groups[1].Value + '"' + $ph + '"' })
+                if ($txt2 -eq $txt) { throw "Khong thay print_host rong trong $srcFile" }
+                [IO.File]::WriteAllText($dst, $txt2, (New-Object Text.UTF8Encoding $false))
+            }
+            else { Copy-Item -LiteralPath $srcFile -Destination $dst }
         }
     }
     Write-Output "Da chep $($todo.Count) file vao $ud"

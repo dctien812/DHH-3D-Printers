@@ -7,7 +7,7 @@
 		"0.08"
 	],
 	"name": "DHH Voron 2.4 300 0.4",
-	"print_host": "192.0.2.89",
+	"print_host": "",
 	"printable_height": "240",
 	"printer_extruder_id": [
 		"1"

@@ -1,4 +1,5 @@
-﻿=== octopus_off128k
+﻿Ghi chú 2026-11-27: IP, tên đăng nhập, MAC và đường dẫn riêng trong file này đã được ẩn danh trước khi đưa lên repo công khai.
+=== octopus_off128k
 CONFIG_FLASH_APPLICATION_ADDRESS=0x8020000
 CONFIG_STM32_FLASH_START_20000=y
 # CONFIG_STM32_FLASH_START_0000 is not set

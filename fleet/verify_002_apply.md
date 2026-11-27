@@ -1,4 +1,5 @@
 # verify_002_apply - kiem chung scripts\voron\apply-config.ps1 voi Moonraker gia (002:T035)
+> Ghi chú 2026-11-27: IP, tên đăng nhập, MAC và đường dẫn riêng trong file này đã được ẩn danh trước khi đưa lên repo công khai.
 
 Lenh chay lai: `powershell -NoProfile -ExecutionPolicy Bypass -File tests\apply-config.mock.ps1` (ma thoat 0 neu moi ca dat; nhat ky o tests\tmp\mock-run.md). Chi dung -BaseUrl http://127.0.0.1:<cong ngau nhien>; harness tu choi moi tham so/lenh chua 192.0.2.x. Chay lai tren ban sao hong: them `-ScriptPath <ban sao> -ReportPath <file>`.
 

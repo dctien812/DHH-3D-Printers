@@ -3,6 +3,7 @@
 # No serial is read or written. A printer that does not answer gets "khong tra loi HH:mm:ss" in its data
 # columns and the other printers are still written.
 #   -Ips        override addresses, e.g. -Ips @{ V24 = '192.0.2.250' } (to test the "no answer" row)
+# Default addresses come from fleet.local.json (see Get-FleetConfig; FLEET_CONFIG overrides the path).
 #   -SampleDir  offline: read <dir>\<id>\objects.json (+ optional info.json) instead of Moonraker
 #   -SsdpSampleFile  offline: text file with SSDP datagrams separated by a line "----"
 #   -OutDir     output folder (default fleet\); required with the offline switches
@@ -31,13 +32,14 @@ $today = Get-Date -Format 'yyyy-MM-dd'
 $noAns = { 'không trả lời ' + (Get-Date -Format 'HH:mm:ss') }
 
 # id -> kind, default ip, catalogue facts (not read from the machine; labelled as such in "nguồn")
+$cfg = Get-FleetConfig
 $fleet = [ordered]@{
-    TRI = @{ Kind = 'Voron'; Ip = '192.0.2.90'; Model = 'Voron Trident 250' }
-    V24 = @{ Kind = 'Voron'; Ip = '192.0.2.89'; Model = 'Voron 2.4 300' }
-    H2S = @{ Kind = 'Bambu'; Ip = '192.0.2.61'; Model = 'Bambu Lab H2S'; Code = 'O1S'; Bed = '340x320x340 mm'; Enclosed = 'có'; Acc = 'AMS' }
-    P1S = @{ Kind = 'Bambu'; Ip = '192.0.2.199'; Model = 'Bambu Lab P1S'; Code = 'C12'; Bed = '256x256x256 mm'; Enclosed = 'có'; Acc = 'không có AMS' }
-    A1 = @{ Kind = 'Bambu'; Ip = '192.0.2.122'; Model = 'Bambu Lab A1'; Code = 'N2S'; Bed = '256x256x256 mm'; Enclosed = 'không'; Acc = 'không có AMS' }
-    A1M = @{ Kind = 'Bambu'; Ip = '192.0.2.149'; Model = 'Bambu Lab A1 Mini'; Code = 'N1'; Bed = '180x180x180 mm'; Enclosed = 'không'; Acc = 'không có AMS' }
+    TRI = @{ Kind = 'Voron'; Ip = $cfg.ips.TRI; Model = 'Voron Trident 250' }
+    V24 = @{ Kind = 'Voron'; Ip = $cfg.ips.V24; Model = 'Voron 2.4 300' }
+    H2S = @{ Kind = 'Bambu'; Ip = $cfg.ips.H2S; Model = 'Bambu Lab H2S'; Code = 'O1S'; Bed = '340x320x340 mm'; Enclosed = 'có'; Acc = 'AMS' }
+    P1S = @{ Kind = 'Bambu'; Ip = $cfg.ips.P1S; Model = 'Bambu Lab P1S'; Code = 'C12'; Bed = '256x256x256 mm'; Enclosed = 'có'; Acc = 'không có AMS' }
+    A1 = @{ Kind = 'Bambu'; Ip = $cfg.ips.A1; Model = 'Bambu Lab A1'; Code = 'N2S'; Bed = '256x256x256 mm'; Enclosed = 'không'; Acc = 'không có AMS' }
+    A1M = @{ Kind = 'Bambu'; Ip = $cfg.ips.A1M; Model = 'Bambu Lab A1 Mini'; Code = 'N1'; Bed = '180x180x180 mm'; Enclosed = 'không'; Acc = 'không có AMS' }
 }
 
 function Get-MacFromArp([string]$ip) {

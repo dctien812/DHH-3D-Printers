@@ -14,7 +14,8 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot '..\lib\Fleet.psm1') -Force
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$defaultIps = @{ TRI = '192.0.2.90'; V24 = '192.0.2.89' }
+$cfg = Get-FleetConfig
+$defaultIps = @{ TRI = $cfg.ips.TRI; V24 = $cfg.ips.V24 }
 $skipDir = '(^|/)(backups|K-ShakeTune_results|ShakeTune[^/]*|shaketune[^/]*)(/|$)'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 

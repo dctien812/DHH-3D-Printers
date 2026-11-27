@@ -3,7 +3,7 @@
 Cập nhật 2026-11-27. Dự án này **không phải** dự án drone: chỉ đọc file trong thư mục này.
 
 - Thư mục: `D:\TTeccS-3D-Printers-Repo` (chuyển từ `D:\WORK\3D-Printer-Klipper` ngày 2026-11-27).
-- GitHub: `dctien812/DHH-3D-Printers` (private), nhánh `main`.
+- GitHub: `dctien812/DHH-3D-Printers` (public), nhánh `main`.
 - Trạng thái chi tiết và việc tiếp theo: **`.office\checkpoint.md`** (đọc mục "Chuyển phiên" trước), sổ ghi `.office\ledger.md`.
 - Spec-kit: `.specify\memory\constitution.md`, `specs\001…004`.
 - Bí mật: `secrets\bambu.local.json` (chỉ trên máy, gitignore — không đẩy, không gửi sang hãng khác).

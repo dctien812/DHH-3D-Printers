@@ -38,12 +38,14 @@ $script:Rollback = $null
 $script:Stage = $null
 
 # ---------------------------------------------------------------- target
-$known = @{ TRI = '192.0.2.90'; V24 = '192.0.2.89' }
 if ($BaseUrl) {
     if ($BaseUrl -notmatch '^http://127\.0\.0\.1:\d{1,5}$') { throw "-BaseUrl must look like http://127.0.0.1:<port>" }
     $base = $BaseUrl
     $machine = if ($Printer) { $Printer } else { 'MOCK' }
 } else {
+    Import-Module (Join-Path $PSScriptRoot '..\lib\Fleet.psm1') -Force
+    $cfg = Get-FleetConfig
+    $known = @{ TRI = $cfg.ips.TRI; V24 = $cfg.ips.V24 }
     if ($Ip) {
         $parsed = $null
         if (-not [System.Net.IPAddress]::TryParse($Ip, [ref]$parsed)) { throw "-Ip is not an IP address: $Ip" }

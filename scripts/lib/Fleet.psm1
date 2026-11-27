@@ -14,6 +14,27 @@ function Get-FleetSha256 {
     }
 }
 
+function Get-FleetConfig {
+    <# Reads the local, git-ignored fleet.local.json (LAN IPs, SSH user/key, Pi home).
+       Path: -Path, else env FLEET_CONFIG, else <repo root>\fleet.local.json.
+       Throws (naming the file and the missing key, never a value) when the file or a key is missing.
+       Required: ips.TRI/V24/H2S/P1S/A1/A1M. Optional (reserved for future SSH use): ssh_user, ssh_key, pi_home. Template: fleet.local.example.json. #>
+    [CmdletBinding()]
+    param([string]$Path)
+    if (-not $Path) { $Path = $env:FLEET_CONFIG }
+    if (-not $Path) { $Path = Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path 'fleet.local.json' }
+    $hint = "Copy fleet.local.example.json to fleet.local.json (repo root, git-ignored) and fill in the real values."
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { throw "Fleet config not found: $Path. $hint" }
+    try { $cfg = Get-Content -LiteralPath $Path -Raw -Encoding UTF8 | ConvertFrom-Json }
+    catch { throw "Fleet config is not valid JSON: $Path. $hint" }
+    $missing = New-Object System.Collections.Generic.List[string]
+    $has = { param($o, $n) $null -ne $o -and $o -isnot [string] -and $null -ne $o.PSObject.Properties[$n] -and -not [string]::IsNullOrWhiteSpace([string]$o.$n) }
+    $ips = if ($null -ne $cfg -and $null -ne $cfg.PSObject.Properties['ips']) { $cfg.ips } else { $null }
+    foreach ($id in 'TRI', 'V24', 'H2S', 'P1S', 'A1', 'A1M') { if (-not (& $has $ips $id)) { $missing.Add("ips.$id") } }
+    if ($missing.Count -gt 0) { throw "Fleet config $Path is missing key(s): $($missing -join ', '). $hint" }
+    $cfg
+}
+
 function Test-MoonrakerPathAllowed {
     <# $true only for the read-only GET endpoints: anchored, no "..", no encoded dots. #>
     param([string]$Path)
@@ -155,4 +176,4 @@ function Receive-BambuSsdp {
     $found.Values
 }
 
-Export-ModuleMember -Function Get-FleetSha256, Invoke-MoonrakerGet, Get-MoonrakerInfo, Get-MoonrakerObjects, Get-MoonrakerFiles, Test-PrinterIdle, ConvertFrom-BambuSsdp, Receive-BambuSsdp
+Export-ModuleMember -Function Get-FleetSha256, Get-FleetConfig,Invoke-MoonrakerGet, Get-MoonrakerInfo, Get-MoonrakerObjects, Get-MoonrakerFiles, Test-PrinterIdle, ConvertFrom-BambuSsdp, Receive-BambuSsdp
